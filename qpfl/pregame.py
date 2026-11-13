@@ -19,6 +19,8 @@ from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 
+from qpfl.elo import EloHistory
+from qpfl.elo import expected as elo_expected
 from qpfl.weekly_facts import (
     CAREER_MILESTONES,
     CONSOLATION,
@@ -987,6 +989,17 @@ def _series_summary(ctx: WeekContext, a: TeamGame) -> dict:
     }
 
 
+def _elo_summary(elo: EloHistory, season: int, a: TeamGame, b: TeamGame) -> dict:
+    """Both sides' Elo ratings coming into the week, and team1's win chance."""
+    first = elo.rating(a.franchises, season)
+    second = elo.rating(b.franchises, season)
+    return {
+        'team1': round(first),
+        'team2': round(second),
+        'team1_win_prob': round(elo_expected(first, second), 3),
+    }
+
+
 def _sorted(facts: list[Fact]) -> list[dict]:
     return [f.to_dict() for f in sorted(facts, key=lambda f: -f.notability)]
 
@@ -1028,6 +1041,7 @@ def generate_pregame(
 
     weeks = _season_weeks(ctx)
     pairs = _matchups(upcoming)
+    elo = EloHistory(ctx.team_all)
     projections = _projection_storylines(pairs, rosters, team_projections)
     matchups = []
     for a, b in pairs:
@@ -1061,6 +1075,7 @@ def generate_pregame(
                 'records': _sorted(records),
                 'milestones': _sorted(milestones),
                 'series': _series_summary(ctx, a),
+                'elo': _elo_summary(elo, season, a, b),
             }
         )
     return {

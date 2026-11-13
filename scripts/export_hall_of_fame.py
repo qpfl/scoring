@@ -2938,6 +2938,9 @@ def generate_hall_of_fame(
         team_hall_of_fame,
         record_book,
         {row['Code']: row['Owner'] for row in owner_stats},
+        team_games,
+        player_games,
+        profile_key_lookup(player_career_stats),
     )
     from scripts.hof_players import lineup_standings
 

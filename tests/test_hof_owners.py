@@ -119,3 +119,32 @@ def test_records_held_skip_player_totals_and_top_players_sum_starts():
     assert [(p['player'], p['points'], p['starts'], p['seasons']) for p in top] == [
         ('Josh Allen', 80, 2, [2024])
     ]
+
+
+def test_fingerprints_rank_owners_on_six_traits():
+    weeks = []
+    # GSA always outscores CGK; CGK wins its close games against RPA.
+    for n in range(1, 17):
+        weeks.append(
+            _week(
+                n,
+                (_team('GSA', 120 + n % 3), _team('SLS', 70)),
+                (_team('CGK', 90), _team('RPA', 85 + n % 2)),
+            )
+        )
+    profiles = _profiles([_season(2025, *weeks)])
+    gsa = {t['key']: t for t in profiles['GSA']['fingerprint']}
+    cgk = {t['key']: t for t in profiles['CGK']['fingerprint']}
+    assert [t['key'] for t in profiles['GSA']['fingerprint']] == [
+        'scoring', 'consistency', 'lineup_iq', 'luck', 'clutch', 'playoffs',
+    ]  # fmt: skip
+    assert gsa['scoring']['percentile'] > cgk['scoring']['percentile']
+    assert gsa['scoring']['detail'] == '121.0 PPG'
+    # CGK went 16-0 in games decided by under 10; GSA played none.
+    assert cgk['clutch']['detail'] == '16-0 in close games'
+    assert gsa['clutch']['percentile'] is None
+    # Second-best score every week (2 of 3 beaten) but always won: a third of
+    # a win of luck in each of the 15 regular-season weeks.
+    assert cgk['luck']['detail'] == '+5.0 wins vs all-play'
+    # No playoff games in the table yet.
+    assert gsa['playoffs']['percentile'] is None

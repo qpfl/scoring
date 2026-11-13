@@ -352,7 +352,36 @@ only count for 2026 (`data/off_roster_scores`); the UI notes that.
 
 ---
 
-## Phase 7: Elo, fingerprints and nemeses (Hall of Fame)
+## Phase 7: Elo, fingerprints and nemeses (Hall of Fame) (done)
+
+**As built:**
+- **Elo** is one model, `qpfl/elo.py` (`EloHistory`), with the planned constants. Every
+  decided game counts once, two-week games on their combined result, and consolation
+  games at 1×. Ratings belong to current franchise seats (`TeamGame.franchises`), so a
+  shared 2021 team plays at its seats' average and moves both.
+  - The Hall of Fame export puts `elo`, `elo_rank` and `elo_series` on each entry of
+    `hall_of_fame_records.franchises` (`scripts/hof_franchises.py`).
+  - The pregame export puts `elo` (both ratings and team1's win chance, coming in) on
+    each matchup, which the Tale of the Tape shows as two rows. Weeks 1-10 of 2026 were
+    regenerated; only that block changed.
+  - The Elo chart leads HOF → Franchises: grey lines, up to 3 highlighted franchises in
+    the palette's all-pairs-safe slots (the viewer's team and the leader by default), a
+    hover crosshair, direct end labels and a ratings table. The team page shows an Elo
+    tile with its rank.
+- **Fingerprints** (`hof_owners._fingerprints`): six traits as midrank percentiles among
+  owners with 15+ regular-season games. Playoffs uses the owner stats table's playoff
+  record, so it matches the profile header. Shown as bars on the owner profile, with a
+  "Compare to" picker that overlays a second owner.
+- **Nemeses** reuse the head-to-head lists already on each page instead of
+  `rivalry_records`: the owner profile's `head_to_head`, and the team page's owner
+  series summed across the franchise's owners (`franchiseOpponentRecords`). One helper,
+  `nemesisAndVictim`, needs 4+ games and breaks ties by series length, then name.
+  **Player nemeses** (`hof_franchises._player_nemeses`) count opposing starters' points
+  against each franchise, consolation games out (as Top Players counts them), and show
+  as a card on the team page.
+
+**Original plan:**
+
 
 **Elo** (`hof_franchises.py`):
 - **Model:** start at 1500, K=24, with a margin-of-victory multiplier
