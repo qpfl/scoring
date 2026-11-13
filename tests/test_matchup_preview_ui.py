@@ -29,7 +29,8 @@ function myTeamAbbrev() {{ return null; }}
 const result = (() => {{ {body} }})();
 process.stdout.write(JSON.stringify(result));
 """
-    output = subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
+    # Over stdin, like run_machine: `node -e` caps the script at 128 KB on Linux.
+    output = subprocess.run(['node'], input=script, check=True, capture_output=True, text=True)
     return json.loads(output.stdout)
 
 
