@@ -8257,7 +8257,15 @@ function buildRingOfHonorOwnerPlaque(owner, franchise, seed = 0) {
                 () => `${plaqueCapitalize(plaqueCountWord(titles.length))} championships came under ${subject}: ${plaqueYearList(titles)}.`,
             ])));
     }
-    if (finalsLost.length) {
+    if (finalsLost.length && !titles.length) {
+        const lastFinal = finalsLost[finalsLost.length - 1];
+        add('finals', 60 + 6 * finalsLost.length, () => (finalsLost.length === 1
+            ? pick([
+                () => `${subject} came within one game of a title in ${lastFinal.season}, falling to ${lastFinal.winner} in the final.`,
+                () => `The peak: a trip to the ${lastFinal.season} title game, where ${lastFinal.winner} edged ${subject} ${hofNumber(lastFinal.opponentScore)}–${hofNumber(lastFinal.score)}.`,
+            ])
+            : `${subject} reached the title game ${plaqueCountWord(finalsLost.length)} times (${plaqueYearList(finalsLost.map(final => final.season))}).`));
+    } else if (finalsLost.length) {
         add('finals', 38 + 6 * finalsLost.length, () => pick([
             () => `${subject} also reached the title game ${finalsLost.length === 1 ? `in ${finalsLost[0].season}` : `${plaqueCountWord(finalsLost.length)} more times`}.`,
             () => `${finalsLost.length === 1 ? 'One more trip' : `${plaqueCapitalize(plaqueCountWord(finalsLost.length))} more trips`} to the final${finalsLost.length === 1 ? ` came in ${finalsLost[0].season}` : ` (${plaqueYearList(finalsLost.map(final => final.season))})`}.`,
@@ -8283,10 +8291,118 @@ function buildRingOfHonorOwnerPlaque(owner, franchise, seed = 0) {
         ]));
     }
 
+    // The owner's Hall of Fame profile: regular-season ranks and playoff record.
+    const ownerProfiles = data?.hall_of_fame_records?.owner_profiles || {};
+    const profileFor = (person, index) => {
+        const [first, ...rest] = person.split(' ');
+        const last = rest[rest.length - 1];
+        const candidates = Object.values(ownerProfiles).filter(profile =>
+            (profile.seasons || []).some(row => plaqueOwnerIsFranchise(row.team, franchise)));
+        return Object.values(ownerProfiles).find(profile => profile.name === person)
+            || (index === 0 && ownerProfiles[franchise])
+            || candidates.find(profile => profile.name?.split(' ')[0] === first)
+            || candidates.find(profile => last && profile.name?.split(' ').slice(-1)[0] === last && profile.code !== franchise);
+    };
+    const ownerProfileRows = people.map(profileFor);
+    const primaryProfile = ownerProfileRows[0];
+    const profileSeasons = (primaryProfile?.seasons || [])
+        .filter(row => seasons.includes(Number(row.season)) && plaqueOwnerIsFranchise(row.team, franchise));
+
+    // Best finish when there's no title to lead with.
+    const placeOf = row => {
+        const label = (row.seasonFinishes || []).map(finish => finish.label).find(text => /^\d+(st|nd|rd|th) Place$/.test(text));
+        return label ? Number.parseInt(label, 10) : null;
+    };
+    const placed = rows.map(row => ({ season: row.season, place: placeOf(row), playoff: finishOf(row).includes('playoff') }))
+        .filter(row => row.place);
+    const bestPlace = Math.min(...placed.map(row => row.place));
+    if (!titles.length && placed.length) {
+        const bestYears = placed.filter(row => row.place === bestPlace).map(row => row.season);
+        const yearsText = plaqueYearList(bestYears);
+        const placeWord = `${plaqueOrdinal(bestPlace)} place`;
+        if (bestPlace === 2 && !finalsLost.length) {
+            add('best-finish', 58, () => pick([
+                () => `${subject} came within one game of a title, finishing second in ${yearsText}.`,
+                () => `The peak: a runner-up finish in ${yearsText}, one win from a ring.`,
+            ]));
+        } else if (bestPlace > 2 || !finalsLost.length) {
+            const inPlayoffs = placed.some(row => row.place === bestPlace && row.playoff);
+            add('best-finish', inPlayoffs ? 62 - 4 * bestPlace : 30, () => pick([
+                () => `${plaqueCapitalize(subjectPossessive)} best finish: ${placeWord}${bestYears.length > 1 ? `, ${plaqueCountWord(bestYears.length)} times (${yearsText})` : ` in ${yearsText}`}.`,
+                () => `${subject} ${verb('climbed', 'climbed')} as high as ${placeWord}${inPlayoffs ? ' in the playoffs' : ''} in ${yearsText}.`,
+            ]));
+        }
+    }
+
+    // Regular-season crowns: first place in the standings.
+    const firstSeeds = profileSeasons.filter(row => Number(row.rank) === 1).map(row => Number(row.season)).sort();
+    if (firstSeeds.length) {
+        add('first-seed', 40 + 8 * firstSeeds.length, () => (firstSeeds.length === 1
+            ? pick([
+                () => `${subject} finished atop the regular-season standings in ${firstSeeds[0]}.`,
+                () => `In ${firstSeeds[0]}, ${subject} ${verb('owned', 'owned')} the regular season, finishing first in the standings.`,
+            ])
+            : pick([
+                () => `${subject} finished atop the regular-season standings ${plaqueCountWord(firstSeeds.length)} times (${plaqueYearList(firstSeeds)}).`,
+                () => `${plaqueCapitalize(plaqueCountWord(firstSeeds.length))} regular-season first-place finishes: ${plaqueYearList(firstSeeds)}.`,
+            ])));
+    }
+
+    // Playoff record, when the profile's whole history is this tenure.
+    const profileCoversTenure = primaryProfile && !plural
+        && (primaryProfile.seasons || []).every(row => seasons.includes(Number(row.season)) && plaqueOwnerIsFranchise(row.team, franchise));
+    const playoffMatch = String(primaryProfile?.summary?.playoff_record || '').match(/^(\d+)-(\d+)/);
+    if (profileCoversTenure && playoffMatch) {
+        const [playoffWins, playoffLosses] = [Number(playoffMatch[1]), Number(playoffMatch[2])];
+        if (playoffWins + playoffLosses >= 4 && playoffWins / (playoffWins + playoffLosses) >= 0.6) {
+            add('playoff-record', 34 + 2 * playoffWins, () => pick([
+                () => `${subject} is ${playoffWins}-${playoffLosses} in the playoffs.`,
+                () => `In the postseason, ${subject} has gone ${playoffWins}-${playoffLosses}.`,
+            ]));
+        }
+    }
+
+    // Winning seasons.
+    const finishedRows = rows.filter(row => (row.seasonFinishes || []).length);
+    const winningSeasons = finishedRows.filter(row => row.wins > row.losses).length;
+    if (finishedRows.length >= 4 && winningSeasons / finishedRows.length >= 0.7) {
+        add('winning', 26 + 2 * winningSeasons, () => (winningSeasons === finishedRows.length
+            ? `Not one losing season in ${plaqueCountWord(finishedRows.length)}.`
+            : `${plaqueCapitalize(plaqueCountWord(winningSeasons))} winning seasons in ${plaqueCountWord(finishedRows.length)}.`));
+    }
+
+    // Their best rivalry record over the tenure.
+    const headToHead = (history?.ownerHeadToHead || []).map(entry => {
+        const matchups = (entry.matchups || []).filter(game => seasons.includes(Number(game.season)));
+        const won = matchups.filter(game => game.result === 'win').length;
+        const lost = matchups.filter(game => game.result === 'loss').length;
+        return { opponent: entry.opponentId, won, lost, games: matchups.length };
+    }).filter(entry => entry.games >= 6 && entry.won / entry.games >= 0.7)
+        .sort((a, b) => b.won / b.games - a.won / a.games || b.games - a.games)[0];
+    if (headToHead) {
+        add('rivalry', 30 + 20 * (headToHead.won / headToHead.games - 0.7) * 5, () => pick([
+            () => `${subject} ${verb('owns', 'own')} ${/^(8|11|18)(\D|$)/.test(String(headToHead.won)) ? 'an' : 'a'} ${headToHead.won}-${headToHead.lost} record against ${headToHead.opponent}.`,
+            () => `${headToHead.opponent} never figured ${subject} out: ${headToHead.won}-${headToHead.lost} head to head.`,
+        ]));
+    }
+
+    // Their highest score, unless a league record already covers it.
+    const peak = rows.map(row => row.highestScore && { ...row.highestScore, season: row.season })
+        .filter(Boolean).sort((a, b) => b.score - a.score)[0];
+    const routRow = rows.map(row => row.biggestWin && { ...row.biggestWin, season: row.season })
+        .filter(Boolean).sort((a, b) => b.margin - a.margin)[0];
+    const peakIsRout = routRow && peak && routRow.season === peak.season && routRow.week === peak.week;
+    if (peak && !peakIsRout && !uniqueRecords.some(entry => entry.group === 'team-game-most-points')) {
+        add('peak', 18 + peak.score / 10, () => pick([
+            () => `High-water mark: ${hofNumber(peak.score)} points against ${peak.opponent} in ${peak.season}.`,
+            () => `${subject} once hung ${hofNumber(peak.score)} on ${peak.opponent} (${peak.season}).`,
+        ]));
+    }
+
     // Best season and biggest rout, when no record says it already.
     const bestRow = rows.filter(row => Number(row.gamesPlayed) >= 10)
         .sort((a, b) => (b.wins - b.losses) - (a.wins - a.losses) || b.totalPoints - a.totalPoints)[0];
-    if (bestRow && rows.length > 1) {
+    if (bestRow && rows.length > 1 && bestRow.wins > bestRow.losses) {
         add('best-season', 30, () => pick([
             () => `The ${bestRow.season} team went ${bestRow.wins}-${bestRow.losses}${bestRow.ties ? `-${bestRow.ties}` : ''}${titles.includes(bestRow.season) ? ' and won it all' : ''}.`,
             () => `${plaqueCapitalize(subjectPossessive)} best season: ${bestRow.wins}-${bestRow.losses}${bestRow.ties ? `-${bestRow.ties}` : ''} in ${bestRow.season}.`,
@@ -8295,7 +8411,7 @@ function buildRingOfHonorOwnerPlaque(owner, franchise, seed = 0) {
     const rout = rows.map(row => row.biggestWin && { ...row.biggestWin, season: row.season })
         .filter(Boolean).sort((a, b) => b.margin - a.margin)[0];
     if (rout && !uniqueRecords.some(entry => entry.group === 'team-game-biggest-win')) {
-        add('rout', 22 + rout.margin / 5, () => (seasons.length === 1
+        add('rout', Math.min(22 + rout.margin / 5, 40), () => (seasons.length === 1
             ? `The highlight: a ${rout.score} rout of ${rout.opponent}.`
             : pick([
             () => `${plaqueCapitalize(subjectPossessive)} biggest rout: ${rout.score} over ${rout.opponent} in ${rout.season}.`,
@@ -8315,18 +8431,18 @@ function buildRingOfHonorOwnerPlaque(owner, franchise, seed = 0) {
                 `${subject} has steered ${franchise} since ${seasons[0]}${founding ? ', the league\'s first season' : ''}: ${record}, a ${pctLabel} clip.`,
             ]
             : [
-                `${subject} ran ${franchise} from ${span.replace('–', ' to ')}, going ${record} (${pctLabel}).`,
+                `${subject} ran ${franchise} ${span.includes('–') ? `from ${span.replace('–', ' to ')}` : `in ${span}`}, going ${record} (${pctLabel}).`,
                 `${founding ? 'A founding owner, ' : ''}${subject} led ${franchise} for ${plaqueCountWord(seasons.length)} season${seasons.length === 1 ? '' : 's'} and went ${record}.`,
             ];
     const opener = openers[seed % openers.length];
 
-    const chosen = facts.sort((a, b) => b.score - a.score).slice(0, 3);
+    // Longer tenures have more to say.
+    const chosen = facts.sort((a, b) => b.score - a.score).slice(0, seasons.length >= 3 ? 4 : 2);
     const titlesFact = chosen.filter(fact => fact.key === 'titles');
     const body = chosen.filter(fact => fact.key !== 'titles');
     const blurb = [opener, ...[...body, ...titlesFact].map(fact => fact.text())].join(' ');
 
-    const ownerProfiles = data?.hall_of_fame_records?.owner_profiles || {};
-    const ownerCodes = people.map(person => Object.values(ownerProfiles).find(profile => profile.name === person)?.code);
+    const ownerCodes = ownerProfileRows.map(profile => profile?.code);
     const nameHtml = people.map((person, index) => (ownerCodes[index] ? hofOwnerLink(ownerCodes[index], person) : escapeHtml(person))).join(' &amp; ');
 
     return {
