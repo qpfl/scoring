@@ -85,14 +85,18 @@ def test_weekly_facts_load_from_the_generated_file_for_any_week():
         in loader
     )
     assert 'if (!headline.length) return null;' in loader
-    # Team tokens show the newsletter's owner names, with the team name on hover.
-    assert '.split(/(\\{(?:team|has|is):[^}]+\\})/)' in loader
-    assert 'const ownerNames = facts.names || {};' in loader
-    assert 'ownerNames[abbrev] || normalizeCoOwnerLabel(teams[abbrev]?.owner) || abbrev' in loader
+    # Team tokens show the newsletter's owner names, with the team name on hover
+    # (a renderer shared with the pregame notes).
+    assert 'factTemplateRenderer(facts.names || {}, identities?.[season] || {})' in loader
+    renderer = app[
+        app.index('function factTemplateRenderer(') : app.index('async function loadWeeklyFacts(')
+    ]
+    assert '.split(/(\\{(?:team|has|is):[^}]+\\})/)' in renderer
+    assert 'ownerNames[abbrev] || normalizeCoOwnerLabel(teams[abbrev]?.owner) || abbrev' in renderer
     # Verbs agree with co-owned names: "Spencer/Tim have".
-    assert "const pluralVerbs = { has: 'have', is: 'are' };" in loader
-    assert "if (kind !== 'team') return isPluralName(owner) ? pluralVerbs[kind] : kind;" in loader
-    assert '`<span title="${escapeHtml(teamName)}">${escapeHtml(owner)}</span>`' in loader
+    assert "const pluralVerbs = { has: 'have', is: 'are' };" in renderer
+    assert "if (kind !== 'team') return isPluralName(owner) ? pluralVerbs[kind] : kind;" in renderer
+    assert '`<span title="${escapeHtml(teamName)}">${escapeHtml(owner)}</span>`' in renderer
 
 
 def test_matchups_page_shows_the_viewed_weeks_facts():

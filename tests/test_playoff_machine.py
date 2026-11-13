@@ -208,7 +208,7 @@ def test_playoff_machine_is_a_standings_subview():
     assert "activateGenericSubview('standings', sub);" in app
     assert "if (subview === 'machine') renderPlayoffMachine();" in app
     # Arriving by link (not the tab button) must still render the Machine.
-    assert "} else if (view === 'standings' && sub === 'machine') {" in app
+    assert "(view === 'standings' && sub === 'machine')" in app
     assert '.pm-layout {' in styles
 
 

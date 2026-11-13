@@ -310,6 +310,14 @@ jobs:
       - name: Export scores for web
         run: uv run --frozen python scripts/export_current.py --season ${{ env.CURRENT_SEASON }}
 
+      - name: Generate pregame matchup notes
+        # Runs after the web export so meta.json's lineup_week and the week's
+        # rosters, starters and projections are current. Notes are optional
+        # extras on the matchup cards, so they never block a scoring run.
+        if: steps.check.outputs.skip_scoring != 'true' && env.CURRENT_SEASON != '2025'
+        continue-on-error: true
+        run: uv run --frozen python scripts/export_pregame.py --season ${{ env.CURRENT_SEASON }}
+
       - name: Commit and push
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"

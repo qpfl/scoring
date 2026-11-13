@@ -246,7 +246,10 @@ def test_schedule_toggle_supports_full_league_and_individual_team_schedules():
     assert 'id="matchups-schedule-tab"' in html
     assert 'id="schedule-team-filter"' in html
     assert 'function renderSchedule()' in app
-    assert 'matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); }' in app
+    assert (
+        '    matchups: subview => {\n        renderWeekSelector();\n        renderMatchups();\n'
+        '        renderSchedule();' in app
+    )
     assert "const requestedTeam = (route.params.get('team') || 'ALL').toUpperCase();" in app
     assert "viewFresh.delete('matchups');" in app
     assert 'matchup.team1 === currentScheduleTeam || matchup.team2 === currentScheduleTeam' in app
