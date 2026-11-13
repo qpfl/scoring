@@ -399,6 +399,21 @@ def test_hot_starters_and_position_leaders():
     assert not any(t.startswith('Other QB') for t in texts)
 
 
+def test_projection_storylines_use_team_pregame_totals():
+    def lineup(total, starters=10):
+        return [_roster(f'P{i}', projected=total / starters) for i in range(starters)]
+
+    upcoming = _upcoming(2026, 10, 'S/T', 'J/J') + _upcoming(2026, 10, 'GSA', 'SLS')
+    # The starters' own projections have drifted since kickoff (a 1.8 gap);
+    # the cards' pregame totals still show 82.3 to 80.0.
+    rosters = {'S/T': lineup(81.1), 'J/J': lineup(79.3), 'GSA': lineup(77.6), 'SLS': lineup(95)}
+    notes = _run([], upcoming, rosters=rosters, team_projections={'S/T': 82.3, 'J/J': 80.0})
+    texts = _texts(notes, 'storylines')
+
+    assert 'The closest projected game of the week: S/T by 2.3.' in texts
+    assert "The week's biggest projected favorite: SLS by 17.4." in texts
+
+
 def test_projection_storylines_skip_unset_lineups():
     def lineup(total, starters=10):
         return [_roster(f'P{i}', projected=total / starters) for i in range(starters)]

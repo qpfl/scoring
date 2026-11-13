@@ -527,9 +527,17 @@ def _player_storylines(
 
 
 def _projection_storylines(
-    matchups: list[tuple[TeamGame, TeamGame]], rosters: Mapping[str, list[RosterPlayer]]
+    matchups: list[tuple[TeamGame, TeamGame]],
+    rosters: Mapping[str, list[RosterPlayer]],
+    team_projections: Mapping[str, float] | None = None,
 ) -> dict[tuple[str, str], list[Fact]]:
-    """The week's closest projected game and its biggest projected favorite."""
+    """The week's closest projected game and its biggest projected favorite.
+
+    Uses each team's pregame projection when the week file has one: it is the
+    "Proj" line on the matchup card, and it stays fixed once games kick off,
+    where the starters' own projections keep moving through the week.
+    """
+    team_projections = team_projections or {}
     # A lineup that isn't set yet projects far too low. Teams do leave a slot
     # empty on purpose, so a lineup counts once it's most of the way there.
     full = max((sum(p.starter for p in roster) for roster in rosters.values()), default=0)
@@ -541,7 +549,10 @@ def _projection_storylines(
             starters = [p for p in rosters.get(side.abbrev, []) if p.starter]
             if not full or len(starters) < needed or any(p.projected is None for p in starters):
                 break
-            totals.append(sum(p.projected or 0.0 for p in starters))
+            pregame = team_projections.get(side.abbrev)
+            totals.append(
+                pregame if pregame is not None else sum(p.projected or 0.0 for p in starters)
+            )
         if len(totals) == 2:
             projected[(a.abbrev, b.abbrev)] = (a, b, totals[0], totals[1])
     if len(projected) < 2:
@@ -922,11 +933,13 @@ def generate_pregame(
     profile_key_for: Callable[[str], str] | None = None,
     owner_code: Callable[[str], str] | None = None,
     is_rivalry: bool = False,
+    team_projections: Mapping[str, float] | None = None,
 ) -> dict:
     """Notes for each of the week's matchups, from games before it only.
 
     `upcoming` holds one TeamGame row per team for the week (scores unused),
     which carries the owners and franchises each side plays for.
+    `team_projections` maps each team to its pregame projected total.
     """
     target = (season, week)
     ctx = WeekContext(
@@ -943,7 +956,7 @@ def generate_pregame(
 
     weeks = _season_weeks(ctx)
     pairs = _matchups(upcoming)
-    projections = _projection_storylines(pairs, rosters)
+    projections = _projection_storylines(pairs, rosters, team_projections)
     matchups = []
     for a, b in pairs:
         storylines = [

@@ -82,6 +82,20 @@ def load_rosters(season: int, week: int) -> dict[str, list[RosterPlayer]]:
     return rosters
 
 
+def load_team_projections(season: int, week: int) -> dict[str, float]:
+    """Each team's pregame projected total from the week's file (the card's "Proj")."""
+    week_file = _load(SEASONS_DIR / str(season) / 'weeks' / f'week_{week}.json')
+    totals = {}
+    for matchup in week_file.get('matchups', []):
+        for side in (matchup.get('team1'), matchup.get('team2')):
+            if not isinstance(side, dict) or not side.get('abbrev'):
+                continue
+            value = side.get('pregame_total')
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                totals[side['abbrev']] = float(value)
+    return totals
+
+
 def upcoming_rows(meta: dict, season: int, week: int) -> tuple[list[TeamGame], bool]:
     """One placeholder TeamGame per team in the week's schedule."""
     entry = next((w for w in meta.get('schedule', []) if w.get('week') == week), None)
@@ -159,6 +173,7 @@ def main() -> None:
         profile_key_for=profile_key_lookup(hall.get('player_career_stats', {})),
         owner_code=hof._owner_identity_code,
         is_rivalry=is_rivalry,
+        team_projections=load_team_projections(season, week),
     )
     notes['names'] = owner_names(season)
     path = pregame_path(season, week)

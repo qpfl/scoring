@@ -10,6 +10,7 @@ def run_preview(body: str, league=None):
     guide = app_slice('function computeRootingGuide', 'function rootingGuideHtml')
     renderer = app_slice('function factTemplateRenderer', '// "This Week in QPFL History"')
     preview = app_slice('const PREGAME_NOTE_KINDS', '// ---- Matchups → Preview ----')
+    h2h = app_slice('function getH2HRecord', 'function renderScoreDifferential')
     script = f"""
 const data = {json.dumps(league or _league())};
 const currentSeason = 2026;
@@ -26,6 +27,7 @@ function myTeamAbbrev() {{ return null; }}
 {guide}
 {renderer}
 {preview}
+{h2h}
 const result = (() => {{ {body} }})();
 process.stdout.write(JSON.stringify(result));
 """
@@ -73,6 +75,51 @@ def test_tale_of_the_tape_compares_season_lines():
     assert result['allPlay'] == [27, 0]
     assert 'All-play record (every team, every week): AAA 27-0, J/J 0-27.' in result['html']
     assert '<span class="tape-value better">140.0</span>' in result['html']
+
+
+def test_tale_of_the_tape_leads_with_head_to_head():
+    league = _league()
+    league['all_weeks_loaded'] = True
+    league['hall_of_fame'] = {
+        'rivalry_records': {
+            'records': [
+                {
+                    'team1': 'J/J',
+                    'team2': 'AAA',
+                    'team1_wins': 2,
+                    'team2_wins': 5,
+                    'ties': 1,
+                    'team1_pf': 640.0,
+                    'team2_pf': 880.0,
+                    'games': 8,
+                }
+            ]
+        }
+    }
+    result = run_preview(
+        """
+        const html = taleOfTheTapeHtml('AAA', 'J/J');
+        // No season lines yet (a week 1 preview) still shows the series.
+        data.weeks = [];
+        return { html, early: taleOfTheTapeHtml('AAA', 'J/J'), none: taleOfTheTapeHtml('AAA', 'BBB') };
+        """,
+        league,
+    )
+    html = result['html']
+    assert '<span class="tape-label">All-time wins (1 tie)</span>' in html
+    assert '<span class="tape-value better">5</span>' in html
+    assert '<span class="tape-label">Avg score in series</span>' in html
+    assert '<span class="tape-value better">110.0</span>' in html
+    assert '<span class="tape-value ">80.0</span>' in html
+    assert html.index('tape-h2h') < html.index('Average score')
+    assert 'All-time wins' in result['early'] and 'Average score' not in result['early']
+    assert result['none'] == ''
+
+
+def test_h2h_badge_leaves_cards_that_have_a_preview():
+    app = WEB_APP.read_text(encoding='utf-8')
+    assert app.count("matchupHasPreview(false) ? '' : renderH2HBadge(") == 1
+    assert app.count("matchupHasPreview(matchupFinal) ? '' : renderH2HBadge(") == 1
 
 
 def test_stakes_show_both_teams_odds_with_a_win_and_a_loss():

@@ -3346,7 +3346,7 @@ function renderScheduledMatchupCard(matchup, index, bracket = '', standingsByTea
                             ${renderTeamProjection(t2, t2.projected_total, false, t2Pregame)}
                         </div>
                     </div>
-                    ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
+                    ${matchupHasPreview(false) ? '' : renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                 </div>
                 <div class="team right">
                     ${seed2}
@@ -3777,7 +3777,7 @@ function renderMatchups() {
                             </div>
                         </div>
                         ${renderScoreDifferential(t1, t2, t1Score, t2Score)}
-                        ${renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
+                        ${matchupHasPreview(matchupFinal) ? '' : renderH2HBadge(t1.abbrev, t2.abbrev, currentSeason)}
                         ${midBowlSubtitle}
                     </div>
                     <div class="team right">
@@ -5537,9 +5537,15 @@ function pregameNotesFor(notes, team1, team2) {
     ) || null;
 }
 
+// Unfinished games in the live season get a Preview drawer, which carries the
+// head-to-head record in its tale of the tape instead of the card header.
+function matchupHasPreview(final) {
+    if (final || data.is_historical || data.season !== LIVE_SEASON) return false;
+    return Number(currentWeek) > completedThroughWeek();
+}
+
 function matchupPreviewSlot(team1, team2, final) {
-    if (final || data.is_historical || data.season !== LIVE_SEASON) return '';
-    if (Number(currentWeek) <= completedThroughWeek()) return '';
+    if (!matchupHasPreview(final)) return '';
     return `
         <details class="matchup-preview" data-preview-teams="${escapeHtml(`${team1}|${team2}`)}" hidden>
             <summary><span class="matchup-preview-label">Preview</span><span class="matchup-preview-chips"></span></summary>
@@ -5577,11 +5583,48 @@ function seasonScoreLines() {
     return lines;
 }
 
+// Head-to-head rows for the tale of the tape: the all-time series (which
+// includes completed weeks of this season), this season's meetings, and each
+// side's average score across the series.
+function headToHeadTapeRows(team1, team2) {
+    const rows = [];
+    const allTime = getH2HRecord(team1, team2);
+    if (allTime?.games) {
+        const ties = allTime.ties ? ` (${allTime.ties} tie${allTime.ties === 1 ? '' : 's'})` : '';
+        rows.push([`All-time wins${ties}`, allTime.wins1, allTime.wins2, true, v => String(v)]);
+    }
+    const season = getSeasonH2H(team1, team2);
+    const seasonGames = season ? season.wins1 + season.wins2 + season.ties : 0;
+    if (seasonGames > 0) {
+        const ties = season.ties ? ` (${season.ties} tie${season.ties === 1 ? '' : 's'})` : '';
+        rows.push([`${data.season ?? currentSeason} wins${ties}`, season.wins1, season.wins2, true, v => String(v)]);
+    }
+    if (allTime?.games && Number.isFinite(allTime.pf1) && Number.isFinite(allTime.pf2)) {
+        rows.push(['Avg score in series', allTime.pf1 / allTime.games, allTime.pf2 / allTime.games, true, v => v.toFixed(1)]);
+    }
+    return rows;
+}
+
+function tapeRowsHtml(rows) {
+    return rows.map(([label, v1, v2, higherBetter, fmt]) => {
+        const better1 = higherBetter ? v1 > v2 : v1 < v2;
+        const better2 = higherBetter ? v2 > v1 : v2 < v1;
+        return `
+            <div class="tape-row">
+                <span class="tape-value ${better1 ? 'better' : ''}">${escapeHtml(fmt(v1))}</span>
+                <span class="tape-label">${escapeHtml(label)}</span>
+                <span class="tape-value ${better2 ? 'better' : ''}">${escapeHtml(fmt(v2))}</span>
+            </div>`;
+    }).join('');
+}
+
 function taleOfTheTapeHtml(team1, team2) {
+    const h2hRows = headToHeadTapeRows(team1, team2);
     const lines = seasonScoreLines();
     const a = lines[team1] || [];
     const b = lines[team2] || [];
-    if (!a.length || !b.length) return '';
+    const hasSeason = a.length > 0 && b.length > 0;
+    if (!hasSeason && !h2hRows.length) return '';
     const avg = values => values.reduce((sum, v) => sum + v, 0) / values.length;
     const stat = games => ({
         avg: avg(games.map(g => g.score)),
@@ -5593,33 +5636,24 @@ function taleOfTheTapeHtml(team1, team2) {
         allPlayW: games.reduce((sum, g) => sum + g.beat, 0),
         allPlayL: games.reduce((sum, g) => sum + g.lost, 0),
     });
-    const s1 = stat(a);
-    const s2 = stat(b);
-    const rows = [
+    const s1 = hasSeason ? stat(a) : null;
+    const s2 = hasSeason ? stat(b) : null;
+    const seasonRows = hasSeason ? [
         ['Average score', s1.avg, s2.avg, true, v => v.toFixed(1)],
         ['Last 3 weeks', s1.last3, s2.last3, true, v => v.toFixed(1)],
         ['High score', s1.high, s2.high, true, v => v.toFixed(0)],
         ['Low score', s1.low, s2.low, true, v => v.toFixed(0)],
         ['Top-half weeks', s1.topHalf, s2.topHalf, true, v => String(v)],
         ['Points against / wk', s1.against, s2.against, false, v => v.toFixed(1)],
-    ];
-    const body = rows.map(([label, v1, v2, higherBetter, fmt]) => {
-        const better1 = higherBetter ? v1 > v2 : v1 < v2;
-        const better2 = higherBetter ? v2 > v1 : v2 < v1;
-        return `
-            <div class="tape-row">
-                <span class="tape-value ${better1 ? 'better' : ''}">${escapeHtml(fmt(v1))}</span>
-                <span class="tape-label">${escapeHtml(label)}</span>
-                <span class="tape-value ${better2 ? 'better' : ''}">${escapeHtml(fmt(v2))}</span>
-            </div>`;
-    }).join('');
+    ] : [];
     const record = s => `${s.allPlayW}-${s.allPlayL}`;
     return `
         <section class="matchup-preview-section">
             <h4>Tale of the tape</h4>
             <div class="tape-head"><span>${escapeHtml(team1)}</span><span>${escapeHtml(team2)}</span></div>
-            <div class="tape">${body}</div>
-            <p class="tape-note">All-play record (every team, every week): ${escapeHtml(team1)} ${escapeHtml(record(s1))}, ${escapeHtml(team2)} ${escapeHtml(record(s2))}.</p>
+            ${h2hRows.length ? `<div class="tape tape-h2h">${tapeRowsHtml(h2hRows)}</div>` : ''}
+            ${hasSeason ? `<div class="tape">${tapeRowsHtml(seasonRows)}</div>
+            <p class="tape-note">All-play record (every team, every week): ${escapeHtml(team1)} ${escapeHtml(record(s1))}, ${escapeHtml(team2)} ${escapeHtml(record(s2))}.</p>` : ''}
         </section>`;
 }
 
@@ -7069,7 +7103,9 @@ function getH2HRecord(abbrev1, abbrev2) {
     if (!rec) return null;
     const wins1 = rec.team1 === abbrev1 ? rec.team1_wins : rec.team2_wins;
     const wins2 = rec.team1 === abbrev1 ? rec.team2_wins : rec.team1_wins;
-    return { wins1, wins2, ties: rec.ties, games: rec.games };
+    const pf1 = rec.team1 === abbrev1 ? rec.team1_pf : rec.team2_pf;
+    const pf2 = rec.team1 === abbrev1 ? rec.team2_pf : rec.team1_pf;
+    return { wins1, wins2, ties: rec.ties, games: rec.games, pf1, pf2 };
 }
 
 // Current-viewing-season H2H from data.weeks.
