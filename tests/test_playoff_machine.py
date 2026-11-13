@@ -166,7 +166,7 @@ def test_rooting_guide_roots_against_rivals_for_the_bubble_team():
         const guide = computeRootingGuide(ctx, new Map(), 'EEE');
         return {
             week: guide.week,
-            own: guide.own && guide.own.win > guide.own.lose,
+            own: guide.own && guide.own.win.odds > guide.own.lose.odds,
             games: guide.games.length,
             sorted: guide.games.every((game, i, all) => i === 0 || all[i - 1].swing >= game.swing),
             ownGameExcluded: guide.games.every(game => game.rootFor !== 'EEE' && game.against !== 'EEE'),
@@ -210,3 +210,17 @@ def test_playoff_machine_is_a_standings_subview():
     # Arriving by link (not the tab button) must still render the Machine.
     assert "} else if (view === 'standings' && sub === 'machine') {" in app
     assert '.pm-layout {' in styles
+
+
+def test_rooting_guide_never_shows_100_percent_unless_clinched():
+    result = run_machine("""
+        // AAA is far ahead: a sampled share can round to 100% without a clinch.
+        const guide = computeRootingGuide(ctx, new Map(), 'AAA');
+        const entries = [guide.own.win, guide.own.lose, ...guide.games.flatMap(g => [g.best, g.worst])];
+        return entries.map(e => [displayPlayoffPct(e), e.clinched, e.eliminated]);
+    """)
+    for pct, clinched, eliminated in result:
+        if not clinched:
+            assert pct <= 99
+        if not eliminated:
+            assert pct >= 1

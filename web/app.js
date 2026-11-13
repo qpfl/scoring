@@ -5292,11 +5292,13 @@ function computeRootingGuide(ctx, picks, team) {
     const week = ctx.remainingWeekNums.find(wk => ctx.weeksRemaining[wk]
         .some(m => !picks.has(playoffPickKey(wk, m.team1Abbrev, m.team2Abbrev))));
     if (!week) return null;
+    // The team's odds and clinch status with this game decided, for display
+    // through displayPlayoffPct (1–99% unless mathematically settled).
     const oddsWith = (key, winner) => {
         const fixed = new Map(picks);
         fixed.set(key, winner);
-        const run = runPlayoffSim(ctx, { fixed, trials: ROOTING_GUIDE_TRIALS });
-        return run.playoffCount[team] / run.trials;
+        return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, trials: ROOTING_GUIDE_TRIALS }), fixed)
+            .byTeam[team];
     };
     const games = [];
     let own = null;
@@ -5314,13 +5316,14 @@ function computeRootingGuide(ctx, picks, team) {
             };
             continue;
         }
-        const rootFor = ifTeam1 >= ifTeam2 ? m.team1Abbrev : m.team2Abbrev;
+        const team1Better = ifTeam1.odds >= ifTeam2.odds;
+        const rootFor = team1Better ? m.team1Abbrev : m.team2Abbrev;
         games.push({
             rootFor,
-            against: rootFor === m.team1Abbrev ? m.team2Abbrev : m.team1Abbrev,
-            swing: Math.abs(ifTeam1 - ifTeam2),
-            best: Math.max(ifTeam1, ifTeam2),
-            worst: Math.min(ifTeam1, ifTeam2),
+            against: team1Better ? m.team2Abbrev : m.team1Abbrev,
+            swing: Math.abs(ifTeam1.odds - ifTeam2.odds),
+            best: team1Better ? ifTeam1 : ifTeam2,
+            worst: team1Better ? ifTeam2 : ifTeam1,
         });
     }
     games.sort((a, b) => b.swing - a.swing);
@@ -5333,7 +5336,7 @@ function rootingGuideHtml(guide, summary) {
     if (status?.clinched || status?.eliminated) {
         return `<p class="pm-empty">${escapeHtml(guide.team)} is ${status.clinched ? 'already in' : 'already out'} in this scenario.</p>`;
     }
-    const pct = value => `${Math.round(value * 100)}%`;
+    const pct = entry => `${displayPlayoffPct(entry)}%`;
     const ownLine = guide.own ? `
         <li class="pm-root-own">
             <span class="pm-root-game">Beat ${escapeHtml(guide.own.opponent)}</span>
