@@ -248,9 +248,10 @@ def test_split_runtime_files_have_freshness_and_workflow_coverage():
     # and rule-change history change whenever a rule passes, so a day-long
     # cache would keep showing managers the old rules. The Ring of Honor files
     # (manual_honors, ring_of_honor_numbers) change when inductees are added.
+    # lineup_superlatives is rebuilt with the Hall of Fame.
     assert (
-        'data/shared/(?:hall_of_fame|hall_of_fame_records|transactions|drafts|constitution'
-        '|rule_changes_history|manual_honors|ring_of_honor_numbers)' in vercel
+        'data/shared/(?:hall_of_fame|hall_of_fame_records|lineup_superlatives|transactions'
+        '|drafts|constitution|rule_changes_history|manual_honors|ring_of_honor_numbers)' in vercel
     )
 
 

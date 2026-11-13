@@ -222,7 +222,7 @@ omitted when empty:
 
 ---
 
-## Phase 3: Scorigami (Hall of Fame → Records)
+## Phase 3: Scorigami (Hall of Fame → Records) (done)
 
 **Exporter** (`scripts/hof_records.py`): add `build_scorigami(team_games)`:
 - **Which games:** one per matchup (winner and loser only); regular season and playoff
@@ -247,7 +247,15 @@ newsletter and the weekly-facts cards for free.
 
 ---
 
-## Phase 4: What-if standings (Standings → Table)
+## Phase 4: What-if standings (Standings → Table) (done)
+
+**As built:** every view is ranked by rank points under the real rules (a win
+is 1, a top-half week 0.5 with ties at the cutoff splitting it), not by W-L.
+All-play, Points only, Perfect lineups (everyone's best lineup, top halves
+recomputed, plus what a perfect lineup alone would have gained) and Schedule
+swap (wins change, a team's own top-half points don't). Pythagorean wins was
+dropped: top-half points already reward raw scoring, so it repeated Points
+only.
 
 Add a collapsed `<details class="standings-whatif">` "Alternate standings" below the
 standings table. It's computed client side from loaded weeks and has a segmented
@@ -266,7 +274,12 @@ Each view shows the rank change against actual standings (↑2 / ↓1).
 
 ---
 
-## Phase 5: Lineup decisions (Stats → new "Lineups" sub-tab)
+## Phase 5: Lineup decisions (Stats → new "Lineups" sub-tab) (done)
+
+**As built:** `scripts/hof_lineups.py`. Ghost starters leave out team units
+(HC, D/ST, OL), which go negative most weeks. A designated starter only
+counts as an OUT blunder when he then scored 0 (designations can land
+mid-game). Perfect lineups use the Hall of Fame's own `best_lineup` test.
 
 **Exporter:** a new `lineup_superlatives` block in `hall_of_fame_records.json`, computed
 from `PlayerGame`, by season and all-time:

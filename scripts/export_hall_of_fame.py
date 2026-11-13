@@ -2948,6 +2948,8 @@ def generate_hall_of_fame(
         if franchise['abbrev'] in standings:
             franchise['all_time_lineup_standing'] = standings[franchise['abbrev']]
 
+    from scripts.hof_lineups import build_lineup_superlatives
+
     records_output = {
         'record_book': record_book,
         'owner_profiles': owner_profiles,
@@ -2959,12 +2961,22 @@ def generate_hall_of_fame(
     if records_file.exists():
         with open(records_file) as f:
             existing_records = json.load(f)
+    # Its own file: the Stats → Lineups tab shouldn't download the record book.
+    lineups_output = build_lineup_superlatives(
+        all_seasons, _owner_label_for_team, profile_key_lookup(player_career_stats)
+    )
+    lineups_file = SHARED_DIR / 'lineup_superlatives.json'
+    existing_lineups = {}
+    if lineups_file.exists():
+        with open(lineups_file) as f:
+            existing_lineups = json.load(f)
 
     changed = False
     SHARED_DIR.mkdir(parents=True, exist_ok=True)
     for path, existing, payload in (
         (hof_file, existing_hof, output),
         (records_file, existing_records, records_output),
+        (lineups_file, existing_lineups, lineups_output),
     ):
         if _without_refresh_metadata(existing) == payload:
             continue

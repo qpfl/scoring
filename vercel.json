@@ -36,7 +36,7 @@
       "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
     },
     {
-      "src": "/(data/shared/(?:hall_of_fame|hall_of_fame_records|transactions|drafts|constitution|rule_changes_history|manual_honors|ring_of_honor_numbers)\\.json)",
+      "src": "/(data/shared/(?:hall_of_fame|hall_of_fame_records|lineup_superlatives|transactions|drafts|constitution|rule_changes_history|manual_honors|ring_of_honor_numbers)\\.json)",
       "dest": "/web/$1",
       "headers": { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" }
     },

@@ -765,6 +765,11 @@ const SHARED_RESOURCES = {
         path: 'data/shared/hall_of_fame_records.json',
         read: payload => payload || {},
     },
+    // Stats → Lineups (scripts/hof_lineups.py).
+    lineup_superlatives: {
+        path: 'data/shared/lineup_superlatives.json',
+        read: payload => payload || {},
+    },
     banners: {
         path: 'data/shared/banners.json',
         read: payload => Array.isArray(payload) ? payload : (payload?.banners || []),
@@ -1091,6 +1096,7 @@ async function prepareViewData(view, subview) {
         await Promise.all(requests);
     } else if (view === 'stats') {
         const requests = [ensureAllSeasonWeeks()];
+        if (subview === 'lineups') requests.push(ensureSharedResource('lineup_superlatives'));
         // Leaders rank current players on their full season, which needs the
         // current rosters to know whose off-roster weeks count.
         if (data.season === LIVE_SEASON) {
@@ -1158,7 +1164,11 @@ const VIEW_RENDERERS = {
         renderTeams();
         renderActiveTeamSubview(subview);
     },
-    stats: () => { renderStatsLeaders(); renderTeamStats(); },
+    stats: subview => {
+        renderStatsLeaders();
+        renderTeamStats();
+        if (subview === 'lineups') renderLineupsTab();
+    },
     history: subview => {
         if (subview === 'banners') renderBanners();
         else if (subview === 'rules') { renderConstitution(); renderRuleChanges(); }
@@ -1247,7 +1257,9 @@ function pageTitleFor(view, subview, detail) {
         if (subview === 'compare') return 'Compare Teams · QPFL';
         return 'All Rosters · QPFL';
     }
-    if (view === 'stats') return `${subview === 'team' ? 'Team Stats' : 'Player Leaders'} · QPFL`;
+    if (view === 'stats') {
+        return `${{ team: 'Team Stats', lineups: 'Lineups' }[subview] || 'Player Leaders'} · QPFL`;
+    }
     if (view === 'history') {
         const labels = {
             records: 'League Hall of Fame',
@@ -4473,6 +4485,432 @@ function renderStandings() {
 
     renderPlayoffOdds();
     renderWeeklyRankHistory(postseasonContext.completedThrough, displayedStandings);
+    renderWhatIfStandings(postseasonContext.completedThrough, displayedStandings);
+}
+
+// ====== LINEUPS (Stats → Lineups) ======
+// Lineup superlatives from scripts/hof_lineups.py, by season or all-time.
+
+let currentLineupsSeason = null;
+
+const LINEUP_REASONS = { bye: 'on bye', out: 'listed out', ir: 'on IR', doubtful: 'doubtful, sat', backup: 'a backup QB', suspended: 'suspended' };
+
+function lineupWhen(row) {
+    const week = row.week_label?.startsWith('Week ') ? `${row.week_label}, ${row.season}` : `${row.season} ${row.week_label || ''}`.trim();
+    return row.opponent ? `${week} · ${hofNumber(row.score)}-${hofNumber(row.opponent_score)} vs ${row.opponent}` : week;
+}
+
+function lineupPlayer(row, info = row) {
+    return playerProfileButton(info.player, '', null, info.position, row.season);
+}
+
+function lineupCard(id, title, note, rows, render) {
+    if (!rows?.length) return '';
+    return `
+        <article class="hof-record-card" id="lineups-${id}">
+            <h3 class="hof-record-title">${escapeHtml(title)}</h3>
+            <ol class="hof-record-rest">
+                ${rows.map((row, index) => {
+                    const { holder, sub, when = '', value = '', mine = false } = render(row);
+                    return `
+                        <li class="hof-record-row${mine ? ' is-my-team' : ''}">
+                            <span class="hof-record-rank">${index + 1}</span>
+                            <span class="hof-record-holder">
+                                <span class="hof-entry-name">${holder}</span>
+                                ${sub ? `<span class="hof-entry-sub">${sub}</span>` : ''}
+                                ${when ? `<span class="hof-entry-when">${when}</span>` : ''}
+                            </span>
+                            <span class="hof-record-value">${value}</span>
+                        </li>`;
+                }).join('')}
+            </ol>
+            ${note ? `<p class="hof-record-note">${escapeHtml(note)}</p>` : ''}
+        </article>`;
+}
+
+function lineupsHtml(block, season) {
+    const data_ = season === 'all' ? block.all_time : block.by_season?.[String(season)];
+    if (!data_) return '<p class="hof-empty">No lineup data for this season.</p>';
+    const allTime = season === 'all';
+    const mine = row => Boolean(row.team && hofEntryIsMine(row));
+    const owner = row => escapeHtml(row.owner || row.team || '');
+    const cards = [
+        lineupCard('bench-blunders', 'Benching Hall of Shame', 'The biggest gap between a benched player and the starter he should have replaced at the same position.', data_.bench_blunders, row => ({
+            holder: owner(row),
+            sub: `Benched ${lineupPlayer(row, row.benched)} (${hofNumber(row.benched_score)}) for ${lineupPlayer(row, row.started)} (${hofNumber(row.started_score)})${row.flipped ? ' <span class="lineup-flag">Cost the game</span>' : ''}`,
+            when: escapeHtml(lineupWhen(row)),
+            value: `+${hofNumber(row.margin)}`,
+            mine: mine(row),
+        })),
+        lineupCard('bench-mvps', 'Bench MVPs', allTime ? 'The most points scored on the bench, all-time.' : 'The most points scored on the bench this season.', data_.bench_mvps, row => ({
+            holder: lineupPlayer(row),
+            sub: escapeHtml(`${row.position} · ${row.games} bench week${row.games === 1 ? '' : 's'}${allTime && row.seasons ? ` over ${row.seasons} season${row.seasons === 1 ? '' : 's'}` : ''}`),
+            value: hofNumber(row.points),
+        })),
+        lineupCard('bench-games', 'Biggest Bench Games', 'The most points a player scored while sitting on the bench.', data_.bench_games, row => ({
+            holder: lineupPlayer(row),
+            sub: owner(row),
+            when: escapeHtml(lineupWhen(row)),
+            value: hofNumber(row.points),
+            mine: mine(row),
+        })),
+        lineupCard('ghosts', 'Ghost Starters', 'Starters whose game was played and who scored zero or less. Team units, which go negative most weeks, are left out.', data_.ghost_starters, row => ({
+            holder: lineupPlayer(row),
+            sub: escapeHtml(`${row.position} · ${row.owner || row.team}`),
+            when: escapeHtml(lineupWhen(row)),
+            value: hofNumber(row.points),
+            mine: mine(row),
+        })),
+        lineupCard('unavailable', 'Bye and OUT Blunders', 'Starters on bye, or (from 2026) listed out, doubtful, on IR or as a backup who then didn’t play. Newest first.', data_.unavailable_starters, row => ({
+            holder: lineupPlayer(row),
+            sub: escapeHtml(`${row.owner || row.team} · ${LINEUP_REASONS[row.reason] || row.reason}`),
+            when: escapeHtml(lineupWhen(row)),
+            mine: mine(row),
+        })),
+        lineupCard('unavailable-counts', 'Most Bye and OUT Starts', '', data_.unavailable_counts, row => ({
+            holder: owner(row),
+            sub: allTime && row.seasons ? escapeHtml(`${row.seasons} season${row.seasons === 1 ? '' : 's'}`) : '',
+            value: hofNumber(row.count),
+            mine: mine(row),
+        })),
+        lineupCard('special-teams', 'Decided by Special Teams', 'Wins where the kicker or defense gap between the lineups was bigger than the final margin.', data_.special_teams, row => ({
+            holder: owner(row),
+            sub: escapeHtml(`${row.unit} outscored ${row.opponent}'s by ${hofNumber(row.gap)}; won by ${hofNumber(row.margin)}`),
+            when: escapeHtml(lineupWhen(row)),
+            value: `+${hofNumber(row.gap)}`,
+            mine: mine(row),
+        })),
+        lineupCard('perfect', 'Perfect Lineups', 'Games a team started the best lineup its roster allowed, out of the games with every player scored.', data_.perfect_lineups, row => ({
+            holder: owner(row),
+            sub: escapeHtml(`${row.count} of ${row.games} games (${(100 * (row.rate || 0)).toFixed(1)}%)`),
+            value: hofNumber(row.count),
+            mine: mine(row),
+        })),
+    ].filter(Boolean);
+    return cards.length
+        ? `<div class="hof-record-grid">${cards.join('')}</div>`
+        : '<p class="hof-empty">No lineup notes for this season yet.</p>';
+}
+
+function renderLineupsTab() {
+    const container = document.getElementById('lineups-container');
+    if (!container) return;
+    const block = data.lineup_superlatives;
+    if (!block?.seasons?.length) {
+        container.innerHTML = '<p class="hof-empty">Lineup stats are not available in this data export.</p>';
+        return;
+    }
+    const options = [['all', 'All-time'], ...block.seasons.map(s => [String(s), String(s)])];
+    if (!options.some(([value]) => value === currentLineupsSeason)) {
+        currentLineupsSeason = block.seasons.includes(Number(data.season)) ? String(data.season) : 'all';
+    }
+    container.innerHTML = `
+        <div class="stats-position-selector" role="group" aria-label="Season">
+            ${options.map(([value, label]) => `
+                <button type="button" class="stats-pos-btn ${value === currentLineupsSeason ? 'active' : ''}"
+                    aria-pressed="${value === currentLineupsSeason}" data-lineups-season="${escapeHtml(value)}">${escapeHtml(label)}</button>`).join('')}
+        </div>
+        ${lineupsHtml(block, currentLineupsSeason)}`;
+    if (!container.dataset.bound) {
+        container.dataset.bound = '1';
+        container.addEventListener('click', event => {
+            const button = event.target.closest('[data-lineups-season]');
+            if (!button) return;
+            currentLineupsSeason = button.dataset.lineupsSeason;
+            renderLineupsTab();
+        });
+    }
+}
+
+// ====== ALTERNATE STANDINGS ======
+// "What if" tables under the standings, all built from the season's finished
+// regular-season weeks with the real rules: 1 rank point a win (0.5 a tie),
+// 0.5 for a top-half week (tied scores at the cutoff split it), then wins,
+// then points for.
+
+const WHATIF_VIEWS = [
+    ['allplay', 'All-play'],
+    ['points', 'Points only'],
+    ['perfect', 'Perfect lineups'],
+    ['schedule', 'Schedule swap'],
+];
+let currentWhatIfView = 'allplay';
+
+function whatIfScore(team) {
+    return typeof team?.total_score === 'number' ? team.total_score : sumStarterScores(team?.roster);
+}
+
+// Finished regular-season weeks as [{ week, games: [{ a, b }] }], where a and b
+// are the week's team objects (abbrev, total_score, roster).
+function whatIfWeeks(completedThrough) {
+    const lastWeek = seasonFormat().lastWeek;
+    return (data.weeks || [])
+        .filter(w => w.has_scores && w.games_final !== false && w.week <= completedThrough && w.week <= lastWeek)
+        .sort((x, y) => x.week - y.week)
+        .map(w => ({
+            week: w.week,
+            games: (w.matchups || [])
+                .filter(m => m.team1?.abbrev && m.team2?.abbrev)
+                .map(m => ({ a: m.team1, b: m.team2 })),
+        }))
+        .filter(w => w.games.length);
+}
+
+// Each team's share (0-1) of the week's top-half finish: the top half by
+// score, with teams tied at the cutoff splitting the places left.
+function topHalfShares(scores) {
+    const sorted = [...scores.entries()].sort(([, x], [, y]) => y - x);
+    const cutoff = Math.floor(sorted.length / 2);
+    const shares = new Map();
+    let index = 0;
+    while (index < sorted.length) {
+        let end = index + 1;
+        while (end < sorted.length && sorted[end][1] === sorted[index][1]) end++;
+        const places = Math.max(0, Math.min(end, cutoff) - index);
+        for (let i = index; i < end; i++) shares.set(sorted[i][0], places / (end - index));
+        index = end;
+    }
+    return shares;
+}
+
+function blankWhatIfRow(abbrev) {
+    return { abbrev, rp: 0, wins: 0, losses: 0, ties: 0, topHalf: 0, pf: 0, pa: 0 };
+}
+
+// Standings from per-week scores: `weekly` is [{ games: [[a, scoreA, b, scoreB]] }].
+function standingsFromScores(weekly) {
+    const rows = new Map();
+    const row = abbrev => {
+        if (!rows.has(abbrev)) rows.set(abbrev, blankWhatIfRow(abbrev));
+        return rows.get(abbrev);
+    };
+    for (const { games } of weekly) {
+        const scores = new Map();
+        for (const [a, sa, b, sb] of games) {
+            scores.set(a, sa);
+            scores.set(b, sb);
+            const ra = row(a);
+            const rb = row(b);
+            ra.pf += sa; ra.pa += sb;
+            rb.pf += sb; rb.pa += sa;
+            if (sa > sb) { ra.wins++; rb.losses++; ra.rp += 1; }
+            else if (sb > sa) { rb.wins++; ra.losses++; rb.rp += 1; }
+            else { ra.ties++; rb.ties++; ra.rp += 0.5; rb.rp += 0.5; }
+        }
+        for (const [abbrev, share] of topHalfShares(scores)) {
+            row(abbrev).topHalf += share;
+            row(abbrev).rp += 0.5 * share;
+        }
+    }
+    return rows;
+}
+
+function sortWhatIfRows(rows, key = 'rp') {
+    return [...rows].sort((x, y) => (y[key] - x[key]) || (y.wins - x.wins) || (y.pf - x.pf));
+}
+
+function whatIfRecord(row) {
+    return `${row.wins}-${row.losses}${row.ties ? `-${row.ties}` : ''}`;
+}
+
+// A team's best possible score that week: its optimal lineup, plus any
+// adjustment the official total carries beyond its starters.
+function perfectScore(team) {
+    const lineup = computeOptimalLineup(team.roster);
+    const actual = whatIfScore(team);
+    if (!lineup || lineup.optimalTotal <= 0) return actual;
+    return Math.max(actual, lineup.optimalTotal + (actual - lineup.actualStarterTotal));
+}
+
+function whatIfActualScores(weeks) {
+    return weeks.map(w => ({ games: w.games.map(g => [g.a.abbrev, whatIfScore(g.a), g.b.abbrev, whatIfScore(g.b)]) }));
+}
+
+// Every view: { rows: [...sorted, each with abbrev and view fields], columns }.
+function computeWhatIf(view, weeks) {
+    const actual = standingsFromScores(whatIfActualScores(weeks));
+    if (view === 'allplay') {
+        const rows = new Map([...actual.keys()].map(ab => [ab, { ...actual.get(ab), apW: 0, apL: 0, apT: 0, xrp: 0 }]));
+        for (const w of weeks) {
+            const scores = w.games.flatMap(g => [[g.a.abbrev, whatIfScore(g.a)], [g.b.abbrev, whatIfScore(g.b)]]);
+            const shares = topHalfShares(new Map(scores));
+            for (const [ab, score] of scores) {
+                const r = rows.get(ab);
+                let beat = 0, tied = 0, lost = 0;
+                for (const [other, otherScore] of scores) {
+                    if (other === ab) continue;
+                    if (score > otherScore) beat++;
+                    else if (score < otherScore) lost++;
+                    else tied++;
+                }
+                r.apW += beat; r.apL += lost; r.apT += tied;
+                r.xrp += (beat + tied / 2) / (scores.length - 1) + 0.5 * (shares.get(ab) || 0);
+            }
+        }
+        return { rows: sortWhatIfRows([...rows.values()], 'xrp'), actual };
+    }
+    if (view === 'points') {
+        return { rows: [...actual.values()].sort((x, y) => y.pf - x.pf), actual };
+    }
+    if (view === 'perfect') {
+        // Everyone sets their best lineup every week.
+        const perfect = standingsFromScores(weeks.map(w => ({
+            games: w.games.map(g => [g.a.abbrev, perfectScore(g.a), g.b.abbrev, perfectScore(g.b)]),
+        })));
+        const rows = [...perfect.values()].map(r => {
+            // And what a perfect lineup alone would have been worth, everyone
+            // else as played.
+            const solo = standingsFromScores(weeks.map(w => ({
+                games: w.games.map(g => [
+                    g.a.abbrev, g.a.abbrev === r.abbrev ? perfectScore(g.a) : whatIfScore(g.a),
+                    g.b.abbrev, g.b.abbrev === r.abbrev ? perfectScore(g.b) : whatIfScore(g.b),
+                ]),
+            }))).get(r.abbrev);
+            const own = actual.get(r.abbrev);
+            return { ...r, bench: r.pf - own.pf, soloGain: solo.rp - own.rp };
+        });
+        return { rows: sortWhatIfRows(rows), actual };
+    }
+    // Schedule swap: each team's rank points against every team's schedule.
+    // Its own top-half points don't change; only who it played does.
+    const teams = sortWhatIfRows([...actual.values()]).map(r => r.abbrev);
+    const opponentOf = new Map();
+    const scoreOf = new Map();
+    for (const w of weeks) {
+        for (const g of w.games) {
+            opponentOf.set(`${w.week}|${g.a.abbrev}`, g.b.abbrev);
+            opponentOf.set(`${w.week}|${g.b.abbrev}`, g.a.abbrev);
+            scoreOf.set(`${w.week}|${g.a.abbrev}`, whatIfScore(g.a));
+            scoreOf.set(`${w.week}|${g.b.abbrev}`, whatIfScore(g.b));
+        }
+    }
+    const grid = {};
+    for (const team of teams) {
+        grid[team] = {};
+        const halfPoints = actual.get(team).rp - actual.get(team).wins - actual.get(team).ties / 2;
+        for (const owner of teams) {
+            const cell = { wins: 0, losses: 0, ties: 0 };
+            for (const w of weeks) {
+                const mine = scoreOf.get(`${w.week}|${team}`);
+                let opp = opponentOf.get(`${w.week}|${owner}`);
+                if (mine === undefined || opp === undefined) continue;
+                // Playing yourself on their schedule means playing them instead.
+                if (opp === team) opp = owner;
+                const theirs = scoreOf.get(`${w.week}|${opp}`);
+                if (mine > theirs) cell.wins++;
+                else if (mine < theirs) cell.losses++;
+                else cell.ties++;
+            }
+            cell.rp = cell.wins + cell.ties / 2 + halfPoints;
+            grid[team][owner] = cell;
+        }
+    }
+    const rows = teams.map(team => {
+        const others = teams.filter(o => o !== team).map(o => grid[team][o].rp);
+        const avg = others.reduce((sum, v) => sum + v, 0) / (others.length || 1);
+        const own = actual.get(team);
+        return { ...own, avgRp: avg, luck: own.rp - avg };
+    });
+    return { rows: sortWhatIfRows(rows, 'avgRp'), actual, grid, teams };
+}
+
+function whatIfRankChange(abbrev, index, actualRank) {
+    const before = actualRank.get(abbrev);
+    if (!before) return '<td class="num whatif-move">—</td>';
+    const move = before - (index + 1);
+    if (!move) return '<td class="num whatif-move">—</td>';
+    const up = move > 0;
+    return `<td class="num whatif-move ${up ? 'up' : 'down'}" aria-label="${up ? 'Up' : 'Down'} ${Math.abs(move)} from actual">${up ? '↑' : '↓'}${Math.abs(move)}</td>`;
+}
+
+function whatIfTeamCell(abbrev) {
+    const team = (data.standings || []).find(t => t.abbrev === abbrev) || { abbrev };
+    return `<th scope="row" class="${myTeamClass(abbrev)}">${teamProfileButton(abbrev, team.name || abbrev)}</th>`;
+}
+
+const WHATIF_NOTES = {
+    allplay: 'Each week counts as a game against every other team. xRP is the rank points that pace is worth: the share of the field beaten each week, plus the actual top-half points.',
+    points: 'Ranked by points for alone, as if the season were decided on total scoring.',
+    perfect: 'Every team starts its best possible lineup every week, top halves included. "Alone" is what a perfect lineup would have gained a team with everyone else as played.',
+    schedule: "Each row is a team's rank points if it had played the column team's schedule (its own top-half points stay the same). The diagonal is what happened. Luck is actual rank points minus the average across the other schedules.",
+};
+
+function whatIfTableHtml(view, result, actualRank) {
+    const fmt1 = v => v.toFixed(1);
+    if (view === 'schedule') {
+        const { teams, grid } = result;
+        const head = teams.map(t => `<th scope="col" class="num">${escapeHtml(t)}</th>`).join('');
+        const body = teams.map(team => {
+            const own = grid[team][team].rp;
+            const cells = teams.map(owner => {
+                const cell = grid[team][owner];
+                const diff = cell.rp - own;
+                const cls = owner === team ? 'is-actual' : diff > 0 ? 'better' : diff < 0 ? 'worse' : '';
+                const title = `${team} with ${owner}'s schedule: ${whatIfRecord(cell)}, ${fmt1(cell.rp)} RP`;
+                return `<td class="num whatif-cell ${cls}" title="${escapeHtml(title)}">${escapeHtml(whatIfRecord(cell))}</td>`;
+            }).join('');
+            return `<tr>${whatIfTeamCell(team)}${cells}</tr>`;
+        }).join('');
+        const summary = result.rows.map((r, i) => `
+            <tr>${whatIfTeamCell(r.abbrev)}<td class="num">${fmt1(r.rp)}</td><td class="num">${fmt1(r.avgRp)}</td>
+            <td class="num whatif-luck ${r.luck > 0.25 ? 'up' : r.luck < -0.25 ? 'down' : ''}">${r.luck > 0 ? '+' : ''}${fmt1(r.luck)}</td>${whatIfRankChange(r.abbrev, i, actualRank)}</tr>`).join('');
+        return `
+            <div class="whatif-scroll"><table class="whatif-table whatif-grid">
+                <caption class="visually-hidden">Each team's record with every team's schedule</caption>
+                <thead><tr><th scope="col">Team \\ Schedule</th>${head}</tr></thead>
+                <tbody>${body}</tbody>
+            </table></div>
+            <div class="whatif-scroll"><table class="whatif-table">
+                <caption class="visually-hidden">Schedule luck</caption>
+                <thead><tr><th scope="col">Team</th><th scope="col" class="num">RP</th><th scope="col" class="num">Avg RP, other schedules</th><th scope="col" class="num">Luck</th><th scope="col" class="num">vs actual</th></tr></thead>
+                <tbody>${summary}</tbody>
+            </table></div>`;
+    }
+    const columns = {
+        allplay: [['All-play', r => `${r.apW}-${r.apL}${r.apT ? `-${r.apT}` : ''}`], ['Win %', r => `${Math.round(100 * (r.apW + r.apT / 2) / Math.max(1, r.apW + r.apL + r.apT))}%`], ['xRP', r => fmt1(r.xrp)], ['Actual RP', r => fmt1(r.rp)]],
+        points: [['PF', r => r.pf.toFixed(0)], ['PF / game', r => fmt1(r.pf / Math.max(1, r.wins + r.losses + r.ties))], ['Actual RP', r => fmt1(r.rp)]],
+        perfect: [['RP', r => fmt1(r.rp)], ['Record', whatIfRecord], ['Bench pts', r => r.bench.toFixed(0)], ['Alone', r => `${r.soloGain > 0 ? '+' : ''}${fmt1(r.soloGain)} RP`]],
+    }[view];
+    const head = columns.map(([label]) => `<th scope="col" class="num">${escapeHtml(label)}</th>`).join('');
+    const body = result.rows.map((r, i) => `
+        <tr><td class="num whatif-rank">${i + 1}</td>${whatIfTeamCell(r.abbrev)}${columns.map(([, value]) => `<td class="num">${escapeHtml(value(r))}</td>`).join('')}${whatIfRankChange(r.abbrev, i, actualRank)}</tr>`).join('');
+    return `
+        <div class="whatif-scroll"><table class="whatif-table">
+            <caption class="visually-hidden">${escapeHtml(WHATIF_VIEWS.find(([id]) => id === view)[1])} standings</caption>
+            <thead><tr><th scope="col" class="num">#</th><th scope="col">Team</th>${head}<th scope="col" class="num">vs actual</th></tr></thead>
+            <tbody>${body}</tbody>
+        </table></div>`;
+}
+
+function renderWhatIfStandings(completedThrough, standings) {
+    const slot = document.getElementById('standings-whatif');
+    if (!slot) return;
+    const weeks = whatIfWeeks(completedThrough);
+    if (!weeks.length) {
+        slot.hidden = true;
+        return;
+    }
+    slot.hidden = false;
+    const view = WHATIF_VIEWS.some(([id]) => id === currentWhatIfView) ? currentWhatIfView : 'allplay';
+    const actualRank = new Map((standings || []).map((t, i) => [t.abbrev, i + 1]));
+    const body = slot.querySelector('.whatif-body');
+    body.innerHTML = `
+        <div class="stats-position-selector" role="group" aria-label="Alternate standings view">
+            ${WHATIF_VIEWS.map(([id, label]) => `
+                <button type="button" class="stats-pos-btn ${id === view ? 'active' : ''}" aria-pressed="${id === view}" data-whatif-view="${id}">${escapeHtml(label)}</button>`).join('')}
+        </div>
+        <p class="whatif-note">${escapeHtml(WHATIF_NOTES[view])} Through Week ${weeks.at(-1).week}.</p>
+        ${whatIfTableHtml(view, computeWhatIf(view, weeks), actualRank)}`;
+    if (!slot.dataset.bound) {
+        slot.dataset.bound = '1';
+        slot.addEventListener('click', event => {
+            const button = event.target.closest('[data-whatif-view]');
+            if (!button) return;
+            currentWhatIfView = button.dataset.whatifView;
+            const context = getPostseasonStatusContext();
+            renderWhatIfStandings(context.completedThrough, context.standings);
+        });
+    }
 }
 
 // ====== PLAYOFF PROBABILITY SIMULATOR ======
@@ -15337,7 +15775,8 @@ async function navigateToView(view, subview, detail) {
         }
     } else if (view === 'history' && sub === 'records') {
         if (setHofRoute(detail)) viewFresh.delete(view);
-    } else if ((view === 'standings' && sub === 'machine') || (view === 'matchups' && sub === 'preview')) {
+    } else if ((view === 'standings' && sub === 'machine') || (view === 'matchups' && sub === 'preview')
+        || (view === 'stats' && sub === 'lineups')) {
         // A link straight to the Machine (or a shared scenario) or to the week's
         // Preview arrives with the view already rendered and marked fresh.
         viewFresh.delete(view);
