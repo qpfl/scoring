@@ -827,8 +827,8 @@ async function ensureManualHonors() {
     // Ring of Honor jersey numbers come from scripts/update_ring_of_honor_numbers.py.
     // A plaque without one falls back to the NFL team, so a missing file is fine.
     const [honors, numbers] = await Promise.all([
-        fetchJsonResource('data/shared/manual_honors.json'),
-        fetchJsonResource('data/shared/ring_of_honor_numbers.json').catch(() => ({})),
+        fetchJsonResource('data/shared/manual_honors.json?v=20261113-short-cache'),
+        fetchJsonResource('data/shared/ring_of_honor_numbers.json?v=20261113-short-cache').catch(() => ({})),
     ]);
     manualHonorsData = { ...honors, ring_of_honor_numbers: numbers || {} };
     return manualHonorsData;
