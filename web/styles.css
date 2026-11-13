@@ -7788,6 +7788,15 @@ a.schedule-row:focus-visible {
     color: #e74c3c;
 }
 
+/* Game log: a bye week reads as BYE, not a scored 0. */
+.player-game-log-bye td {
+    color: var(--text-muted);
+}
+
+.player-game-log-bye .player-status.bye {
+    margin-left: 0;
+}
+
 .player-status.not-played {
     background: rgba(241, 196, 15, 0.15);
     color: #f1c40f;

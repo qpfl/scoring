@@ -17949,6 +17949,9 @@ function buildPlayerGameLog(seasonData, profileOrName) {
                     fantasyAbbrev: t.abbrev,
                     breakdown: p.breakdown || null,
                     game_final: p.game_final,
+                    // A bye's 0 isn't a real game. Only trust the flag when
+                    // nothing was scored, so stray flags never hide points.
+                    bye: p.on_bye === true && !Number(p.score),
                 });
             }
         }
@@ -18034,18 +18037,22 @@ function renderPlayerGameLog(rows, seasonData, season, seasons, { loading = fals
                         ${rows.map(w => {
                             const bd = w.breakdown ? renderBreakdown(w.breakdown) : '';
                             const isFinalScore = Number(w.week) === liveWeek ? w.game_final === true : true;
-                            const scoreText = (w.score === 0 && !isFinalScore) ? '-' : w.score.toFixed(0);
-                            const scoreCell = bd
+                            const scoreText = w.bye
+                                ? 'BYE'
+                                : ((w.score === 0 && !isFinalScore) ? '-' : w.score.toFixed(0));
+                            const scoreCell = w.bye
+                                ? `<span class="player-status bye" title="${escapeHtml(`${w.nfl_team || 'NFL team'} bye week`)}">BYE</span>`
+                                : bd
                                 ? `<details class="score-breakdown"><summary class="player-score has-breakdown">${scoreText}</summary>${bd}</details>`
                                 : `<strong>${scoreText}</strong>`;
                             // Ranked among every rostered and taxi player that week,
                             // the same pool Compare uses.
-                            const rankEntry = scoreText === '-' ? null : getWeekPlayerScores(w.week, seasonData).get(w.rankKey);
+                            const rankEntry = scoreText === '-' || w.bye ? null : getWeekPlayerScores(w.week, seasonData).get(w.rankKey);
                             const rankCell = rankEntry
                                 ? `<span title="${escapeHtml(`#${rankEntry.position_rank} of ${rankEntry.pool_size} rostered ${rankEntry.position}s in Week ${w.week}`)}">${escapeHtml(`${rankEntry.position}${rankEntry.position_rank}`)}</span>`
                                 : '—';
                             return `
-                            <tr>
+                            <tr${w.bye ? ' class="player-game-log-bye"' : ''}>
                                 <td>${matchupLink(season, w.week, `Wk ${w.week}`)}</td>
                                 <td><span class="team-code">${w.freeAgent ? 'FA' : teamProfileButton(w.fantasyAbbrev, w.fantasyAbbrev, '', teamSubview, season)}</span></td>
                                 <td class="num">${scoreCell}</td>
