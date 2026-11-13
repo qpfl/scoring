@@ -7945,6 +7945,32 @@ a.schedule-row:focus-visible {
     white-space: nowrap;
 }
 
+/* Founding Draft holdover: still on the team that drafted him in 2020.
+   Rose is used nowhere else, so it never reads as an award or status. */
+.player-founding-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.45rem;
+    border: 1px solid rgba(244, 114, 182, 0.5);
+    border-radius: var(--radius-sm);
+    color: #f9a8d4;
+    background: linear-gradient(135deg, rgba(244, 114, 182, 0.16), rgba(219, 39, 119, 0.06));
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.player-founding-badge::before {
+    content: '';
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: #f472b6;
+    box-shadow: 0 0 6px rgba(244, 114, 182, 0.7);
+}
+
 /* A repeated award shows its count and each season once. */
 .player-award-count {
     font-variant-numeric: tabular-nums;

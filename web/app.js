@@ -17795,6 +17795,19 @@ function getPlayerDraftHistory(profileOrName) {
     });
 }
 
+// A player taken in the 2020 Founding Draft who has never left the franchise
+// that drafted him: no trade, release, or re-draft since, and still on that
+// franchise's roster (or taxi squad) today. Taxi activations keep him on the
+// same team, so they don't break the streak.
+function isFoundingDraftHolder(profileOrName, liveStatus, draftHistory, transactions, releases) {
+    if (!liveStatus?.owner || draftHistory.length !== 1 || releases.length) return false;
+    const [selection] = draftHistory;
+    if (selection.draftName !== 'Founding Draft') return false;
+    if (!sameFranchise(draftTeamCode(selection.selectedBy, selection), liveStatus.owner)) return false;
+    return transactions.every(tx => tx.activated
+        && playerNameMatches(typeof tx.activated === 'object' ? tx.activated.name : tx.activated, profileOrName));
+}
+
 function transactionPlayerValues(tx) {
     return [
         ...(tx.proposer_gives?.players || []),
@@ -18123,6 +18136,13 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     const awards = profile?.awards || [];
     const playerAge = calculatePlayerAge(profile?.birth_date);
     const byeWeek = getNflByeWeek(playerNflTeam);
+    const draftHistory = getPlayerDraftHistory(profile || requestedName);
+    const originalDraft = draftHistory[0];
+    const transactions = getPlayerTransactionHistory(profile || requestedName);
+    const draftReleases = getPlayerDraftReleases(profile || requestedName);
+    const foundingDraftHolder = isFoundingDraftHolder(
+        profile || requestedName, liveStatus, draftHistory, transactions, draftReleases
+    );
     document.getElementById('player-modal-name').textContent = displayName;
     document.getElementById('player-modal-meta').innerHTML = [
         playerPos ? `<span class="position-tag">${escapeHtml(playerPos)}</span>` : '',
@@ -18132,6 +18152,9 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
         // Whose roster he's on, by team code; the full owner is in the tooltip.
         `<span class="player-status-pill ${escapeHtml(liveStatus.tone)}"${liveStatus.owner ? ` title="${escapeHtml(`${liveStatus.label}: ${playerFranchiseLabel(liveStatus.owner)}`)}"` : ''}>${escapeHtml(liveStatus.owner ? `${liveStatus.label} · ${liveStatus.owner}` : liveStatus.label)}</span>`,
         byeWeek === null ? '' : `<span class="player-status-pill bye">Bye ${byeWeek}</span>`,
+        foundingDraftHolder
+            ? `<span class="player-founding-badge" title="${escapeHtml(`Founding Draft ${originalDraft.slot}${originalDraft.taxi ? ' Taxi' : ''} (2020) · never left ${playerFranchiseLabel(liveStatus.owner)}`)}">Founding Draft</span>`
+            : '',
         ...groupPlayerAwards(awards).map(group => `
             <span class="player-award-badge${playerAwardTier(group.title)}" title="${escapeHtml(`${group.title}: ${group.years.join(', ')}`)}">
                 ${group.years.length > 1 ? `<span class="player-award-count">${group.years.length}×</span> ` : ''}${escapeHtml(group.title)}
@@ -18174,9 +18197,6 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
             </div>
         </div>`;
 
-    const draftHistory = getPlayerDraftHistory(profile || requestedName);
-    const originalDraft = draftHistory[0];
-    const transactions = getPlayerTransactionHistory(profile || requestedName);
     const careerRows = careerSeasons.length ? careerSeasons.map(([season, stats]) => {
         const ownerLabels = (stats.owners || [])
             .map(owner => teamProfileButton(owner, playerFranchiseLabel(owner, Number(season)), '', 'history', Number(season)))
@@ -18255,7 +18275,7 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
             `,
         };
     });
-    const draftReleaseItems = getPlayerDraftReleases(profile || requestedName).map(release => {
+    const draftReleaseItems = draftReleases.map(release => {
         const isMidseason = /midseason/i.test(release.draftName);
         const draftRoute = seasonAwareRoute(
             `#drafts/history?draft=${encodeURIComponent(release.draftName)}`,
