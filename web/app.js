@@ -12329,15 +12329,19 @@ function tradeHighlights(entries) {
     const totals = entries.map(combined).sort((a, b) => a - b);
     const median = totals[Math.floor(totals.length / 2)];
     const by = (list, score) => list.reduce((best, entry) => (!best || score(entry) > score(best) ? entry : best), null);
-    return {
-        fleecing: by(entries, entry => entry.verdict.margin),
-        bestForBoth: by(
-            entries.filter(entry => entry.sides.every(side => LETTER_GRADES.indexOf(side.grade) <= LETTER_GRADES.indexOf('C-'))),
-            entry => Math.min(...entry.verdict.sides.map(side => side.total)),
-        ),
-        mostEven: by(entries.filter(entry => combined(entry) >= median && combined(entry) > 0),
-            entry => -entry.verdict.margin / combined(entry)),
-    };
+    // Each headline names a different trade: a close, big trade would
+    // otherwise win both Most even and Best for both.
+    const fleecing = by(entries, entry => entry.verdict.margin);
+    const mostEven = by(
+        entries.filter(entry => entry !== fleecing && combined(entry) >= median && combined(entry) > 0),
+        entry => -entry.verdict.margin / combined(entry),
+    );
+    const bestForBoth = by(
+        entries.filter(entry => entry !== fleecing && entry !== mostEven
+            && entry.sides.every(side => LETTER_GRADES.indexOf(side.grade) <= LETTER_GRADES.indexOf('C-'))),
+        entry => Math.min(...entry.verdict.sides.map(side => side.total)),
+    );
+    return { fleecing, bestForBoth, mostEven };
 }
 
 function tradeGradeLine(entry) {

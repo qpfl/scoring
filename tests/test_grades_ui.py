@@ -98,6 +98,7 @@ def test_trade_report_grades_each_side_and_ranks_teams():
             teams: tradeReportByTeam(graded).map(r => [r.team, r.trades, r.qualified]),
             fleecing: highlights.fleecing.tx.id,
             mostEven: highlights.mostEven.tx.id,
+            bestForBoth: highlights.bestForBoth?.tx.id ?? null,
             gpa: teamTradeGpaHtml('GSA'),
         };
         """,
@@ -110,6 +111,8 @@ def test_trade_report_grades_each_side_and_ranks_teams():
     assert result['fleecing'] == 1
     # Trade 3 is dead even but produced little; trade 2 is close and big.
     assert result['mostEven'] == 2
+    # Never the same trade as another headline.
+    assert result['bestForBoth'] not in (result['fleecing'], result['mostEven'])
     assert 'over 2 graded trades' in result['gpa']
 
 
