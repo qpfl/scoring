@@ -824,7 +824,13 @@ async function ensureSeasonTeamIdentities() {
 
 async function ensureManualHonors() {
     if (manualHonorsData) return manualHonorsData;
-    manualHonorsData = await fetchJsonResource('data/shared/manual_honors.json');
+    // Ring of Honor jersey numbers come from scripts/update_ring_of_honor_numbers.py.
+    // A plaque without one falls back to the NFL team, so a missing file is fine.
+    const [honors, numbers] = await Promise.all([
+        fetchJsonResource('data/shared/manual_honors.json'),
+        fetchJsonResource('data/shared/ring_of_honor_numbers.json').catch(() => ({})),
+    ]);
+    manualHonorsData = { ...honors, ring_of_honor_numbers: numbers || {} };
     return manualHonorsData;
 }
 
@@ -6987,18 +6993,8 @@ function hofRingOfHonorSection() {
     return `
         <section class="hof-section" id="players-ring-of-honor">
             <h2 class="hof-section-title">Ring of Honor</h2>
-            <ol class="hof-record-rest hof-wide-rank">
-                ${rows.map(row => `
-                    <li class="hof-record-row ${myTeamClass(row.franchise)}">
-                        <span class="hof-record-rank">${escapeHtml(row.position)}</span>
-                        <span class="hof-record-holder">
-                            <span class="hof-entry-name">${playerProfileButton(row.name, '', null, row.position)}</span>
-                            <span class="hof-entry-sub">${teamProfileButton(row.franchise, row.franchise, '', 'history')}</span>
-                        </span>
-                        <span class="hof-record-value">${escapeHtml(row.rings || 0)}<small>${row.rings === 1 ? 'ring' : 'rings'}</small></span>
-                    </li>`).join('')}
-            </ol>
-            <p class="hof-record-note">Chosen by each franchise. Rings won with that franchise.</p>
+            ${ringOfHonorPlaquesHtml(rows, row => row.franchise)}
+            <p class="hof-record-note">Chosen by each franchise. Plaques are written from each inductee's record with that franchise.</p>
         </section>`;
 }
 
@@ -7634,6 +7630,254 @@ function teamHofLineupHtml(franchise) {
         </section>`;
 }
 
+// --- Ring of Honor plaques ------------------------------------------------- #
+// Each inductee gets a bronze plaque in the style of a baseball Hall of Fame
+// plaque. Everything on it but the induction itself is generated from the
+// Hall of Fame data, so a plaque keeps up with the player's record by itself.
+
+const NFL_TEAM_NAMES = {
+    ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills',
+    CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns',
+    DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers',
+    HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', JAC: 'Jacksonville Jaguars',
+    KC: 'Kansas City Chiefs', LV: 'Las Vegas Raiders', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams',
+    MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints',
+    NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers',
+    SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans',
+    WAS: 'Washington Commanders', WSH: 'Washington Commanders',
+};
+
+const PLAQUE_ROLES = {
+    QB: 'Quarterback', RB: 'Running Back', WR: 'Wide Receiver', TE: 'Tight End', K: 'Kicker',
+    HC: 'Head Coach', 'D/ST': 'Defense', OL: 'Offensive Line',
+};
+
+const PLAQUE_COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const PLAQUE_ORDINAL_WORDS = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+const plaqueCountWord = count => PLAQUE_COUNT_WORDS[count] || String(count);
+const plaqueTimes = count => (count === 1 ? 'once' : count === 2 ? 'twice' : `${plaqueCountWord(count)} times`);
+
+// "2020–2024", "2020–2021, 2023", or "2022–Present" while he's still there.
+function plaqueYearsLabel(seasons, current) {
+    const ranges = [];
+    for (const season of seasons) {
+        const last = ranges[ranges.length - 1];
+        if (last && season === last[1] + 1) last[1] = season;
+        else ranges.push([season, season]);
+    }
+    return ranges.map(([start, end], index) => {
+        const isLast = index === ranges.length - 1;
+        if (isLast && current) return `${start}–Present`;
+        return start === end ? String(start) : `${start}–${end}`;
+    }).join(', ');
+}
+
+function plaqueListPhrase(items) {
+    if (items.length <= 1) return items.join('');
+    if (items.length === 2) return `${items[0]} and ${items[1]}`;
+    return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+}
+
+// Whether a season's owner code (e.g. "CGK/SRY") belongs to this franchise.
+function plaqueOwnerIsFranchise(owner, franchise) {
+    const codes = franchiseSuccessionCodes(franchise);
+    return franchiseCodesForStintTeam(owner).some(code => codes.includes(code));
+}
+
+// Every week a player started for this franchise: [season, week, points].
+function plaqueFranchiseStarts(profile, franchise) {
+    return (profile?.franchise_stints || []).flatMap(stint =>
+        (stint.weekly_points || [])
+            .filter(([, , , scoredFor = stint.teams?.[0]]) => plaqueOwnerIsFranchise(scoredFor, franchise))
+            .map(([season, week, points]) => [Number(season), Number(week), Number(points) || 0]));
+}
+
+// Where a player's starter points rank among everyone who played for the franchise.
+const plaqueFranchiseRankCache = new Map();
+function plaqueFranchisePointsRank(franchise, profileKey) {
+    if (!plaqueFranchiseRankCache.has(franchise)) {
+        const profiles = Object.values(data?.hall_of_fame?.player_career_stats || {});
+        const totals = profiles
+            .map(profile => ({
+                key: profile.profile_key,
+                points: plaqueFranchiseStarts(profile, franchise).reduce((sum, [, , points]) => sum + points, 0),
+            }))
+            .filter(row => row.points > 0)
+            .sort((a, b) => b.points - a.points);
+        plaqueFranchiseRankCache.set(franchise, totals);
+    }
+    const index = plaqueFranchiseRankCache.get(franchise).findIndex(row => row.key === profileKey);
+    return index === -1 ? null : index + 1;
+}
+
+function buildRingOfHonorPlaque(inductee, franchise) {
+    const profile = getPlayerCareerProfile(inductee.name, inductee.position);
+    const position = inductee.position || profile?.position || '';
+    const isUnit = position === 'D/ST' || position === 'OL';
+    const nflTeams = String(inductee.team || '').split('/').map(team => team.trim()).filter(Boolean);
+    const number = manualHonorsData?.ring_of_honor_numbers?.[franchise]?.[inductee.name] ?? null;
+
+    const seasonRows = Object.entries(profile?.seasons || {})
+        .map(([season, stats]) => ({ season: Number(season), ...stats }))
+        .filter(row => (row.owners || []).some(owner => plaqueOwnerIsFranchise(owner, franchise)))
+        .sort((a, b) => a.season - b.season);
+    const seasons = seasonRows.map(row => row.season);
+    const liveOwner = getLivePlayerStatus(profile || inductee.name).owner;
+    const current = Boolean(liveOwner && plaqueOwnerIsFranchise(liveOwner, franchise));
+
+    const starts = plaqueFranchiseStarts(profile, franchise);
+    const points = starts.reduce((sum, [, , value]) => sum + value, 0);
+    const bestGame = starts.reduce((best, game) => (!best || game[2] > best[2] ? game : best), null);
+    const rank = profile ? plaqueFranchisePointsRank(franchise, profile.profile_key) : null;
+    const bestSeason = seasonRows
+        .filter(row => Number(row.position_rank) > 0)
+        .sort((a, b) => a.position_rank - b.position_rank || b.points - a.points)[0];
+    const topThree = seasonRows.filter(row => Number(row.position_rank) > 0 && row.position_rank <= 3).length;
+
+    const tenureAwards = (profile?.awards || []).filter(award => seasons.includes(Number(award.year)));
+    const ringYears = tenureAwards.filter(award => award.title === 'QPFL Champion').map(award => Number(award.year)).sort();
+    const rings = Number(inductee.rings) || ringYears.length;
+    const mvpYears = (manualHonorsData?.mvps || [])
+        .filter(mvp => playerNameMatches(mvp.player, profile || inductee.name, mvp.position)
+            && franchiseCodesForStintTeam(mvp.team).some(code => franchiseSuccessionCodes(franchise).includes(code)))
+        .map(mvp => Number(mvp.year));
+    const awardYears = title => tenureAwards.filter(award => award.title === title).map(award => Number(award.year)).sort();
+    const topAwardTitle = `Top ${position}`;
+    const topYears = awardYears(topAwardTitle);
+    const firstTeamYears = awardYears('First-Team All-QPFL');
+    const secondTeamYears = awardYears('Second-Team All-QPFL');
+
+    // The blurb. Units are "they"; everyone else "he".
+    const lastName = isUnit
+        ? `The ${inductee.name.split(' ').slice(-1)[0]}`
+        : inductee.name.replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i, '').split(' ').slice(-1)[0];
+    const subject = isUnit ? 'They' : 'He';
+    const possessive = isUnit ? 'Their' : 'His';
+    const sentences = [];
+    const seasonCount = seasons.length;
+    const tenure = `${plaqueCountWord(seasonCount)} season${seasonCount === 1 ? '' : 's'}`;
+    const served = {
+        QB: `quarterbacked ${franchise} for ${tenure}`,
+        RB: `carried the ${franchise} backfield for ${tenure}`,
+        WR: `lined up at receiver for ${franchise} for ${tenure}`,
+        TE: `played tight end for ${franchise} for ${tenure}`,
+        K: `kicked for ${franchise} for ${tenure}`,
+        HC: `coached ${franchise} for ${tenure}`,
+    }[position] || `${isUnit ? 'anchored' : 'starred for'} ${franchise} for ${tenure}`;
+    const rankPhrase = rank && rank <= 10
+        ? (rank === 1 ? ', the most in franchise history' : `, the ${PLAQUE_ORDINAL_WORDS[rank]}-most in franchise history`)
+        : '';
+    if (seasonCount) {
+        sentences.push(position === 'HC'
+            ? `${lastName} ${served}, roaming the sideline for ${starts.length} start${starts.length === 1 ? '' : 's'}.`
+            : `${lastName} ${served} and scored ${hofNumber(points)} points as a starter${rankPhrase}.`);
+    }
+
+    // Repeat honors count up ("three times"); one-off honors in the same
+    // year share it ("Top RB and First-Team All-QPFL in 2020").
+    const honorGroups = [
+        ['league MVP', mvpYears],
+        [topAwardTitle, topYears],
+        ['First-Team All-QPFL', firstTeamYears],
+        ['Second-Team All-QPFL', secondTeamYears],
+    ].filter(([, years]) => years.length);
+    const honors = [];
+    const singlesByYear = new Map();
+    for (const [title, years] of honorGroups) {
+        if (years.length > 1) {
+            honors.push(`${title} ${plaqueTimes(years.length)}`);
+        } else {
+            if (!singlesByYear.has(years[0])) {
+                singlesByYear.set(years[0], []);
+                honors.push(singlesByYear.get(years[0]));
+            }
+            singlesByYear.get(years[0]).push(title);
+        }
+    }
+    for (const [year, titles] of singlesByYear) {
+        honors[honors.indexOf(titles)] = `${plaqueListPhrase(titles)} in ${year}`;
+    }
+    if (honors.length) {
+        sentences.push(`${subject} ${isUnit ? 'were' : 'was'} named ${plaqueListPhrase(honors)}.`);
+    } else if (topThree >= 2) {
+        sentences.push(`${subject} finished top three at ${isUnit ? 'the' : 'his'} position ${plaqueTimes(topThree)}.`);
+    } else if (bestSeason && bestSeason.position_rank <= 12) {
+        sentences.push(`${possessive} best year came in ${bestSeason.season}, a ${position}${bestSeason.position_rank} finish worth ${hofNumber(bestSeason.points)} points.`);
+    }
+
+    if (bestGame && bestGame[2] > 0 && position !== 'HC') {
+        sentences.push(`${possessive} signature game: ${hofNumber(bestGame[2])} points in Week ${bestGame[1]} of ${bestGame[0]}.`);
+    }
+    if (ringYears.length) {
+        sentences.push(ringYears.length === 1
+            ? `${subject} helped bring home the ${ringYears[0]} championship.`
+            : `${subject} won ${plaqueCountWord(ringYears.length)} championships with ${franchise} (${plaqueListPhrase(ringYears.map(String))}).`);
+    }
+    if (current) sentences.push(`${subject} ${isUnit ? 'remain' : 'remains'} on the roster today.`);
+
+    return {
+        name: inductee.name,
+        position,
+        role: PLAQUE_ROLES[position] || position,
+        franchise,
+        number,
+        // Coaches, units and anyone without a number on file show the NFL team.
+        emblem: number ?? nflTeams.join('/'),
+        emblemIsNumber: number !== null && number !== undefined,
+        nflTeamNames: nflTeams.map(team => NFL_TEAM_NAMES[team] || team),
+        years: seasons.length ? plaqueYearsLabel(seasons, current) : '',
+        blurb: sentences.join(' '),
+        rings,
+        ringYears,
+        statLine: [
+            starts.length ? `${starts.length} starts` : '',
+            points ? `${hofNumber(points)} pts` : '',
+            starts.length ? `${hofNumber(points / starts.length)} ppg` : '',
+        ].filter(Boolean).join(' · '),
+    };
+}
+
+// A jersey for players, a shield for coaches and units.
+function ringOfHonorEmblemSvg(plaque) {
+    const label = String(plaque.emblem);
+    const fontSize = plaque.emblemIsNumber
+        ? (label.length > 1 ? 46 : 52)
+        : (label.length > 5 ? 20 : label.length > 3 ? 26 : 32);
+    const shape = plaque.emblemIsNumber
+        ? `<path class="plaque-emblem-shape" d="M54 6 L70 22 L86 6 L108 12 Q124 18 132 34 L120 56 L106 48 L106 114 L34 114 L34 48 L20 56 L8 34 Q16 18 32 12 Z"/>
+           <path class="plaque-emblem-trim" d="M14 38 L26 46 M126 38 L114 46 M18 31 L29 38 M122 31 L111 38 M54 6 L70 22 L86 6"/>`
+        : '<path class="plaque-emblem-shape" d="M70 4 L122 18 L122 58 Q122 96 70 116 Q18 96 18 58 L18 18 Z"/>';
+    const textY = plaque.emblemIsNumber ? 80 : 68;
+    return `
+        <svg class="plaque-emblem" viewBox="0 0 140 120" role="img" aria-label="${escapeHtml(plaque.emblemIsNumber ? `Number ${label}` : label)}">
+            ${shape}
+            <text x="70" y="${textY}" text-anchor="middle" font-size="${fontSize}" class="plaque-emblem-text">${escapeHtml(label)}</text>
+        </svg>`;
+}
+
+function ringOfHonorPlaqueHtml(plaque) {
+    const route = playerProfileButton(plaque.name, 'plaque-name-link', plaque.name.toUpperCase(), plaque.position);
+    return `
+        <article class="roh-plaque ${myTeamClass(plaque.franchise)}">
+            <div class="roh-plaque-inner">
+                ${ringOfHonorEmblemSvg(plaque)}
+                <h4 class="roh-plaque-name">${route}</h4>
+                <p class="roh-plaque-role">${escapeHtml(plaque.role)} · ${escapeHtml(plaque.nflTeamNames.join(' / '))}</p>
+                <p class="roh-plaque-tenure">${escapeHtml(plaque.franchise)}${plaque.years ? ` · ${escapeHtml(plaque.years)}` : ''}</p>
+                <p class="roh-plaque-blurb">${escapeHtml(plaque.blurb)}</p>
+                ${plaque.statLine ? `<p class="roh-plaque-stats">${escapeHtml(plaque.statLine)}</p>` : ''}
+                ${plaque.rings ? `<p class="roh-plaque-rings">${'★'.repeat(Math.min(plaque.rings, 5))} ${escapeHtml(plaque.rings === 1 ? `${plaque.ringYears[0] || ''} Champion` : `${plaque.rings}× Champion`)}</p>` : ''}
+            </div>
+        </article>`;
+}
+
+function ringOfHonorPlaquesHtml(players, franchiseFor) {
+    if (!players.length) return '';
+    return `<div class="roh-plaque-grid">${players
+        .map(player => ringOfHonorPlaqueHtml(buildRingOfHonorPlaque(player, franchiseFor(player))))
+        .join('')}</div>`;
+}
+
 function teamHofRingOfHonorHtml(ringOfHonor) {
     if (!ringOfHonor) return '';
     const rings = count => (count ? `${count}` : '—');
@@ -7655,18 +7899,14 @@ function teamHofRingOfHonorHtml(ringOfHonor) {
             <h2 class="team-hof-section-title">Team Ring of Honor</h2>
             <div class="hof-record-grid">
                 ${list('Owners', (ringOfHonor.owners || []).map(o => row(escapeHtml(o.name), escapeHtml(o.years), rings(o.rings))))}
-                ${list('Players', (ringOfHonor.players || []).map(p => row(
-                    playerProfileButton(p.name, '', null, p.position),
-                    escapeHtml(`${p.position} · ${p.team}`),
-                    rings(p.rings),
-                )))}
                 ${list('Team Names', (ringOfHonor.team_names || []).map(t => row(
                     escapeHtml(t.name),
                     escapeHtml([t.years, t.note].filter(Boolean).join(' · ')),
                     rings(t.rings),
                 )))}
             </div>
-            <p class="hof-record-note">Chosen by the franchise. The number is rings won with it.</p>
+            ${ringOfHonorPlaquesHtml(ringOfHonor.players || [], () => currentTeam)}
+            <p class="hof-record-note">Chosen by the franchise. The number is rings won with it. Plaques are written from each inductee's record with the franchise and update as it grows.</p>
         </section>`;
 }
 
