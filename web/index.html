@@ -203,6 +203,7 @@
         <div id="matchups-view" class="view-container">
             <div class="subnav" role="tablist" aria-label="Matchup views">
                 <button class="subnav-btn active" id="matchups-week-tab" role="tab" aria-selected="true" aria-controls="matchups-week-subview" tabindex="0" data-parent="matchups" data-subview="week">Week View</button>
+                <button class="subnav-btn" id="matchups-preview-tab" role="tab" aria-selected="false" aria-controls="matchups-preview-subview" tabindex="-1" data-parent="matchups" data-subview="preview">Preview</button>
                 <button class="subnav-btn" id="matchups-schedule-tab" role="tab" aria-selected="false" aria-controls="matchups-schedule-subview" tabindex="-1" data-parent="matchups" data-subview="schedule">Schedule</button>
             </div>
             <div class="subview active" id="matchups-week-subview" role="tabpanel" aria-labelledby="matchups-week-tab">
@@ -211,6 +212,9 @@
                 </div>
                 <p class="matchups-refresh-note">Scores refresh around 5 PM, 8 PM, and 12:30 AM on game days.</p>
                 <div class="matchups" id="matchups-container" role="tabpanel"></div>
+            </div>
+            <div class="subview" id="matchups-preview-subview" role="tabpanel" aria-labelledby="matchups-preview-tab" hidden>
+                <div id="matchups-preview-container" class="matchups-preview"></div>
             </div>
             <div class="subview" id="matchups-schedule-subview" role="tabpanel" aria-labelledby="matchups-schedule-tab" hidden>
                 <div class="schedule-controls">
