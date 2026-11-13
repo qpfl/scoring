@@ -4924,8 +4924,9 @@ const PLAYOFF_MEAN_PRIOR_GAMES = 3;
 const DEFAULT_PLAYOFF_STRUCTURE = {
     championship_seeds: [1, 2, 3, 4],
     mid_bowl_seeds: [5, 6],
-    sewer_series_seeds: [7, 8],
-    toilet_bowl_seeds: [9, 10],
+    // The bottom four play the Toilet Bowl. The two who win their first game
+    // escape to the Sewer Series, so it is decided in Week 16, not by seed.
+    toilet_bowl_seeds: [7, 8, 9, 10],
 };
 
 // The season's playoff format, from meta.json's playoff_format (exported from
@@ -5666,7 +5667,6 @@ const ROOTING_GUIDE_TRIALS = 1000;
 const PLAYOFF_MACHINE_BRACKETS = [
     ['championship_seeds', 'Playoffs', 'playoffs'],
     ['mid_bowl_seeds', BRACKET_LABELS.mid_bowl, 'mid'],
-    ['sewer_series_seeds', BRACKET_LABELS.sewer_series, 'sewer'],
     ['toilet_bowl_seeds', BRACKET_LABELS.toilet_bowl, 'toilet'],
 ];
 

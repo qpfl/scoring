@@ -357,3 +357,18 @@ def test_both_sides_of_a_game_can_finish_top_half():
     assert result['errors'] == [None, None, None]
     assert result['a'] == {'wins': 1, 'losses': 0, 'tops': 1, 'bottoms': 0}
     assert result['b'] == {'wins': 0, 'losses': 1, 'tops': 1, 'bottoms': 0}
+
+
+def test_toilet_bowl_is_the_bottom_four_seeds():
+    # The Sewer Series is the two Toilet Bowl teams who win in Week 16, so no
+    # seed lands there directly and the machine doesn't show it.
+    result = run_machine("""
+        const team = { seedOdds: [0, 0, 0, 0, 0, 0, 0.1, 0.2, 0.3, 0.4] };
+        return {
+            toiletSlots: ctx.format.toiletSlots,
+            shares: bracketShares(ctx, team).map(({ label, share }) => [label, share]),
+        };
+    """)
+    assert result['toiletSlots'] == 4
+    assert [label for label, _ in result['shares']] == ['Playoffs', 'Mid Bowl', 'Toilet Bowl']
+    assert abs(result['shares'][2][1] - 1) < 1e-9

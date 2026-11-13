@@ -6,14 +6,16 @@ Starting in 2026:
   - 1 seed vs 4 seed (playoffs - affects standings)
   - 2 seed vs 3 seed (playoffs - affects standings)
   - 5 seed vs 6 seed (mid bowl - no standings impact, cumulative over weeks 16-17)
-  - 7 seed vs 10 seed (sewer series - no standings impact)
-  - 8 seed vs 9 seed (sewer series - no standings impact)
+  - 7 seed vs 10 seed (toilet bowl round 1 - no standings impact)
+  - 8 seed vs 9 seed (toilet bowl round 1 - no standings impact)
 - Week 17: Finals
   - Championship: Winners of 1v4 and 2v3 (1st/2nd place)
   - Consolation Cup: Losers of 1v4 and 2v3 (3rd/4th place)
   - Mid Bowl: Same 5v6 teams, cumulative score from weeks 16-17 (5th/6th place)
-  - Toilet Bowl: Losers of sewer series matchups (9th/10th place - loser is Toilet Bowl loser)
-  - 7th Place Game: Winners of sewer series matchups (7th/8th place)
+  - Toilet Bowl: Losers of the round 1 toilet bowl games (9th/10th place - loser is
+    the Toilet Bowl loser)
+  - Sewer Series: Winners of the round 1 toilet bowl games, who are out of the Toilet
+    Bowl (7th/8th place)
 """
 
 import json
@@ -51,15 +53,15 @@ PLAYOFF_STRUCTURE_2026: dict[int, dict[str, Any]] = {
             {
                 'seed1': 7,
                 'seed2': 10,
-                'bracket': 'sewer_series',
-                'game': 'sewer_1',
+                'bracket': 'toilet_bowl',
+                'game': 'toilet_1',
                 'affects_standings': False,
             },
             {
                 'seed1': 8,
                 'seed2': 9,
-                'bracket': 'sewer_series',
-                'game': 'sewer_2',
+                'bracket': 'toilet_bowl',
+                'game': 'toilet_2',
                 'affects_standings': False,
             },
         ],
@@ -91,17 +93,17 @@ PLAYOFF_STRUCTURE_2026: dict[int, dict[str, Any]] = {
                 'determines': [5, 6],
             },
             {
-                'from_games': ['sewer_1', 'sewer_2'],
+                'from_games': ['toilet_1', 'toilet_2'],
                 'take': 'losers',
                 'bracket': 'toilet_bowl',
                 'game': 'toilet_bowl',
                 'determines': [9, 10],
             },
             {
-                'from_games': ['sewer_1', 'sewer_2'],
+                'from_games': ['toilet_1', 'toilet_2'],
                 'take': 'winners',
-                'bracket': '7th_place',
-                'game': '7th_place',
+                'bracket': 'sewer_series',
+                'game': 'sewer_series',
                 'determines': [7, 8],
             },
         ],
@@ -481,15 +483,15 @@ def resolve_playoff_matchups(week_16_results: dict, week_17_results: dict | None
             final_standings[team2] = 5
             final_standings[team1] = 6
 
-    # Sewer series -> toilet bowl and 7th place
-    if 'sewer_1' in week_16_results and 'sewer_2' in week_16_results and week_17_results:
-        # 7th place: winners of sewer series
-        if '7th_place' in week_17_results:
-            seventh = week_17_results['7th_place']
+    # Toilet bowl round 1 -> toilet bowl final and sewer series
+    if 'toilet_1' in week_16_results and 'toilet_2' in week_16_results and week_17_results:
+        # Sewer series (7th place): winners of toilet bowl round 1
+        if 'sewer_series' in week_17_results:
+            seventh = week_17_results['sewer_series']
             final_standings[seventh['winner']] = 7
             final_standings[seventh['loser']] = 8
 
-        # Toilet bowl: losers of sewer series (loser of this game is 10th)
+        # Toilet bowl: losers of round 1 (loser of this game is 10th)
         if 'toilet_bowl' in week_17_results:
             toilet = week_17_results['toilet_bowl']
             final_standings[toilet['winner']] = 9

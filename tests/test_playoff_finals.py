@@ -55,7 +55,7 @@ def _scored(matchups, scores, games_final=True, week=16):
 
 
 # 1v4: GSA wins. 2v3: tied, so RPA (2 seed) advances over CGK (3 seed).
-# Mid Bowl 5v6. Sewer 7v10: AST (10) wins; 8v9: WJK (8) wins.
+# Mid Bowl 5v6. Toilet Bowl round 1, 7v10: AST (10) wins; 8v9: WJK (8) wins.
 WEEK16_SCORES = {
     'GSA': 110,
     'CWR': 90,
@@ -115,12 +115,12 @@ def test_week16_results_wait_for_every_game_to_be_final(tmp_path):
 
 def test_finals_teams_list_the_better_seed_first():
     results = {
-        'sewer_1': {'winner': 'AST', 'loser': 'J/J', 'winner_seed': 10, 'loser_seed': 7},
-        'sewer_2': {'winner': 'WJK', 'loser': 'AYP', 'winner_seed': 8, 'loser_seed': 9},
+        'toilet_1': {'winner': 'AST', 'loser': 'J/J', 'winner_seed': 10, 'loser_seed': 7},
+        'toilet_2': {'winner': 'WJK', 'loser': 'AYP', 'winner_seed': 8, 'loser_seed': 9},
     }
-    game = {'from_games': ['sewer_1', 'sewer_2'], 'take': 'winners'}
+    game = {'from_games': ['toilet_1', 'toilet_2'], 'take': 'winners'}
     assert teams_from_games(game, results) == [('WJK', 8), ('AST', 10)]
-    assert teams_from_games(game, {'sewer_1': results['sewer_1']}) == []
+    assert teams_from_games(game, {'toilet_1': results['toilet_1']}) == []
 
 
 def test_week16_is_seeded_from_standings(tmp_path):
@@ -131,8 +131,8 @@ def test_week16_is_seeded_from_standings(tmp_path):
         'semi_1': ('GSA', 'CWR'),
         'semi_2': ('RPA', 'CGK'),
         'mid_bowl_1': ('S/T', 'SLS'),
-        'sewer_1': ('J/J', 'AST'),
-        'sewer_2': ('WJK', 'AYP'),
+        'toilet_1': ('J/J', 'AST'),
+        'toilet_2': ('WJK', 'AYP'),
     }
 
 
@@ -150,7 +150,7 @@ def test_week17_finals_come_from_final_week16_results(tmp_path):
         'CWR',
     )
     assert (by_game['mid_bowl_2']['team1'], by_game['mid_bowl_2']['team2']) == ('S/T', 'SLS')
-    assert (by_game['7th_place']['team1'], by_game['7th_place']['team2']) == ('WJK', 'AST')
+    assert (by_game['sewer_series']['team1'], by_game['sewer_series']['team2']) == ('WJK', 'AST')
     assert (by_game['toilet_bowl']['team1'], by_game['toilet_bowl']['team2']) == ('J/J', 'AYP')
 
 

@@ -1252,7 +1252,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
             'playoff_wins': 0,
             'playoff_losses': 0,
             'playoff_berths': 0,
-            'sewer_series_berths': 0,
+            'toilet_bowl_berths': 0,
             'third_place': 0,
             'second_place': 0,
             'championships': 0,
@@ -1291,7 +1291,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
                     if rank <= playoff_cutoff:
                         stats['playoff_berths'] += 1
                     if num_teams == 10 and rank > 6 or num_teams == 8 and rank > 4:
-                        stats['sewer_series_berths'] += 1
+                        stats['toilet_bowl_berths'] += 1
                     if rank == num_teams:
                         stats['last_place'] += 1
 
@@ -1459,7 +1459,7 @@ def calculate_owner_stats(all_seasons: list[dict], finishes_by_year: list[dict])
                 '3rd Place': str(stats['third_place']),
                 '2nd Place': str(stats['second_place']),
                 'Rings': str(stats['championships']),
-                'Sewer Series Berths': str(stats['sewer_series_berths']),
+                'Toilet Bowl Berths': str(stats['toilet_bowl_berths']),
                 'Last Place': str(stats['last_place']),
                 'Prestige': f'{prestige:.2f}',
             }
@@ -2517,13 +2517,14 @@ def generate_season_finishes(season_data: dict, season: int) -> dict | None:
             sewer_teams.append(t2_owner)
             toilet_bowl_loser = t2_owner if t1_wins else t1_owner
 
-    # Also get sewer series teams from week 16 (the other 2 teams)
+    # The other two Toilet Bowl teams, from round 1 in week 16 (2025 named
+    # those games sewer_1 and sewer_2)
     semifinal_week = finals_week - 1
     for week in weeks:
         if week.get('week') == semifinal_week:
             for matchup in week.get('matchups', []):
                 game = matchup.get('game', '')
-                if game.startswith('sewer_'):
+                if game.startswith(('sewer_', 'toilet_')):
                     t1 = matchup.get('team1', {})
                     t2 = matchup.get('team2', {})
                     if not isinstance(t1, str):

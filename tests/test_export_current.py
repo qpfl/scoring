@@ -70,7 +70,7 @@ def test_split_standings_include_last_completed_week_snapshot(tmp_path):
     # The site's playoff odds and Playoff Machine read the format from here.
     assert meta['playoff_format']['playoff_slots'] == 4
     assert meta['playoff_format']['regular_season_weeks'] == 15
-    assert meta['playoff_format']['playoff_structure']['toilet_bowl_seeds'] == [9, 10]
+    assert meta['playoff_format']['playoff_structure']['toilet_bowl_seeds'] == [7, 8, 9, 10]
     assert payload['completed_through'] == 1
     assert payload['standings'][0]['abbrev'] == 'WJK'
     assert [team['abbrev'] for team in payload['completed_standings']] == ['GSA', 'WJK']

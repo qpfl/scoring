@@ -73,8 +73,8 @@ Rivalry Week 5: GSA versus RPA, CWR versus CGK, WJK versus J/J, AYP versus AST, 
 | 1 seed vs 4 seed | Playoffs | Determines championship participants |
 | 2 seed vs 3 seed | Playoffs | Determines championship participants |
 | 5 seed vs 6 seed | Mid Bowl | Week 1 of 2-week cumulative |
-| 7 seed vs 10 seed | Sewer Series | No standings impact |
-| 8 seed vs 9 seed | Sewer Series | No standings impact |
+| 7 seed vs 10 seed | Toilet Bowl, round 1 | No standings impact |
+| 8 seed vs 9 seed | Toilet Bowl, round 1 | No standings impact |
 
 ### Week 17: Finals
 
@@ -83,8 +83,8 @@ Rivalry Week 5: GSA versus RPA, CWR versus CGK, WJK versus J/J, AYP versus AST, 
 | Winners of 1v4 and 2v3 | Championship | 1st/2nd place |
 | Losers of 1v4 and 2v3 | Consolation Cup | 3rd/4th place |
 | 5 vs 6 (cumulative) | Mid Bowl | 5th/6th place (weeks 16+17 total) |
-| Losers of Sewer Series | Toilet Bowl | 9th/10th (loser is Toilet Bowl loser) |
-| Winners of Sewer Series | 7th Place Game | 7th/8th place |
+| Losers of Toilet Bowl round 1 | Toilet Bowl | 9th/10th (loser is Toilet Bowl loser) |
+| Winners of Toilet Bowl round 1 | Sewer Series | 7th/8th place (out of the Toilet Bowl) |
 
 ## Scripts and Commands
 
