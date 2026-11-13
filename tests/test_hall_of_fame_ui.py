@@ -84,7 +84,8 @@ def test_weekly_facts_load_from_the_generated_file_for_any_week():
         'fetchJsonResource(`data/seasons/${season}/facts/week_${week}.json`, { optional: true })'
         in loader
     )
-    assert 'if (!headline.length) return null;' in loader
+    # A week with awards but no notes still loads (the Weekly Awards card).
+    assert 'if (!headline.length && !facts?.awards?.length) return null;' in loader
     # Team tokens show the newsletter's owner names, with the team name on hover
     # (a renderer shared with the pregame notes).
     assert 'factTemplateRenderer(facts.names || {}, identities?.[season] || {})' in loader

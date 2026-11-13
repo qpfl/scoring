@@ -1547,6 +1547,71 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "SLS",
+      "value": 116,
+      "unit": "pts",
+      "subject": "{team:SLS}",
+      "detail": "beat {team:S/T} 116-103"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "GSA",
+      "value": 59,
+      "unit": "pts",
+      "subject": "{team:GSA}",
+      "detail": "lost to {team:RPA} 59-78"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "AYP",
+      "value": 37,
+      "unit": "margin",
+      "subject": "{team:AYP}",
+      "detail": "beat {team:AST} 97-60"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "SLS",
+      "value": 13,
+      "unit": "margin",
+      "subject": "{team:SLS}",
+      "detail": "beat {team:S/T} 116-103"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "RPA",
+      "value": 33,
+      "unit": "pts",
+      "subject": "Matthew Stafford",
+      "detail": "QB on {team:RPA}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "WJK",
+      "value": 27,
+      "unit": "pts",
+      "subject": "{team:WJK}",
+      "detail": "benched Jaylen Warren (30) for Chase Brown (3), and it cost the game"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "AYP",
+      "value": 46,
+      "unit": "pts",
+      "subject": "Drake Maye",
+      "detail": "QB for {team:AYP}"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -1559,5 +1624,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.270819+00:00"
+  "generated_at": "2026-11-13T22:35:07.317799+00:00"
 }

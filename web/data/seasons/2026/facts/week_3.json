@@ -1369,6 +1369,71 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "S/T",
+      "value": 122,
+      "unit": "pts",
+      "subject": "{team:S/T}",
+      "detail": "beat {team:GSA} 122-112"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "AYP",
+      "value": 46,
+      "unit": "pts",
+      "subject": "{team:AYP}",
+      "detail": "lost to {team:RPA} 46-94"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "RPA",
+      "value": 48,
+      "unit": "margin",
+      "subject": "{team:RPA}",
+      "detail": "beat {team:AYP} 94-46"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "CGK",
+      "value": 6,
+      "unit": "margin",
+      "subject": "{team:CGK}",
+      "detail": "beat {team:WJK} 106-100"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "WJK",
+      "value": 31,
+      "unit": "pts",
+      "subject": "Tyler Shough",
+      "detail": "QB on {team:WJK}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "AYP",
+      "value": 29,
+      "unit": "pts",
+      "subject": "{team:AYP}",
+      "detail": "benched Sam Darnold (31) for Drake Maye (2)"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "WJK",
+      "value": 38,
+      "unit": "pts",
+      "subject": "Brock Purdy",
+      "detail": "QB for {team:WJK}"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -1381,5 +1446,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.025094+00:00"
+  "generated_at": "2026-11-13T22:35:07.068829+00:00"
 }

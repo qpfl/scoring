@@ -1095,6 +1095,8 @@ async function prepareViewData(view, subview) {
                 ensureSharedResource('banners'),
                 ensureSharedResource('hall_of_fame_records'),
                 ensureSharedResource('drafts'),
+                // Season Wrapped grades the season's best trade.
+                ensureSharedResource('transactions'),
                 ensureManualHonors(),
             );
         }
@@ -1479,6 +1481,7 @@ function renderHome() {
         offseasonTransactionsCard.hidden = Boolean(data.is_historical);
     }
 
+    renderWrappedBanner().catch(() => {});
     if (isOffseason) {
         seasonContent.style.display = 'none';
         offseasonContent.style.display = 'block';
@@ -3827,7 +3830,8 @@ function renderMatchups() {
     }).join('');
 
     // Combine regular matchups with jamboree scoreboard
-    container.innerHTML = matchupsHtml + jamboreeHtml
+    container.innerHTML = '<div id="matchup-weekly-awards" class="matchup-weekly-awards-slot"></div>'
+        + matchupsHtml + jamboreeHtml
         + '<div id="matchup-weekly-facts" class="matchup-weekly-facts-slot"></div>'
         + renderProjectionScoreboard(currentWeek) + renderProjectionMethodology();
     renderMatchupWeeklyFacts(currentSeason, currentWeek).catch(() => {});
@@ -7555,6 +7559,7 @@ function renderTeamHistory() {
             <div><h2>Franchise Hall of Fame</h2></div>
             ${teamProfileButton(currentTeam, 'View roster')}
         </div>
+        <div id="team-wrapped" class="team-wrapped-slot"></div>
         <nav class="hof-index" aria-label="Hall of Fame sections">${sections.map(sectionLink).join('')}</nav>
         ${teamHofOverviewHtml(franchise, allTime, teamBanners)}
     `;
@@ -7707,6 +7712,7 @@ function renderTeamHistory() {
     }
 
     container.innerHTML = html;
+    renderTeamWrapped(Number(data.season ?? currentSeason), currentTeam).catch(() => {});
 }
 
 function teamHistoryData() {
@@ -9691,6 +9697,143 @@ function playerNemesesCard(franchise) {
     })), { note: 'Points opposing starters scored against this franchise, consolation games out.' });
 }
 
+// ====== SEASON WRAPPED ======
+// Each team's finished season in one card (scripts/season_wrapped.py writes
+// data/seasons/<season>/wrapped.json once the season has a champion), at the
+// top of Teams → Hall of Fame for that season. The best trade's grade comes
+// from the Transactions report cards and records set from the franchise's
+// record-book entries, so neither is computed twice.
+const WRAPPED_BANNER_DAYS = 14;
+const WRAPPED_RECORDS_SHOWN = 3;
+const wrappedCache = new Map();
+
+function loadSeasonWrapped(season) {
+    if (!wrappedCache.has(season)) {
+        wrappedCache.set(season, fetchJsonResource(`data/seasons/${season}/wrapped.json`, { optional: true })
+            .catch(() => null));
+    }
+    return wrappedCache.get(season);
+}
+
+function wrappedTeamFor(wrapped, franchise) {
+    return Object.values(wrapped?.teams || {})
+        .find(row => row.team === franchise || franchiseCodesForStintTeam(row.team).includes(franchise)) || null;
+}
+
+// The team's best graded trade that season, from the trade report cards.
+function wrappedBestTrade(season, team) {
+    const codes = new Set(franchiseCodesForStintTeam(team));
+    let best = null;
+    for (const entry of tradeGrades().graded) {
+        if (txSeason(entry.tx) !== Number(season)) continue;
+        const side = entry.sides.find(s => codes.has(s.team) || s.team === team);
+        if (side && (!best || side.net > best.side.net)) best = { side, entry };
+    }
+    return best;
+}
+
+function wrappedGameLine(game, season) {
+    if (!game) return '—';
+    const verb = game.result === 'W' ? 'beat' : game.result === 'L' ? 'lost to' : 'tied';
+    return `${verb} ${seasonTeamLabel(game.opponent, season)} ${hofNumber(game.score)}-${hofNumber(game.opponent_score)} · ${game.week_label}`;
+}
+
+function wrappedStat(label, value, detail = '') {
+    return `
+        <div class="wrapped-stat">
+            <span class="wrapped-stat-label">${escapeHtml(label)}</span>
+            <span class="wrapped-stat-value">${value}</span>
+            ${detail ? `<span class="wrapped-stat-detail">${detail}</span>` : ''}
+        </div>`;
+}
+
+function seasonWrappedHtml(wrapped, row, franchise) {
+    const season = wrapped.season;
+    const finish = row.finishes?.[0] || `${ordinalSuffix(row.rank)} of ${row.teams}`;
+    const player = p => (p ? playerProfileButton(p.player, '', null, p.position) : '—');
+    const mostStarted = row.most_started && row.most_started.player !== row.mvp?.player ? row.most_started : null;
+    const trade = wrappedBestTrade(season, row.team);
+    const tradePartner = trade?.entry.sides.find(side => side !== trade.side)?.team;
+    const records = (hofFranchiseIndex().find(f => f.abbrev === franchise)?.records_held || [])
+        .filter(record => Number(record.season) === Number(season))
+        .slice(0, WRAPPED_RECORDS_SHOWN);
+    const revenge = row.revenge_wins || [];
+    const luck = Number(row.luck) || 0;
+    return `
+        <section class="season-wrapped" aria-label="${escapeHtml(`${season} Wrapped`)}">
+            <div class="wrapped-panel wrapped-hero">
+                <span class="wrapped-kicker">${escapeHtml(season)} Wrapped</span>
+                <span class="wrapped-team">${escapeHtml(row.team_name || row.team)}</span>
+                <span class="wrapped-record">${escapeHtml(row.record)}</span>
+                <span class="wrapped-finish">${escapeHtml(finish)} · ${escapeHtml(hofNumber(row.points_for))} points</span>
+            </div>
+            <div class="wrapped-panel">
+                <span class="wrapped-panel-title">Highs and lows</span>
+                <div class="wrapped-grid">
+                    ${wrappedStat('Best week', `${hofNumber(row.best_week.score)}`, escapeHtml(wrappedGameLine(row.best_week, season)))}
+                    ${wrappedStat('Worst week', `${hofNumber(row.worst_week.score)}`, escapeHtml(wrappedGameLine(row.worst_week, season)))}
+                    ${row.biggest_win ? wrappedStat('Biggest win', `+${hofNumber(row.biggest_win.score - row.biggest_win.opponent_score)}`, escapeHtml(wrappedGameLine(row.biggest_win, season))) : ''}
+                    ${row.worst_loss ? wrappedStat('Worst loss', `−${hofNumber(row.worst_loss.opponent_score - row.worst_loss.score)}`, escapeHtml(wrappedGameLine(row.worst_loss, season))) : ''}
+                </div>
+            </div>
+            <div class="wrapped-panel">
+                <span class="wrapped-panel-title">Players</span>
+                <div class="wrapped-grid">
+                    ${row.mvp ? wrappedStat('MVP', player(row.mvp), escapeHtml(`${hofNumber(row.mvp.points)} pts in ${row.mvp.starts} starts`)) : ''}
+                    ${mostStarted ? wrappedStat('Most started', player(mostStarted), escapeHtml(`${mostStarted.starts} starts`)) : ''}
+                    ${row.top_add ? wrappedStat('Top add', player(row.top_add), escapeHtml(`${hofNumber(row.top_add.points)} pts after joining in Week ${row.top_add.week}`)) : ''}
+                    ${row.nemesis ? wrappedStat('Nemesis of the year', player(row.nemesis), escapeHtml(`${hofNumber(row.nemesis.points)} pts against in ${row.nemesis.starts} ${row.nemesis.starts === 1 ? 'game' : 'games'}`)) : ''}
+                </div>
+            </div>
+            <div class="wrapped-panel">
+                <span class="wrapped-panel-title">Decisions and luck</span>
+                <div class="wrapped-grid">
+                    ${row.lineup_iq !== null ? wrappedStat('Lineup IQ', `${hofNumber(row.lineup_iq)}%`, 'of the best possible lineups') : ''}
+                    ${wrappedStat('Luck', `${luck > 0 ? '+' : luck < 0 ? '−' : ''}${hofNumber(Math.abs(luck))}`, `wins vs the all-play record`)}
+                    ${trade ? wrappedStat('Best trade', letterGradeHtml(trade.side.grade), escapeHtml(`with ${seasonTeamLabel(tradePartner, season)}, ${formatSignedPoints(trade.side.net)} pts`)) : ''}
+                    ${wrappedStat('Revenge wins', String(revenge.length), revenge.length
+                        ? escapeHtml(revenge.map(game => `${seasonTeamLabel(game.opponent, season)} (${game.week_label})`).join(', '))
+                        : 'beating a team that beat you first')}
+                </div>
+            </div>
+            ${records.length ? `
+                <div class="wrapped-panel">
+                    <span class="wrapped-panel-title">Records set</span>
+                    <ol class="wrapped-records">${records.map(record => `<li>${escapeHtml(record.title)} <span>#${escapeHtml(record.rank)}${record.shame ? ' · Hall of Shame' : ''}</span></li>`).join('')}</ol>
+                </div>` : ''}
+        </section>`;
+}
+
+async function renderTeamWrapped(season, franchise) {
+    const slot = document.getElementById('team-wrapped');
+    if (!slot) return;
+    const wrapped = await loadSeasonWrapped(season);
+    const row = wrappedTeamFor(wrapped, franchise);
+    if (!slot.isConnected || currentTeam !== franchise || !row) return;
+    slot.innerHTML = seasonWrappedHtml(wrapped, row, franchise);
+}
+
+// "2026 Wrapped is here" on Home for two weeks after the file first appears.
+async function renderWrappedBanner() {
+    const slot = document.getElementById('home-wrapped-banner');
+    if (!slot) return;
+    for (const season of [LIVE_SEASON, LIVE_SEASON - 1]) {
+        const wrapped = await loadSeasonWrapped(season);
+        const created = Date.parse(wrapped?.created_at || '');
+        if (!Number.isFinite(created)) continue;
+        if (Date.now() - created > WRAPPED_BANNER_DAYS * 86400000) break;
+        const team = myTeamAbbrev() || wrapped.champion;
+        const route = seasonAwareRoute(`#teams/history/${encodeURIComponent(hofFranchiseFor(team))}`, season);
+        slot.innerHTML = `
+            <a class="wrapped-banner" href="${escapeHtml(route)}" data-route="${escapeHtml(route)}">
+                <strong>${escapeHtml(season)} Wrapped is here</strong>
+                <span>${myTeamAbbrev() ? 'See how your season went' : "See every team's season"} →</span>
+            </a>`;
+        return;
+    }
+    slot.innerHTML = '';
+}
+
 // A team's Hall of Fame (Teams page), built from the same pieces as the
 // League Hall of Fame: stat tiles, record cards and record-book entries.
 
@@ -11222,7 +11365,7 @@ async function loadWeeklyFacts(season, week) {
         ensureSeasonTeamIdentities().catch(() => ({})),
     ]);
     const headline = facts?.headline || [];
-    if (!headline.length) return null;
+    if (!headline.length && !facts?.awards?.length) return null;
 
     const renderFact = factTemplateRenderer(facts.names || {}, identities?.[season] || {});
     const list = items => `<ul class="weekly-facts-list">${items
@@ -11241,6 +11384,9 @@ async function renderMatchupWeeklyFacts(season, week) {
     const notes = await loadWeeklyFacts(season, week);
     if (!notes || !slot.isConnected) return;
 
+    const awardsSlot = document.getElementById('matchup-weekly-awards');
+    if (awardsSlot) awardsSlot.innerHTML = weeklyAwardsHtml(notes.facts, notes.renderFact, season, week);
+    if (!notes.headline.length) return;
     const { facts, list } = notes;
     let { headline, rest } = notes;
     // Notes about a single matchup live in that matchup's Recap; this keeps
@@ -11274,6 +11420,32 @@ async function renderMatchupWeeklyFacts(season, week) {
     `;
 }
 
+// Weekly Awards (scripts/weekly_awards.py): a fixed set of superlatives for a
+// finished week, in the week's facts file. Sized to screenshot.
+function weeklyAwardsHtml(facts, renderFact, season, week) {
+    const awards = facts?.awards || [];
+    if (!awards.length) return '';
+    const figure = award => (award.unit === 'margin'
+        ? `by ${hofNumber(award.value)}`
+        : `${hofNumber(award.value)} pts`);
+    return `
+        <section class="weekly-awards" aria-label="Weekly Awards">
+            <div class="weekly-awards-head">
+                <span class="weekly-awards-title">Weekly Awards</span>
+                <span class="weekly-awards-week">${escapeHtml(`${facts.week_label || `Week ${week}`} · ${season}`)}</span>
+            </div>
+            <div class="weekly-awards-grid">
+                ${awards.map(award => `
+                    <div class="weekly-award ${myTeamClass(award.team)}">
+                        <span class="weekly-award-title">${escapeHtml(award.title)}</span>
+                        <span class="weekly-award-subject">${renderFact(award.subject)}</span>
+                        <span class="weekly-award-figure">${escapeHtml(figure(award))}</span>
+                        <span class="weekly-award-detail">${renderFact(award.detail)}</span>
+                    </div>`).join('')}
+            </div>
+        </section>`;
+}
+
 const HOF_WEEKLY_FACTS_TEASER = 3;
 
 // Hall of Fame teaser: the top few notes from the latest completed week, with
@@ -11285,7 +11457,7 @@ async function renderWeeklyFactsCard() {
     if (!slot || !season || !week) return;
 
     const notes = await loadWeeklyFacts(season, week);
-    if (!notes || !slot.isConnected) return;
+    if (!notes?.headline.length || !slot.isConnected) return;
 
     const { facts, headline, rest, list } = notes;
     const total = headline.length + rest.length;

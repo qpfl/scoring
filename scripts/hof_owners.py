@@ -188,6 +188,28 @@ def _win_pct(games: list[TeamGame]) -> float | None:
     )
 
 
+def regular_games(team_games: list[TeamGame]) -> list[TeamGame]:
+    """Played one-week regular-season games, the ones luck and all-play use."""
+    return [g for g in team_games if g.bracket == REGULAR and g.single_game and g.score > 0]
+
+
+def all_play_share(games: list[TeamGame]):
+    """A function giving the share of the week's other scores a game beat
+    (ties count half): the all-play expected wins for that game."""
+    weeks: dict[tuple[int, int], dict[str, float]] = defaultdict(dict)
+    for g in games:
+        weeks[g.order][g.abbrev] = g.score
+
+    def share(g: TeamGame) -> float:
+        others = [s for team, s in weeks[g.order].items() if team != g.abbrev]
+        if not others:
+            return 0.5
+        beaten = sum(s < g.score for s in others) + sum(s == g.score for s in others) / 2
+        return beaten / len(others)
+
+    return share
+
+
 def _fingerprints(team_games: list[TeamGame], playoff_records: dict[str, str]) -> dict:
     """Six traits per owner, each as a percentile among qualifying owners.
 
@@ -198,19 +220,8 @@ def _fingerprints(team_games: list[TeamGame], playoff_records: dict[str, str]) -
     Playoffs (playoff win %, from the owner stats table's playoff record so the
     two always agree).
     """
-    regular = [g for g in team_games if g.bracket == REGULAR and g.single_game and g.score > 0]
-    # All-play: the share of the week's other scores each team beat.
-    weeks: dict[tuple[int, int], dict[str, float]] = defaultdict(dict)
-    for g in regular:
-        weeks[g.order][g.abbrev] = g.score
-
-    def all_play(g: TeamGame) -> float:
-        others = [s for team, s in weeks[g.order].items() if team != g.abbrev]
-        if not others:
-            return 0.5
-        return (sum(s < g.score for s in others) + sum(s == g.score for s in others) / 2) / len(
-            others
-        )
+    regular = regular_games(team_games)
+    all_play = all_play_share(regular)
 
     by_owner: dict[str, list[TeamGame]] = defaultdict(list)
     for g in regular:

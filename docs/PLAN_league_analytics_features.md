@@ -408,7 +408,32 @@ this franchise, from `PlayerGame` `opp_franchises`.
 
 ---
 
-## Phase 8: Weekly Awards and Season Wrapped
+## Phase 8: Weekly Awards and Season Wrapped (done)
+
+**As built:**
+- **Weekly Awards** (`scripts/weekly_awards.py`) go into each week's facts file as `awards`
+  (2026 Weeks 1-9 backfilled; nothing else in those files changed).
+  - Benching Blunder reuses the Lineups tab's swap logic (`hof_lineups.lineup_swaps`).
+  - Best Pickup is the top starter who wasn't on any roster in one of the two weeks
+    before, so midseason draft picks count too.
+  - The card leads Matchups for any week with a facts file. Facts files are written once
+    a week is final, so they're never there mid-week.
+  - The newsletter gets a "Weekly Awards" section ahead of By the Numbers.
+- **Season Wrapped** (`scripts/season_wrapped.py`) is written by the Hall of Fame refresh
+  to `web/data/seasons/<yr>/wrapped.json` for every season with a champion (2020-2025
+  today). `created_at` is kept from the first write.
+  - Lineup IQ and luck use the owner fingerprints' all-play helper
+    (`hof_owners.all_play_share`).
+  - Top add: the best starter who joined from outside the league's rosters.
+  - Revenge wins: beating a team that had beaten you earlier that season.
+  - Nemesis of the year: the opposing starter with the most points against you.
+  - The site adds the best trade's grade (Phase 6's trade grades) and records set (the
+    franchise's record-book entries for the season), so neither is computed twice.
+  - The card shows at the top of Teams → Hall of Fame for the season being viewed. The
+    Home banner runs for 14 days after `created_at` for the live or previous season.
+
+**Original plan:**
+
 
 **Weekly Awards card.**
 - **Where:** on Matchups → This Week once every game for the week is final.

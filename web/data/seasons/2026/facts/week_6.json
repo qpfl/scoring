@@ -997,6 +997,71 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "AYP",
+      "value": 106,
+      "unit": "pts",
+      "subject": "{team:AYP}",
+      "detail": "beat {team:S/T} 106-34"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "S/T",
+      "value": 34,
+      "unit": "pts",
+      "subject": "{team:S/T}",
+      "detail": "lost to {team:AYP} 34-106"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "AYP",
+      "value": 72,
+      "unit": "margin",
+      "subject": "{team:AYP}",
+      "detail": "beat {team:S/T} 106-34"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "GSA",
+      "value": 8,
+      "unit": "margin",
+      "subject": "{team:GSA}",
+      "detail": "beat {team:SLS} 74-66"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "GSA",
+      "value": 32,
+      "unit": "pts",
+      "subject": "Tyler Shough",
+      "detail": "QB on {team:GSA}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "GSA",
+      "value": 23,
+      "unit": "pts",
+      "subject": "{team:GSA}",
+      "detail": "benched Tyler Shough (32) for Patrick Mahomes II (9)"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "CWR",
+      "value": 35,
+      "unit": "pts",
+      "subject": "Trevor Lawrence",
+      "detail": "QB for {team:CWR}"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -1009,5 +1074,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.400961+00:00"
+  "generated_at": "2026-11-13T22:35:07.450031+00:00"
 }

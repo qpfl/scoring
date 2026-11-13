@@ -88,11 +88,16 @@ def _games(all_seasons: list[dict]):
 
 
 def _blunders(game: _Week) -> list[tuple[dict, dict, float]]:
+    return lineup_swaps(game.team.get('roster', []))
+
+
+def lineup_swaps(roster: list[dict]) -> list[tuple[dict, dict, float]]:
     """(benched, started, margin) for each swap the best lineup would make,
     pairing the best benched player with the best starter he displaces, as the
-    site's optimal-lineup view does."""
+    site's optimal-lineup view does. Players are dicts with `position`,
+    `score` and `starter` (the weekly awards pass the same shape)."""
     by_position: dict[str, list[dict]] = defaultdict(list)
-    for player in game.team.get('roster', []):
+    for player in roster:
         if _score(player) is not None:
             by_position[hof.canonical_profile_position(player.get('position'))].append(player)
     out = []

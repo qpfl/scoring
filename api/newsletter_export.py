@@ -234,8 +234,8 @@ FACT_TOKEN = re.compile(r'\{(team|has|is):([^}]+)\}')
 PLURAL_VERBS = {'has': 'have', 'is': 'are'}
 
 
-def _fact_lines(facts: dict | None, names: dict[str, str]) -> list[str]:
-    """Headline facts with `{team:X}` tokens swapped for newsletter names and
+def _render(template: str, names: dict[str, str]) -> str:
+    """A fact template with `{team:X}` tokens swapped for newsletter names and
     `{has:X}`/`{is:X}` for verbs that agree with them ("Spencer/Tim have").
     Mirrors qpfl.weekly_facts.render, which Vercel functions can't import."""
 
@@ -247,11 +247,29 @@ def _fact_lines(facts: dict | None, names: dict[str, str]) -> list[str]:
         plural = '/' in name or '&' in name or ' and ' in name
         return PLURAL_VERBS[kind] if plural else kind
 
+    return FACT_TOKEN.sub(swap, template)
+
+
+def _fact_lines(facts: dict | None, names: dict[str, str]) -> list[str]:
+    """Headline facts, rendered with newsletter names."""
     lines = []
     for fact in (facts or {}).get('headline') or []:
         template = fact.get('template') if isinstance(fact, dict) else None
         if template:
-            lines.append(FACT_TOKEN.sub(swap, template))
+            lines.append(_render(template, names))
+    return lines
+
+
+def _award_lines(facts: dict | None, names: dict[str, str]) -> list[str]:
+    """The week's awards (scripts/weekly_awards.py), one line each:
+    "Top Score: Griff, 121 (beat Anagh 121-89)"."""
+    lines = []
+    for award in (facts or {}).get('awards') or []:
+        if not isinstance(award, dict) or not award.get('title'):
+            continue
+        subject = _render(str(award.get('subject', '')), names)
+        detail = _render(str(award.get('detail', '')), names)
+        lines.append(f'{award["title"]}: {subject}, {_number(award.get("value"))} ({detail})')
     return lines
 
 
@@ -537,6 +555,14 @@ def build_newsletter_document(sources: dict, generated_at: datetime | None = Non
     body.append(_paragraph())
     body.append(_paragraph(_run(f'Week {max(results_week, 0)} Recap'), style='Heading2'))
     body.extend(_paragraph() for _ in range(8))
+
+    # Weekly Awards
+    award_lines = _award_lines(sources.get('facts'), names)
+    if award_lines:
+        body.append(_paragraph(_run('Weekly Awards'), style='Heading2'))
+        for line in award_lines:
+            body.append(_paragraph(_run(line), bullet=True))
+        body.append(_paragraph())
 
     # By the Numbers
     body.append(_paragraph(_run('By the Numbers'), style='Heading2'))

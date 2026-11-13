@@ -2975,12 +2975,47 @@ def generate_hall_of_fame(
         with open(lineups_file) as f:
             existing_lineups = json.load(f)
 
+    # Season Wrapped, for each season with a champion. `created_at` is the
+    # first time the file was written (the Home banner runs for two weeks
+    # from it), kept on every later refresh.
+    from scripts.export_weekly_facts import roster_timeline
+    from scripts.season_wrapped import build_season_wrapped
+
+    champions = {
+        int(entry['year']): entry['champion_abbrev']
+        for entry in finishes_by_year
+        if str(entry.get('year', '')).isdigit() and entry.get('champion_abbrev')
+    }
+    wrapped_files = []
+    for season_data in all_seasons:
+        season = season_data['season']
+        if season not in champions:
+            continue
+        path = SEASONS_DIR / str(season) / 'wrapped.json'
+        existing = {}
+        if path.exists():
+            with open(path) as f:
+                existing = json.load(f)
+        payload = {
+            **build_season_wrapped(
+                season_data,
+                team_games,
+                player_games,
+                roster_timeline(season_data, {}),
+                team_hall_of_fame,
+            ),
+            'champion': champions[season],
+            'created_at': existing.get('created_at') or datetime.now(timezone.utc).isoformat(),
+        }
+        wrapped_files.append((path, existing, payload))
+
     changed = False
     SHARED_DIR.mkdir(parents=True, exist_ok=True)
     for path, existing, payload in (
         (hof_file, existing_hof, output),
         (records_file, existing_records, records_output),
         (lineups_file, existing_lineups, lineups_output),
+        *wrapped_files,
     ):
         if _without_refresh_metadata(existing) == payload:
             continue
