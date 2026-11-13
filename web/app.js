@@ -18032,7 +18032,7 @@ function renderPlayerGameLog(rows, seasonData, season, seasons, { loading = fals
         body = `
             <div class="player-modal-table-wrap">
                 <table class="player-modal-table">
-                    <thead><tr><th>Week</th><th>Team</th><th class="num">Score</th><th class="num">Rank</th><th class="num">Role</th></tr></thead>
+                    <thead><tr><th>Week</th><th>Team</th><th class="num game-log-score">Score</th><th class="num">Rank</th><th class="num">Role</th></tr></thead>
                     <tbody>
                         ${rows.map(w => {
                             const bd = w.breakdown ? renderBreakdown(w.breakdown) : '';
@@ -18055,7 +18055,7 @@ function renderPlayerGameLog(rows, seasonData, season, seasons, { loading = fals
                             <tr${w.bye ? ' class="player-game-log-bye"' : ''}>
                                 <td>${matchupLink(season, w.week, `Wk ${w.week}`)}</td>
                                 <td><span class="team-code">${w.freeAgent ? 'FA' : teamProfileButton(w.fantasyAbbrev, w.fantasyAbbrev, '', teamSubview, season)}</span></td>
-                                <td class="num">${scoreCell}</td>
+                                <td class="num game-log-score">${scoreCell}</td>
                                 <td class="num">${rankCell}</td>
                                 <td class="num"><span class="${w.starter ? 'pm-starter' : 'pm-bench'}">${w.starter ? 'Start' : (w.freeAgent ? 'FA' : (w.taxi ? 'Taxi' : 'Bench'))}</span></td>
                             </tr>`;

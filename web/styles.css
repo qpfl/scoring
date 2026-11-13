@@ -8359,6 +8359,13 @@ a.schedule-row:focus-visible {
     text-align: right;
 }
 
+/* Game log scores are centered so a wider BYE tag lines up with them. */
+.player-modal-table th.game-log-score,
+.player-modal-table td.game-log-score,
+.player-modal-table td.game-log-score .score-breakdown {
+    text-align: center;
+}
+
 .player-modal-table td {
     padding: 0.45rem 0.5rem;
     border-bottom: 1px solid rgba(255,255,255,0.04);
