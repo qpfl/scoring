@@ -16,6 +16,7 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Callable, Iterable
 
+from qpfl.scorigami import build_scorigami
 from qpfl.weekly_facts import CONSOLATION, PLAYOFFS, REGULAR, PlayerGame, TeamGame
 from scripts import export_hall_of_fame as hof
 
@@ -767,6 +768,7 @@ def build_record_book(
     return {
         'categories': [{'id': cid, 'title': title} for cid, title in CATEGORIES],
         'groups': book.build(),
+        'scorigami': build_scorigami(book.team_games, book.team_names),
     }
 
 

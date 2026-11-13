@@ -7610,7 +7610,10 @@ function hofFilterButtons(name, options, current) {
 function hofRecordsHtml(hof) {
     const book = data.hall_of_fame_records?.record_book;
     if (!book?.groups?.length) return '<p class="hof-empty">Records are not available in this data export.</p>';
-    const categories = book.categories || [];
+    const categories = [
+        ...(book.categories || []),
+        ...(book.scorigami?.games ? [{ id: 'scorigami', title: 'Scorigami' }] : []),
+    ];
     const category = categories.some(c => c.id === currentHofCategory) ? currentHofCategory : 'all';
     const playerCategory = category.startsWith('player-');
     const position = playerCategory && HOF_RECORD_POSITIONS.includes(currentHofPosition) ? currentHofPosition : 'ALL';
@@ -7629,6 +7632,7 @@ function hofRecordsHtml(hof) {
                 </div>` : ''}
         </div>
         ${shown.map(c => {
+            if (c.id === 'scorigami') return position === 'ALL' ? scorigamiSectionHtml(book.scorigami) : '';
             const cards = groupsFor(c.id).map(hofRecordCard);
             if (c.id === 'league' && position === 'ALL') cards.push(hofPerfectLineupsCard(hof.perfect_lineups));
             if (!cards.filter(Boolean).length) return '';
@@ -7638,6 +7642,161 @@ function hofRecordsHtml(hof) {
                     <div class="hof-record-grid">${cards.join('')}</div>
                 </section>`;
         }).join('')}`;
+}
+
+// ====== SCORIGAMI ======
+// Every final score in league history (scripts/hof_records.py → qpfl/scorigami.py),
+// as a grid of winning score against losing score.
+const SCORIGAMI_CELL = 4;
+const SCORIGAMI_LIST = 5;
+
+function scorigamiGameLabel(game) {
+    if (!game) return '';
+    const teams = `${game.winner_name || game.winner} over ${game.loser_name || game.loser}`;
+    return `${game.week_label}, ${game.season} (${teams})`;
+}
+
+function scorigamiCellText(cell) {
+    const times = cell.count === 1 ? 'once' : cell.count === 2 ? 'twice' : `${cell.count} times`;
+    const parts = [`${cell.w}-${cell.l}: happened ${times}`, `First: ${scorigamiGameLabel(cell.first)}`];
+    if (cell.latest) parts.push(`Latest: ${scorigamiGameLabel(cell.latest)}`);
+    return parts.join('. ') + '.';
+}
+
+function scorigamiGridSvg(block) {
+    const cells = block.cells || [];
+    const size = SCORIGAMI_CELL;
+    // Crop each axis to the scores that have happened, in steps of 25.
+    const step = 25;
+    const xMin = Math.floor(Math.min(...cells.map(c => c.w)) / step) * step;
+    const xMax = Math.ceil(Math.max(...cells.map(c => c.w), xMin + step) / step) * step;
+    const yMin = 0;
+    const yMax = Math.ceil(Math.max(...cells.map(c => c.l), step) / step) * step;
+    const pad = { left: 40, bottom: 34, top: 8, right: 8 };
+    const plotW = (xMax - xMin + 1) * size;
+    const plotH = (yMax - yMin + 1) * size;
+    const width = pad.left + plotW + pad.right;
+    const height = pad.top + plotH + pad.bottom;
+    const x = score => pad.left + (score - xMin) * size;
+    const y = score => pad.top + plotH - (score - yMin + 1) * size;
+    const newest = block.recent?.[0];
+    const xTicks = [];
+    for (let v = xMin; v <= xMax; v += step) xTicks.push(v);
+    const yTicks = [];
+    for (let v = yMin; v <= yMax; v += step) yTicks.push(v);
+    // Where a final can land: the losing score never tops the winning one.
+    const top = Math.min(xMax, yMax);
+    const possible = [
+        [x(xMin), y(yMin) + size],
+        [x(xMax) + size, y(yMin) + size],
+        [x(xMax) + size, y(top)],
+        [x(top), y(top)],
+        [x(xMin), y(xMin)],
+    ].map(point => point.join(',')).join(' ');
+    const rects = cells.map(cell => {
+        const level = cell.count >= 3 ? 3 : cell.count;
+        const isNewest = newest && newest.w === cell.w && newest.l === cell.l;
+        return `<rect class="sg-cell sg-count-${level}${isNewest ? ' sg-newest' : ''}" x="${x(cell.w)}" y="${y(cell.l)}" width="${size}" height="${size}" data-sg="${cell.w}-${cell.l}"><title>${escapeHtml(scorigamiCellText(cell))}</title></rect>`;
+    }).join('');
+    const ring = newest
+        ? `<circle class="sg-ring" cx="${x(newest.w) + size / 2}" cy="${y(newest.l) + size / 2}" r="${size * 2.5}"/>`
+        : '';
+    return `
+        <svg class="scorigami-grid" viewBox="0 0 ${width} ${height}" role="img"
+             aria-label="${escapeHtml(`Scorigami grid: ${block.unique} unique final scores from ${block.games} games, winning score across, losing score up.`)}">
+            <polygon class="sg-possible" points="${possible}"/>
+            ${xTicks.map(v => `
+                <line class="sg-gridline" x1="${x(v)}" y1="${pad.top}" x2="${x(v)}" y2="${pad.top + plotH}"/>
+                <text class="sg-tick" x="${x(v)}" y="${pad.top + plotH + 14}" text-anchor="middle">${v}</text>`).join('')}
+            ${yTicks.map(v => `
+                <line class="sg-gridline" x1="${pad.left}" y1="${y(v) + size}" x2="${pad.left + plotW}" y2="${y(v) + size}"/>
+                <text class="sg-tick" x="${pad.left - 6}" y="${y(v) + size + 3}" text-anchor="end">${v}</text>`).join('')}
+            ${rects}
+            ${ring}
+            <text class="sg-axis" x="${pad.left + plotW / 2}" y="${height - 4}" text-anchor="middle">Winning score</text>
+            <text class="sg-axis" x="12" y="${pad.top + plotH / 2}" text-anchor="middle" transform="rotate(-90 12 ${pad.top + plotH / 2})">Losing score</text>
+        </svg>`;
+}
+
+function scorigamiSectionHtml(block) {
+    if (!block?.games) return '';
+    const cells = block.cells || [];
+    const rate = Math.round((block.unique / block.games) * 100);
+    const topCount = Math.max(...cells.map(c => c.count));
+    const common = topCount > 1 ? cells.filter(c => c.count === topCount) : [];
+    const repeats = cells.filter(c => c.count > 1).length;
+    const tile = (value, label) => `
+        <div class="sg-tile"><span class="sg-tile-value">${escapeHtml(value)}</span><span class="sg-tile-label">${escapeHtml(label)}</span></div>`;
+    const gameOrder = game => (game?.season || 0) * 100 + (game?.week || 0);
+    const repeated = cells.filter(c => c.count > 1)
+        .sort((a, b) => gameOrder(b.latest) - gameOrder(a.latest) || b.count - a.count);
+    const repeatRow = cell => `
+        <li>
+            <span class="sg-score">${escapeHtml(`${cell.w}-${cell.l}`)}</span>
+            <span class="sg-recent-game">${escapeHtml(`Latest: ${scorigamiGameLabel(cell.latest)}. First: ${cell.first.week_label}, ${cell.first.season}.`)}</span>
+            <span class="sg-nth">${escapeHtml(`×${cell.count}`)}</span>
+        </li>`;
+    const repeatsHtml = repeated.length ? `
+        <div>
+            <h3 class="sg-list-title">Repeated finals</h3>
+            <ol class="sg-list">${repeated.slice(0, SCORIGAMI_LIST).map(repeatRow).join('')}</ol>
+            ${repeated.length > SCORIGAMI_LIST ? `
+                <details class="weekly-facts-more">
+                    <summary>${repeated.length - SCORIGAMI_LIST} more</summary>
+                    <ol class="sg-list">${repeated.slice(SCORIGAMI_LIST).map(repeatRow).join('')}</ol>
+                </details>` : ''}
+        </div>` : '';
+    const recent = (block.recent || []).slice(0, SCORIGAMI_LIST).map(game => `
+        <li>
+            <span class="sg-score">${escapeHtml(`${game.w}-${game.l}`)}</span>
+            <span class="sg-recent-game">${escapeHtml(scorigamiGameLabel(game))}</span>
+            <span class="sg-nth">${escapeHtml(`#${game.nth}`)}</span>
+        </li>`).join('');
+    const ties = (block.ties || []).map(game => `
+        <li>
+            <span class="sg-score">${escapeHtml(`${game.score}-${game.score}`)}</span>
+            <span class="sg-recent-game">${escapeHtml(`${game.week_label}, ${game.season} (${game.winner_name || game.winner} and ${game.loser_name || game.loser})`)}</span>
+        </li>`).join('');
+    return `
+        <section class="hof-section scorigami" id="records-scorigami">
+            <h2 class="hof-section-title">Scorigami</h2>
+            <p class="sg-intro">Every final score in QPFL history. A scorigami is a final that had never happened before; nearly every game is one, so a repeat is the rarer feat.</p>
+            <div class="sg-tiles">
+                ${tile(String(block.games), 'games')}
+                ${tile(String(block.unique), 'unique finals')}
+                ${tile(`${rate}%`, 'were scorigamis')}
+                ${tile(String(repeats), repeats === 1 ? 'final repeated' : 'finals repeated')}
+            </div>
+            <div class="sg-grid-scroll">${scorigamiGridSvg(block)}</div>
+            <p class="sg-detail" aria-live="polite">${common.length
+                ? escapeHtml(`Most common final: ${common.map(c => `${c.w}-${c.l}`).join(', ')} (${topCount} times). Tap a square for its games.`)
+                : 'Tap a square for its games.'}</p>
+            <div class="sg-legend" aria-hidden="true">
+                <span><i class="sg-swatch sg-count-1"></i>Once</span>
+                <span><i class="sg-swatch sg-count-2"></i>Twice</span>
+                <span><i class="sg-swatch sg-count-3"></i>3+ times</span>
+                <span><i class="sg-swatch sg-swatch-ring"></i>Newest scorigami</span>
+            </div>
+            <div class="sg-lists">
+                ${repeatsHtml}
+                ${recent ? `<div><h3 class="sg-list-title">Recent scorigamis</h3><ol class="sg-list">${recent}</ol></div>` : ''}
+                ${ties ? `<div><h3 class="sg-list-title">Ties</h3><ol class="sg-list">${ties}</ol></div>` : ''}
+            </div>
+        </section>`;
+}
+
+// Tapping a square shows its games under the grid (title tooltips need a hover).
+function bindScorigamiGrid(container) {
+    const grid = container.querySelector('.scorigami-grid');
+    const detail = container.querySelector('.sg-detail');
+    if (!grid || !detail) return;
+    grid.addEventListener('click', event => {
+        const rect = event.target.closest('[data-sg]');
+        if (!rect) return;
+        grid.querySelectorAll('.sg-selected').forEach(node => node.classList.remove('sg-selected'));
+        rect.classList.add('sg-selected');
+        detail.textContent = rect.querySelector('title')?.textContent || '';
+    });
 }
 
 function hofPerfectLineupsCard(rows) {
@@ -9720,6 +9879,7 @@ function renderHallOfFame() {
     `;
     if (tab === 'overview') renderWeeklyFactsCard().catch(() => {});
     if (tab === 'records' || tab === 'players') bindHofRecordFilters(container);
+    if (tab === 'records') bindScorigamiGrid(container);
     // The owner's name for the title only arrives with the records file.
     if (currentHofOwner) updatePageMetadata('history', 'records');
 }

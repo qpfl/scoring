@@ -17,6 +17,8 @@ from collections import defaultdict
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 
+from qpfl import scorigami
+
 REGULAR = 'regular'
 PLAYOFFS = 'playoffs'
 CONSOLATION = 'consolation'
@@ -75,6 +77,8 @@ CLOSE_WEEK_MIN = 2
 WEEK_CLUB_MAX = 6
 # Week-level and lineup-level records need this much history behind them.
 MIN_WEEK_SAMPLE = 20
+# Finals on record before a scorigami note means anything.
+MIN_SCORIGAMI_HISTORY = 50
 MIN_ROW_SAMPLE = 100
 MIN_RUNS_SAMPLE = 10
 ZERO_SLOTS_MIN = 3
@@ -3203,6 +3207,88 @@ def _projection_facts(ctx: WeekContext) -> list[Fact]:
     return facts
 
 
+def _scorigami_facts(ctx: WeekContext) -> list[Fact]:
+    """New final scores, and the much rarer finals the league has seen before.
+
+    Nearly every QPFL final is a first (scores run to 200), so a repeat is the
+    real news and a new scorigami is a minor note.
+    """
+    current = scorigami.finals(ctx.current)
+    prior = scorigami.finals(ctx.history)
+    if not current or len(prior) < MIN_SCORIGAMI_HISTORY:
+        return []
+    counts: dict[tuple[int, int], int] = defaultdict(int)
+    latest: dict[tuple[int, int], scorigami.Final] = {}
+    for final in prior:
+        counts[final.score] += 1
+        latest[final.score] = final
+    unique = len(counts)
+    facts = []
+    new: list[tuple[scorigami.Final, str, str]] = []
+    for final in current:
+        score = f'{final.high}-{final.low}'
+        result = (
+            f'{team(final.winner)} and {team(final.loser)} tied {score}'
+            if final.tie
+            else f'{team(final.winner)} beat {team(final.loser)} {score}'
+        )
+        seen = counts[final.score]
+        if seen == 0:
+            unique += 1
+            new.append((final, result, score))
+        else:
+            previous = latest[final.score]
+            times = 'once' if seen == 1 else 'twice' if seen == 2 else f'{seen} times'
+            facts.append(
+                Fact(
+                    'scorigami_repeat',
+                    TEAM,
+                    [final.winner, final.loser],
+                    f'{result}, a final the league had seen only {times} before '
+                    f'(most recently {previous.week_label}, {previous.season}).',
+                    0.55 if seen == 1 else 0.7,
+                    _scope_tags(final.bracket),
+                )
+            )
+        counts[final.score] += 1
+        latest[final.score] = final
+
+    # One note for the week's first-time finals, not one per game.
+    if len(new) == 1:
+        final, result, score = new[0]
+        facts.append(
+            Fact(
+                'scorigami_new',
+                TEAM,
+                [final.winner, final.loser],
+                f'Scorigami: {result}, the first {score} final in QPFL history '
+                f"and the league's {ordinal(unique)} unique final score.",
+                0.3,
+                _scope_tags(final.bracket),
+            )
+        )
+    elif new:
+        scores = [score for _, _, score in new]
+        listed = f'{", ".join(scores[:-1])} and {scores[-1]}'
+        lead = (
+            f'Every game was a scorigami ({listed})'
+            if len(new) == len(current)
+            else f'{len(new)} of {len(current)} games were scorigamis ({listed})'
+        )
+        facts.append(
+            Fact(
+                'scorigami_week',
+                LEAGUE,
+                [],
+                f'{lead}, first-time finals that take the league to '
+                f'{number(unique)} unique final scores.',
+                0.3,
+                _scope_tags(new[0][0].bracket),
+            )
+        )
+    return facts
+
+
 DETECTORS: tuple[Callable[[WeekContext], list[Fact]], ...] = (
     _team_score_facts,
     _matchup_facts,
@@ -3242,6 +3328,7 @@ DETECTORS: tuple[Callable[[WeekContext], list[Fact]], ...] = (
     _career_milestone_facts,
     _rivalry_facts,
     _projection_facts,
+    _scorigami_facts,
 )
 
 
