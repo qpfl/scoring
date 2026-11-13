@@ -88,7 +88,11 @@ def find_profile(profiles: dict, name: str, position: str) -> dict | None:
 def lookup_number(rows: list[dict], name: str, nfl_teams: set[str]) -> int | None:
     """The jersey number he wore most often for those NFL teams."""
     key = normalize_name(name)
-    matches = [row for row in rows if normalize_name(row.get('full_name')) == key and row.get('jersey_number') is not None]
+    matches = [
+        row
+        for row in rows
+        if normalize_name(row.get('full_name')) == key and row.get('jersey_number') is not None
+    ]
     on_team = [row for row in matches if row.get('team') in nfl_teams]
     numbers = Counter(int(row['jersey_number']) for row in (on_team or matches))
     return numbers.most_common(1)[0][0] if numbers else None

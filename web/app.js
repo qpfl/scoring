@@ -1144,7 +1144,10 @@ async function prepareViewData(view, subview) {
 const VIEW_RENDERERS = {
     home: () => renderHome(),
     matchups: () => { renderWeekSelector(); renderMatchups(); renderSchedule(); },
-    standings: () => renderStandings(),
+    standings: subview => {
+        renderStandings();
+        if (subview === 'machine') renderPlayoffMachine();
+    },
     teams: async subview => {
         if (subview === 'all-rosters') await renderAllRosters();
         renderTeams();
@@ -1191,6 +1194,7 @@ const LEGACY_HASH_REDIRECTS = {
 // just `#view` without a subview portion.
 const DEFAULT_SUBVIEW = {
     matchups: 'week',
+    standings: 'table',
     teams: 'roster',
     stats: 'leaders',
     history: 'records',
@@ -1216,7 +1220,11 @@ function pageTitleFor(view, subview, detail) {
             ? `${season} Schedule · QPFL`
             : `Week ${detail || currentWeek} Matchups · QPFL`;
     }
-    if (view === 'standings') return `${season} Standings · QPFL`;
+    if (view === 'standings') {
+        return subview === 'machine'
+            ? `${season} Playoff Machine · QPFL`
+            : `${season} Standings · QPFL`;
+    }
     if (view === 'transactions') return `${season} Transactions · QPFL`;
     if (view === 'teams') {
         if (['roster', 'history', 'activity'].includes(subview)) {
@@ -4466,6 +4474,28 @@ const PLAYOFF_SLOTS = 4;
 const TOILET_BOWL_SLOTS = 4;
 const REGULAR_SEASON_LAST_WEEK = 15;
 const PLAYOFF_MEAN_PRIOR_GAMES = 3;
+const DEFAULT_PLAYOFF_STRUCTURE = {
+    championship_seeds: [1, 2, 3, 4],
+    mid_bowl_seeds: [5, 6],
+    sewer_series_seeds: [7, 8],
+    toilet_bowl_seeds: [9, 10],
+};
+
+// The season's playoff format, from meta.json's playoff_format (exported from
+// data/league_config.json). Older seasons' meta files predate the field, so
+// fall back to the format they were played under.
+function seasonFormat() {
+    const season = Number(data.season ?? currentSeason);
+    const format = data.playoff_format || {};
+    const structure = format.playoff_structure || DEFAULT_PLAYOFF_STRUCTURE;
+    return {
+        lastWeek: Number(format.regular_season_weeks)
+            || (season <= 2021 ? 14 : REGULAR_SEASON_LAST_WEEK),
+        slots: Number(format.playoff_slots) || PLAYOFF_SLOTS,
+        toiletSlots: (structure.toilet_bowl_seeds || []).length || TOILET_BOWL_SLOTS,
+        structure,
+    };
+}
 
 function completedThroughWeek() {
     const season = Number(data.season ?? currentSeason);
@@ -4691,27 +4721,37 @@ function getRemainingMatchups(completedWeeks) {
 // Ties in the possible ranges are therefore uncertain until all games finish.
 // Once no weeks remain, the already-sorted standings supply the head-to-head or
 // commissioner tiebreak result.
-function computePlayoffStatus(standings, remainingWeeksCount) {
+//
+// `fixedRecords` ({ abbrev: { wins, losses } }) narrows the bounds for games
+// whose winner a Playoff Machine scenario has already picked: a picked win is
+// a guaranteed RP and win, a picked loss is an RP and win that can't happen.
+function computePlayoffStatus(standings, remainingWeeksCount, fixedRecords = {}) {
     const MAX_RP_PER_WEEK = 1.5;
+    const format = seasonFormat();
     const order = new Map(standings.map((team, index) => [team.abbrev, index]));
+    const bounds = team => {
+        const rp = team.rank_points || 0;
+        const wins = team.wins || 0;
+        const fixed = fixedRecords[team.abbrev] || { wins: 0, losses: 0 };
+        return {
+            minRP: rp + fixed.wins,
+            maxRP: rp + MAX_RP_PER_WEEK * remainingWeeksCount - fixed.losses,
+            minWins: wins + fixed.wins,
+            maxWins: wins + remainingWeeksCount - fixed.losses,
+        };
+    };
     const result = {};
     for (const a of standings) {
-        const aRP = a.rank_points || 0;
-        const aWins = a.wins || 0;
-        const aMinRP = aRP;
-        const aMaxRP = aRP + MAX_RP_PER_WEEK * remainingWeeksCount;
-        const aMinWins = aWins;
-        const aMaxWins = aWins + remainingWeeksCount;
+        const {
+            minRP: aMinRP, maxRP: aMaxRP, minWins: aMinWins, maxWins: aMaxWins,
+        } = bounds(a);
         let canPassA = 0;
         let definitelyAboveA = 0;
         for (const b of standings) {
             if (b.abbrev === a.abbrev) continue;
-            const bRP = b.rank_points || 0;
-            const bWins = b.wins || 0;
-            const bMinRP = bRP;
-            const bMaxRP = bRP + MAX_RP_PER_WEEK * remainingWeeksCount;
-            const bMinWins = bWins;
-            const bMaxWins = bWins + remainingWeeksCount;
+            const {
+                minRP: bMinRP, maxRP: bMaxRP, minWins: bMinWins, maxWins: bMaxWins,
+            } = bounds(b);
 
             let couldPass = bMaxRP > aMinRP;
             if (bMaxRP === aMinRP) {
@@ -4734,9 +4774,9 @@ function computePlayoffStatus(standings, remainingWeeksCount) {
             if (guaranteedAbove) definitelyAboveA++;
         }
         result[a.abbrev] = {
-            clinched: canPassA < PLAYOFF_SLOTS,
-            eliminated: definitelyAboveA >= PLAYOFF_SLOTS,
-            toiletBowlClinched: definitelyAboveA >= standings.length - TOILET_BOWL_SLOTS,
+            clinched: canPassA < format.slots,
+            eliminated: definitelyAboveA >= format.slots,
+            toiletBowlClinched: definitelyAboveA >= standings.length - format.toiletSlots,
         };
     }
     return result;
@@ -4749,19 +4789,21 @@ function stabilizedPlayoffMean(samples, leagueMean) {
         / (scores.length + PLAYOFF_MEAN_PRIOR_GAMES);
 }
 
-function simulatePlayoffOdds(completedThrough = null) {
-    // Returns { byTeam: { abbrev: { name, odds, clinched, mean } }, weeksRemaining, weeksCompleted }
-    // or null if the simulation isn't applicable (offseason, no schedule, no scores yet).
+// Everything the simulation needs, fixed for a given completed week: the
+// standings it starts from, each team's scoring model and the remaining
+// schedule. Returns null when there is nothing left to simulate.
+function preparePlayoffSim(completedThrough = null) {
     if (!data.standings || data.standings.length === 0) return null;
     if (data.is_offseason || data.is_historical) return null;
 
+    const format = seasonFormat();
     const statusContext = getPostseasonStatusContext();
     const cutoff = completedThrough === null
         ? statusContext.completedThrough
-        : Math.max(0, Math.min(REGULAR_SEASON_LAST_WEEK, Number(completedThrough)));
+        : Math.max(0, Math.min(format.lastWeek, Number(completedThrough)));
     const completedScoresByTeam = getCompletedWeekScoresByTeam(cutoff);
     const completedWeeks = (data.weeks || [])
-        .filter(w => w.has_scores && w.week <= REGULAR_SEASON_LAST_WEEK && w.week <= cutoff)
+        .filter(w => w.has_scores && w.week <= format.lastWeek && w.week <= cutoff)
         .map(w => w.week);
     const remaining = getRemainingMatchups(completedWeeks);
     if (remaining.length === 0) return null;
@@ -4783,14 +4825,27 @@ function simulatePlayoffOdds(completedThrough = null) {
     // dominate the rest-of-season forecast. Actual results steadily gain weight:
     // 25% after Week 1, 40% after Week 2, and 50% after Week 3.
     const teamMean = {};
-    const simulationStandings = cutoff === statusContext.completedThrough
+    const standings = cutoff === statusContext.completedThrough
         ? statusContext.standings
         : buildCompletedStandingsSnapshot(cutoff);
-    for (const t of simulationStandings) {
+    for (const t of standings) {
         teamMean[t.abbrev] = stabilizedPlayoffMean(
             completedScoresByTeam[t.abbrev],
             leagueMean
         );
+    }
+
+    // teamMean is only a point estimate of each team's true scoring level, and
+    // early in the season it's built from very few games. Treating it as known
+    // truth in every trial understates uncertainty and makes the odds swing to
+    // extremes after a single week. Instead, draw each team's "true" mean once
+    // per trial from a distribution around teamMean, with spread that shrinks
+    // as more games accumulate (standard-error-of-the-mean shape using the same
+    // prior-games weighting as stabilizedPlayoffMean).
+    const meanUncertaintySD = {};
+    for (const t of standings) {
+        const gamesObserved = (completedScoresByTeam[t.abbrev] || []).filter(Number.isFinite).length;
+        meanUncertaintySD[t.abbrev] = leagueStd / Math.sqrt(gamesObserved + PLAYOFF_MEAN_PRIOR_GAMES);
     }
 
     // Group remaining matchups by week, so top-half RP can be assigned weekly.
@@ -4801,129 +4856,199 @@ function simulatePlayoffOdds(completedThrough = null) {
     }
     const remainingWeekNums = Object.keys(weeksRemaining).map(Number).sort((a, b) => a - b);
 
-    // Initial standings snapshot
+    return {
+        format,
+        cutoff,
+        standings,
+        completedWeeks,
+        remaining,
+        weeksRemaining,
+        remainingWeekNums,
+        teamMean,
+        meanUncertaintySD,
+        leagueMean,
+        leagueStd,
+        // With no completed games, every team has the same scoring distribution
+        // and the exact same prior chance: playoff slots divided by league size.
+        // Running Monte Carlo here only turns sampling noise into a misleading
+        // ranking.
+        neutralPreseason: cutoff === 0,
+    };
+}
+
+function playoffPickKey(week, team1, team2) {
+    return `${week}|${team1}|${team2}`;
+}
+
+// Monte Carlo over the remaining regular-season matchups. Top `slots` by rank
+// points, then wins and points for, make the playoffs.
+//
+// `fixed` maps playoffPickKey(week, team1, team2) to the picked winner. A
+// trial whose sampled scores have the other team winning swaps the two
+// scores, so the picked winner also takes the higher score into the weekly
+// top-half race and points for. The random draws are the same with or without
+// picks (common random numbers), which keeps scenario comparisons from being
+// swamped by sampling noise.
+//
+// Returns { trials, playoffCount: {abbrev: n}, seedCounts: {abbrev: [n per seed]} }.
+function runPlayoffSim(ctx, { fixed = null, trials = PLAYOFF_TRIALS, seed = null } = {}) {
+    const abbrevs = ctx.standings.map(t => t.abbrev);
+    const playoffCount = {};
+    const seedCounts = {};
+    for (const ab of abbrevs) {
+        playoffCount[ab] = 0;
+        seedCounts[ab] = new Array(abbrevs.length).fill(0);
+    }
+    if (ctx.neutralPreseason && !(fixed && fixed.size)) {
+        return { trials: 0, playoffCount, seedCounts };
+    }
+
     const initialRP = {};
     const initialWins = {};
     const initialPF = {};
-    const teamLabel = {};
-    for (const t of simulationStandings) {
+    for (const t of ctx.standings) {
         initialRP[t.abbrev] = t.rank_points || 0;
         initialWins[t.abbrev] = t.wins || 0;
         initialPF[t.abbrev] = t.points_for || 0;
-        teamLabel[t.abbrev] = t.name || t.abbrev;
     }
 
-    const playoffCount = {};
-    for (const t of simulationStandings) playoffCount[t.abbrev] = 0;
+    const random = createSeededRandom(seed ?? (Number(data.season || 1) * 1009 + 17));
+    for (let trial = 0; trial < trials; trial++) {
+        const rp = { ...initialRP };
+        const wins = { ...initialWins };
+        const pf = { ...initialPF };
+        const trialMean = {};
+        for (const ab of abbrevs) {
+            trialMean[ab] = gaussianSample(
+                ctx.teamMean[ab] ?? ctx.leagueMean,
+                ctx.meanUncertaintySD[ab] ?? 0,
+                random
+            );
+        }
 
-    // With no completed games, every team has the same scoring distribution and
-    // the exact same prior chance: playoff slots divided by league size. Running
-    // Monte Carlo here only turns sampling noise into a misleading ranking.
-    const neutralPreseason = cutoff === 0;
+        for (const wk of ctx.remainingWeekNums) {
+            const matchups = ctx.weeksRemaining[wk];
+            const weekScores = {};
+            const teamsThisWeek = new Set();
 
-    // teamMean is only a point estimate of each team's true scoring level, and
-    // early in the season it's built from very few games. Treating it as known
-    // truth in every trial understates uncertainty and makes the odds swing to
-    // extremes after a single week. Instead, draw each team's "true" mean once
-    // per trial from a distribution around teamMean, with spread that shrinks
-    // as more games accumulate (standard-error-of-the-mean shape using the same
-    // prior-games weighting as stabilizedPlayoffMean).
-    const meanUncertaintySD = {};
-    for (const t of simulationStandings) {
-        const gamesObserved = (completedScoresByTeam[t.abbrev] || []).filter(Number.isFinite).length;
-        meanUncertaintySD[t.abbrev] = leagueStd / Math.sqrt(gamesObserved + PLAYOFF_MEAN_PRIOR_GAMES);
-    }
-
-    if (!neutralPreseason) {
-        const random = createSeededRandom(Number(data.season || 1) * 1009 + 17);
-        for (let trial = 0; trial < PLAYOFF_TRIALS; trial++) {
-            const rp = { ...initialRP };
-            const wins = { ...initialWins };
-            const pf = { ...initialPF };
-            const trialMean = {};
-            for (const t of simulationStandings) {
-                trialMean[t.abbrev] = gaussianSample(
-                    teamMean[t.abbrev] ?? leagueMean,
-                    meanUncertaintySD[t.abbrev] ?? 0,
-                    random
-                );
+            for (const m of matchups) {
+                teamsThisWeek.add(m.team1Abbrev);
+                teamsThisWeek.add(m.team2Abbrev);
             }
-
-            for (const wk of remainingWeekNums) {
-                const matchups = weeksRemaining[wk];
-                const weekScores = {};
-                const teamsThisWeek = new Set();
-
+            for (const ab of teamsThisWeek) {
+                weekScores[ab] = gaussianSample(trialMean[ab] ?? ctx.leagueMean, ctx.leagueStd, random);
+            }
+            if (fixed && fixed.size) {
                 for (const m of matchups) {
-                    teamsThisWeek.add(m.team1Abbrev);
-                    teamsThisWeek.add(m.team2Abbrev);
-                }
-                for (const ab of teamsThisWeek) {
-                    weekScores[ab] = gaussianSample(trialMean[ab] ?? leagueMean, leagueStd, random);
-                    pf[ab] = (pf[ab] || 0) + weekScores[ab];
-                }
-                // H2H rank points
-                for (const m of matchups) {
-                    const s1 = weekScores[m.team1Abbrev];
-                    const s2 = weekScores[m.team2Abbrev];
-                    if (s1 > s2) {
-                        rp[m.team1Abbrev] += 1;
-                        wins[m.team1Abbrev] += 1;
-                    } else if (s2 > s1) {
-                        rp[m.team2Abbrev] += 1;
-                        wins[m.team2Abbrev] += 1;
-                    } else {
-                        rp[m.team1Abbrev] += 0.5;
-                        rp[m.team2Abbrev] += 0.5;
+                    const winner = fixed.get(playoffPickKey(wk, m.team1Abbrev, m.team2Abbrev));
+                    if (!winner) continue;
+                    const loser = winner === m.team1Abbrev ? m.team2Abbrev : m.team1Abbrev;
+                    if (weekScores[winner] < weekScores[loser]) {
+                        [weekScores[winner], weekScores[loser]] = [weekScores[loser], weekScores[winner]];
+                    } else if (weekScores[winner] === weekScores[loser]) {
+                        weekScores[winner] += 0.01;
                     }
                 }
-                // Top-half scoring (top half of teams that played this week get +0.5 RP)
-                const sortedThisWeek = Array.from(teamsThisWeek).sort(
-                    (a, b) => weekScores[b] - weekScores[a]
-                );
-                const halfCutoff = Math.floor(sortedThisWeek.length / 2);
-                for (let i = 0; i < halfCutoff; i++) {
-                    rp[sortedThisWeek[i]] += 0.5;
+            }
+            for (const ab of teamsThisWeek) {
+                pf[ab] = (pf[ab] || 0) + weekScores[ab];
+            }
+            // H2H rank points
+            for (const m of matchups) {
+                const s1 = weekScores[m.team1Abbrev];
+                const s2 = weekScores[m.team2Abbrev];
+                if (s1 > s2) {
+                    rp[m.team1Abbrev] += 1;
+                    wins[m.team1Abbrev] += 1;
+                } else if (s2 > s1) {
+                    rp[m.team2Abbrev] += 1;
+                    wins[m.team2Abbrev] += 1;
+                } else {
+                    rp[m.team1Abbrev] += 0.5;
+                    rp[m.team2Abbrev] += 0.5;
                 }
             }
-
-            // Final ranking follows the constitution: RP, wins, then PF.
-            const finalOrder = simulationStandings.map(t => t.abbrev).sort((a, b) => {
-                if (rp[b] !== rp[a]) return rp[b] - rp[a];
-                if (wins[b] !== wins[a]) return wins[b] - wins[a];
-                return pf[b] - pf[a];
-            });
-            for (let i = 0; i < PLAYOFF_SLOTS && i < finalOrder.length; i++) {
-                playoffCount[finalOrder[i]] += 1;
+            // Top-half scoring (top half of teams that played this week get +0.5 RP)
+            const sortedThisWeek = Array.from(teamsThisWeek).sort(
+                (a, b) => weekScores[b] - weekScores[a]
+            );
+            const halfCutoff = Math.floor(sortedThisWeek.length / 2);
+            for (let i = 0; i < halfCutoff; i++) {
+                rp[sortedThisWeek[i]] += 0.5;
             }
         }
-    }
 
+        // Final ranking follows the constitution: RP, wins, then PF.
+        const finalOrder = [...abbrevs].sort((a, b) => {
+            if (rp[b] !== rp[a]) return rp[b] - rp[a];
+            if (wins[b] !== wins[a]) return wins[b] - wins[a];
+            return pf[b] - pf[a];
+        });
+        finalOrder.forEach((ab, index) => {
+            seedCounts[ab][index] += 1;
+            if (index < ctx.format.slots) playoffCount[ab] += 1;
+        });
+    }
+    return { trials, playoffCount, seedCounts };
+}
+
+// Wins and losses a set of picks hands each team, for the clinch bounds.
+function fixedPickRecords(ctx, fixed) {
+    const records = {};
+    if (!fixed) return records;
+    for (const m of ctx.remaining) {
+        const winner = fixed.get(playoffPickKey(m.week, m.team1Abbrev, m.team2Abbrev));
+        if (!winner) continue;
+        const loser = winner === m.team1Abbrev ? m.team2Abbrev : m.team1Abbrev;
+        for (const ab of [winner, loser]) {
+            if (!records[ab]) records[ab] = { wins: 0, losses: 0 };
+        }
+        records[winner].wins += 1;
+        records[loser].losses += 1;
+    }
+    return records;
+}
+
+// Turns a simulation run into per-team odds, seed shares and clinch status.
+function summarizePlayoffSim(ctx, run, fixed = null) {
     const statusMap = computePlayoffStatus(
-        simulationStandings,
-        REGULAR_SEASON_LAST_WEEK - cutoff
+        ctx.standings,
+        ctx.format.lastWeek - ctx.cutoff,
+        fixedPickRecords(ctx, fixed)
     );
     const byTeam = {};
-    const neutralOdds = Math.min(1, PLAYOFF_SLOTS / simulationStandings.length);
-    for (const t of simulationStandings) {
-        const count = playoffCount[t.abbrev];
+    const neutralOdds = Math.min(1, ctx.format.slots / ctx.standings.length);
+    const neutral = run.trials === 0;
+    for (const t of ctx.standings) {
         const status = statusMap[t.abbrev] || { clinched: false, eliminated: false };
         byTeam[t.abbrev] = {
-            name: teamLabel[t.abbrev],
+            name: t.name || t.abbrev,
             abbrev: t.abbrev,
-            odds: neutralPreseason ? neutralOdds : count / PLAYOFF_TRIALS,
+            odds: neutral ? neutralOdds : run.playoffCount[t.abbrev] / run.trials,
+            seedOdds: neutral
+                ? ctx.standings.map(() => 1 / ctx.standings.length)
+                : run.seedCounts[t.abbrev].map(count => count / run.trials),
             clinched: status.clinched,
             eliminated: status.eliminated,
-            mean: teamMean[t.abbrev],
+            mean: ctx.teamMean[t.abbrev],
         };
     }
     return {
         byTeam,
-        weeksRemaining: remainingWeekNums.length,
-        weeksCompleted: completedWeeks.length,
-        completedThrough: cutoff,
-        neutralPreseason,
+        weeksRemaining: ctx.remainingWeekNums.length,
+        weeksCompleted: ctx.completedWeeks.length,
+        completedThrough: ctx.cutoff,
+        neutralPreseason: ctx.neutralPreseason,
     };
+}
+
+function simulatePlayoffOdds(completedThrough = null) {
+    // Returns { byTeam: { abbrev: { name, odds, seedOdds, clinched, mean } },
+    // weeksRemaining, weeksCompleted } or null if the simulation isn't
+    // applicable (offseason, no schedule, no scores yet).
+    const ctx = preparePlayoffSim(completedThrough);
+    if (!ctx) return null;
+    return summarizePlayoffSim(ctx, runPlayoffSim(ctx));
 }
 
 function renderPlayoffOdds() {
@@ -4933,6 +5058,8 @@ function renderPlayoffOdds() {
     if (!card || !grid) return;
 
     const sim = simulatePlayoffOdds();
+    const machineTab = document.getElementById('standings-machine-tab');
+    if (machineTab) machineTab.hidden = !sim;
     if (!sim) {
         card.style.display = 'none';
         return;
@@ -4991,6 +5118,385 @@ function renderPlayoffOdds() {
         `;
     }).join('');
     card.style.display = '';
+}
+
+// ====== PLAYOFF MACHINE ======
+// Standings → Playoff Machine: pick winners for any remaining regular-season
+// game and watch every team's playoff and bracket odds respond. Picks live in
+// the URL (`?picks=11-GSA,12-J/J`) so a scenario can be shared. The Rooting
+// Guide reruns the same simulation with each of the next week's games going
+// each way, using the same random draws so the difference is the game itself.
+// Same trial count as the Standings odds card, so "no picks" matches it exactly.
+const PLAYOFF_MACHINE_TRIALS = PLAYOFF_TRIALS;
+const ROOTING_GUIDE_TRIALS = 1000;
+const PLAYOFF_MACHINE_BRACKETS = [
+    ['championship_seeds', 'Playoffs', 'playoffs'],
+    ['mid_bowl_seeds', BRACKET_LABELS.mid_bowl, 'mid'],
+    ['sewer_series_seeds', BRACKET_LABELS.sewer_series, 'sewer'],
+    ['toilet_bowl_seeds', BRACKET_LABELS.toilet_bowl, 'toilet'],
+];
+
+const playoffMachineState = {
+    ctx: null,
+    picks: new Map(),
+    baseline: null,
+    rootingTeam: null,
+    rootingTimer: null,
+    bound: false,
+};
+
+function encodePlayoffPicks(ctx, picks) {
+    return ctx.remaining
+        .map(m => {
+            const winner = picks.get(playoffPickKey(m.week, m.team1Abbrev, m.team2Abbrev));
+            return winner ? `${m.week}-${winner}` : null;
+        })
+        .filter(Boolean)
+        .join(',');
+}
+
+// Each team plays once a week, so week + winner names the game.
+function decodePlayoffPicks(ctx, encoded) {
+    const picks = new Map();
+    for (const token of String(encoded || '').split(',')) {
+        const dash = token.indexOf('-');
+        if (dash <= 0) continue;
+        const week = Number(token.slice(0, dash));
+        const winner = token.slice(dash + 1);
+        const game = ctx.remaining.find(m => m.week === week
+            && (m.team1Abbrev === winner || m.team2Abbrev === winner));
+        if (game) picks.set(playoffPickKey(week, game.team1Abbrev, game.team2Abbrev), winner);
+    }
+    return picks;
+}
+
+function playoffMachineSummary(ctx, picks, trials = PLAYOFF_MACHINE_TRIALS) {
+    const fixed = picks.size ? picks : null;
+    return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, trials }), fixed);
+}
+
+// Odds shown to managers stay off 0% and 100% until the bounds check makes
+// them certain, as on the Standings odds card.
+function displayPlayoffPct(team) {
+    if (team.clinched) return 100;
+    if (team.eliminated) return 0;
+    return Math.min(99, Math.max(1, Math.round(team.odds * 100)));
+}
+
+function formatPpDelta(delta) {
+    if (!Number.isFinite(delta) || delta === 0) return '—';
+    return delta > 0 ? `+${delta} pp` : `${delta} pp`;
+}
+
+function bracketShares(ctx, team) {
+    return PLAYOFF_MACHINE_BRACKETS
+        .map(([key, label, cls]) => ({ seeds: ctx.format.structure[key] || [], label, cls }))
+        .filter(({ seeds }) => seeds.length)
+        .map(({ seeds, label, cls }) => ({
+            label,
+            cls,
+            share: seeds.reduce((sum, seed) => sum + (team.seedOdds[seed - 1] || 0), 0),
+        }));
+}
+
+function seedStripHtml(ctx, team) {
+    const shares = bracketShares(ctx, team);
+    const title = shares
+        .map(({ label, share }) => `${label} ${Math.round(share * 100)}%`)
+        .join(' · ');
+    const seedTitle = team.seedOdds
+        .map((share, index) => `#${index + 1}: ${Math.round(share * 100)}%`)
+        .join(', ');
+    return `
+        <span class="pm-seed-strip" role="img" aria-label="${escapeHtml(title)}" title="${escapeHtml(`${title}\nSeeds: ${seedTitle}`)}">
+            ${shares.map(({ cls, share }) => share > 0
+                ? `<span class="pm-seed-seg ${cls}" style="width:${(share * 100).toFixed(1)}%"></span>`
+                : '').join('')}
+        </span>`;
+}
+
+function playoffMachineGamesHtml(ctx, picks) {
+    const me = myTeamAbbrev();
+    const liveWeek = Number(data.current_week) || null;
+    return ctx.remainingWeekNums.map(week => {
+        const games = ctx.weeksRemaining[week].map(m => {
+            const key = playoffPickKey(week, m.team1Abbrev, m.team2Abbrev);
+            const pick = picks.get(key) || '';
+            const option = (value, label, extra = '') => `
+                <button type="button" class="pm-pick ${extra} ${pick === value ? 'active' : ''}"
+                    aria-pressed="${pick === value}" data-pm-key="${escapeHtml(key)}" data-pm-winner="${escapeHtml(value)}">${escapeHtml(label)}</button>`;
+            const mine = me && (m.team1Abbrev === me || m.team2Abbrev === me);
+            return `
+                <div class="pm-game ${mine ? 'is-my-team' : ''}" role="group" aria-label="Week ${week}: ${escapeHtml(m.team1Abbrev)} vs ${escapeHtml(m.team2Abbrev)}">
+                    ${option(m.team1Abbrev, m.team1Abbrev, 'team')}
+                    ${option('', 'Sim', 'sim')}
+                    ${option(m.team2Abbrev, m.team2Abbrev, 'team')}
+                </div>`;
+        }).join('');
+        const status = week === liveWeek ? ' <span class="pm-week-note">in progress</span>' : '';
+        return `
+            <div class="pm-week">
+                <div class="pm-week-label">Week ${week}${status}</div>
+                <div class="pm-week-games">${games}</div>
+            </div>`;
+    }).join('');
+}
+
+function playoffMachineResultsHtml(ctx, summary, baseline) {
+    const me = myTeamAbbrev();
+    const teams = Object.values(summary.byTeam).sort((a, b) => {
+        if (b.odds !== a.odds) return b.odds - a.odds;
+        return (b.mean || 0) - (a.mean || 0);
+    });
+    if (me) {
+        const index = teams.findIndex(team => team.abbrev === me);
+        if (index > 0) teams.unshift(...teams.splice(index, 1));
+    }
+    const rows = teams.map(team => {
+        const pct = displayPlayoffPct(team);
+        const base = baseline?.byTeam?.[team.abbrev];
+        const delta = base ? pct - displayPlayoffPct(base) : 0;
+        const deltaClass = delta > 0 ? 'up' : (delta < 0 ? 'down' : 'flat');
+        let chip = '';
+        if (team.clinched) chip = '<span class="playoff-odds-clinch">Clinched</span>';
+        else if (team.eliminated) chip = '<span class="playoff-odds-elim">Eliminated</span>';
+        return `
+            <tr class="${myTeamClass(team.abbrev)}">
+                <th scope="row">${teamProfileButton(team.abbrev, team.name)}${chip}</th>
+                <td class="num pm-pct">${pct}%</td>
+                <td class="num pm-delta ${deltaClass}">${escapeHtml(formatPpDelta(delta))}</td>
+                <td class="pm-seeds">${seedStripHtml(ctx, team)}</td>
+            </tr>`;
+    }).join('');
+    const legend = PLAYOFF_MACHINE_BRACKETS
+        .filter(([key]) => (ctx.format.structure[key] || []).length)
+        .map(([key, label, cls]) => {
+            const seeds = ctx.format.structure[key];
+            const range = seeds.length > 1 ? `${seeds[0]}–${seeds[seeds.length - 1]}` : `${seeds[0]}`;
+            return `<span class="pm-legend-item"><span class="pm-seed-seg ${cls}"></span>${escapeHtml(label)} (seeds ${range})</span>`;
+        }).join('');
+    return `
+        <div class="pm-table-scroll">
+            <table class="pm-table">
+                <caption class="visually-hidden">Playoff odds in this scenario</caption>
+                <thead><tr><th scope="col">Team</th><th scope="col" class="num">Playoffs</th><th scope="col" class="num" title="Change from the odds with no picks">vs now</th><th scope="col">Where they finish</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>
+        <div class="pm-legend">${legend}</div>`;
+}
+
+// For one team, how each undecided game of the next remaining week moves its
+// playoff odds. Respects the scenario's picks; picked games are skipped.
+function computeRootingGuide(ctx, picks, team) {
+    const week = ctx.remainingWeekNums.find(wk => ctx.weeksRemaining[wk]
+        .some(m => !picks.has(playoffPickKey(wk, m.team1Abbrev, m.team2Abbrev))));
+    if (!week) return null;
+    // The team's odds and clinch status with this game decided, for display
+    // through displayPlayoffPct (1–99% unless mathematically settled).
+    const oddsWith = (key, winner) => {
+        const fixed = new Map(picks);
+        fixed.set(key, winner);
+        return summarizePlayoffSim(ctx, runPlayoffSim(ctx, { fixed, trials: ROOTING_GUIDE_TRIALS }), fixed)
+            .byTeam[team];
+    };
+    const games = [];
+    let own = null;
+    for (const m of ctx.weeksRemaining[week]) {
+        const key = playoffPickKey(week, m.team1Abbrev, m.team2Abbrev);
+        if (picks.has(key)) continue;
+        const ifTeam1 = oddsWith(key, m.team1Abbrev);
+        const ifTeam2 = oddsWith(key, m.team2Abbrev);
+        if (m.team1Abbrev === team || m.team2Abbrev === team) {
+            const opponent = m.team1Abbrev === team ? m.team2Abbrev : m.team1Abbrev;
+            own = {
+                opponent,
+                win: m.team1Abbrev === team ? ifTeam1 : ifTeam2,
+                lose: m.team1Abbrev === team ? ifTeam2 : ifTeam1,
+            };
+            continue;
+        }
+        const team1Better = ifTeam1.odds >= ifTeam2.odds;
+        const rootFor = team1Better ? m.team1Abbrev : m.team2Abbrev;
+        games.push({
+            rootFor,
+            against: team1Better ? m.team2Abbrev : m.team1Abbrev,
+            swing: Math.abs(ifTeam1.odds - ifTeam2.odds),
+            best: team1Better ? ifTeam1 : ifTeam2,
+            worst: team1Better ? ifTeam2 : ifTeam1,
+        });
+    }
+    games.sort((a, b) => b.swing - a.swing);
+    return { week, team, own, games };
+}
+
+function rootingGuideHtml(guide, summary) {
+    if (!guide) return '<p class="pm-empty">Every game is picked. Clear a pick to see who to root for.</p>';
+    const status = summary.byTeam[guide.team];
+    if (status?.clinched || status?.eliminated) {
+        return `<p class="pm-empty">${escapeHtml(guide.team)} is ${status.clinched ? 'already in' : 'already out'} in this scenario.</p>`;
+    }
+    const pct = entry => `${displayPlayoffPct(entry)}%`;
+    const ownLine = guide.own ? `
+        <li class="pm-root-own">
+            <span class="pm-root-game">Beat ${escapeHtml(guide.own.opponent)}</span>
+            <span class="pm-root-odds">${pct(guide.own.win)} with a win · ${pct(guide.own.lose)} with a loss</span>
+        </li>` : '';
+    const rows = guide.games.map(game => {
+        const pp = Math.round(game.swing * 100);
+        return `
+        <li class="${pp < 1 ? 'pm-root-quiet' : ''}">
+            <span class="pm-root-game">Root for <strong>${escapeHtml(game.rootFor)}</strong> over ${escapeHtml(game.against)}</span>
+            <span class="pm-root-odds">${pp < 1 ? 'barely matters' : `${pct(game.best)} vs ${pct(game.worst)} <span class="pm-root-swing">(${pp} pp)</span>`}</span>
+        </li>`;
+    }).join('');
+    return `<ol class="pm-root-list">${ownLine}${rows}</ol>
+        <p class="pm-footnote">Week ${guide.week} · ${ROOTING_GUIDE_TRIALS.toLocaleString()} simulations per outcome.</p>`;
+}
+
+function renderPlayoffMachine() {
+    const container = document.getElementById('playoff-machine');
+    if (!container) return;
+    const ctx = preparePlayoffSim();
+    const tab = document.getElementById('standings-machine-tab');
+    if (tab) tab.hidden = !ctx;
+    playoffMachineState.ctx = ctx;
+    if (!ctx) {
+        container.innerHTML = `<p class="pm-empty">${data.is_historical || data.is_offseason
+            ? 'The Playoff Machine runs during the regular season.'
+            : 'The regular season is decided. No games are left to play out.'}</p>`;
+        return;
+    }
+    playoffMachineState.picks = decodePlayoffPicks(ctx, parseHashRoute().params.get('picks'));
+    playoffMachineState.baseline = playoffMachineSummary(ctx, new Map());
+    const me = myTeamAbbrev();
+    if (!playoffMachineState.rootingTeam || !ctx.teamMean[playoffMachineState.rootingTeam]) {
+        playoffMachineState.rootingTeam = me && ctx.teamMean[me] !== undefined
+            ? me
+            : ctx.standings[Math.min(ctx.format.slots, ctx.standings.length - 1)].abbrev;
+    }
+    const teamOptions = ctx.standings.map(team => `
+        <option value="${escapeHtml(team.abbrev)}" ${team.abbrev === playoffMachineState.rootingTeam ? 'selected' : ''}>${escapeHtml(team.name || team.abbrev)}</option>`).join('');
+
+    container.innerHTML = `
+        <div class="pm-intro">
+            <p>Pick winners for the rest of the regular season and the odds update. Games left on <strong>Sim</strong> are simulated ${PLAYOFF_MACHINE_TRIALS.toLocaleString()} times, the same way as the Standings playoff odds.</p>
+            <div class="pm-actions">
+                <button type="button" class="pm-action" data-pm-action="favorites">Favorites win</button>
+                ${me ? `<button type="button" class="pm-action" data-pm-action="win-out">${escapeHtml(me)} wins out</button>` : ''}
+                <button type="button" class="pm-action" data-pm-action="reset">Reset</button>
+                <button type="button" class="pm-action" data-pm-action="share">Copy link</button>
+                <span class="pm-status" id="pm-status" aria-live="polite"></span>
+            </div>
+        </div>
+        <div class="pm-layout">
+            <section class="pm-panel pm-games" aria-label="Remaining games">
+                <h2 class="pm-heading">Remaining games</h2>
+                <div id="pm-games"></div>
+            </section>
+            <div class="pm-side">
+                <section class="pm-panel" aria-label="Playoff odds in this scenario">
+                    <h2 class="pm-heading">Odds in this scenario <span class="pm-pick-count" id="pm-pick-count"></span></h2>
+                    <div id="pm-results" aria-live="polite"></div>
+                </section>
+                <section class="pm-panel" aria-label="Rooting guide">
+                    <div class="pm-heading-row">
+                        <h2 class="pm-heading">Rooting guide</h2>
+                        <select id="pm-rooting-team" class="pm-select" aria-label="Rooting guide team">${teamOptions}</select>
+                    </div>
+                    <div id="pm-rooting"></div>
+                </section>
+            </div>
+        </div>
+        <p class="playoff-odds-disclaimer">Picks decide the winner only. Each team's score is still simulated, so the weekly top-half rank point and points for still vary. Clinched and Eliminated are mathematical guarantees given your picks. For entertainment only.</p>`;
+
+    if (!playoffMachineState.bound) {
+        container.addEventListener('click', handlePlayoffMachineClick);
+        container.addEventListener('change', event => {
+            if (event.target.id !== 'pm-rooting-team') return;
+            playoffMachineState.rootingTeam = event.target.value;
+            schedulePlayoffMachineRootingGuide(0);
+        });
+        playoffMachineState.bound = true;
+    }
+    updatePlayoffMachine({ syncRoute: false });
+}
+
+function updatePlayoffMachine({ syncRoute = true } = {}) {
+    const { ctx, picks, baseline } = playoffMachineState;
+    if (!ctx) return;
+    const games = document.getElementById('pm-games');
+    const results = document.getElementById('pm-results');
+    const count = document.getElementById('pm-pick-count');
+    if (!games || !results) return;
+    games.innerHTML = playoffMachineGamesHtml(ctx, picks);
+    const summary = picks.size ? playoffMachineSummary(ctx, picks) : baseline;
+    playoffMachineState.summary = summary;
+    results.innerHTML = playoffMachineResultsHtml(ctx, summary, baseline);
+    if (count) {
+        count.textContent = picks.size
+            ? `${picks.size} of ${ctx.remaining.length} games picked`
+            : 'no picks yet';
+    }
+    if (syncRoute) replaceRouteParams({ picks: encodePlayoffPicks(ctx, picks) || null });
+    schedulePlayoffMachineRootingGuide();
+}
+
+// The guide runs about ten simulations, so it waits until the picks settle.
+function schedulePlayoffMachineRootingGuide(delay = 150) {
+    clearTimeout(playoffMachineState.rootingTimer);
+    const target = document.getElementById('pm-rooting');
+    if (target) target.classList.add('is-updating');
+    playoffMachineState.rootingTimer = setTimeout(() => {
+        const { ctx, picks, rootingTeam, summary } = playoffMachineState;
+        const node = document.getElementById('pm-rooting');
+        if (!ctx || !node) return;
+        node.innerHTML = rootingGuideHtml(computeRootingGuide(ctx, picks, rootingTeam), summary);
+        node.classList.remove('is-updating');
+    }, delay);
+}
+
+async function handlePlayoffMachineClick(event) {
+    const { ctx, picks } = playoffMachineState;
+    if (!ctx) return;
+    const pickButton = event.target.closest('[data-pm-key]');
+    if (pickButton) {
+        const winner = pickButton.dataset.pmWinner;
+        if (winner) picks.set(pickButton.dataset.pmKey, winner);
+        else picks.delete(pickButton.dataset.pmKey);
+        updatePlayoffMachine();
+        return;
+    }
+    const action = event.target.closest('[data-pm-action]')?.dataset.pmAction;
+    if (!action) return;
+    const status = document.getElementById('pm-status');
+    if (action === 'reset') {
+        picks.clear();
+    } else if (action === 'favorites') {
+        for (const m of ctx.remaining) {
+            const favorite = (ctx.teamMean[m.team1Abbrev] ?? 0) >= (ctx.teamMean[m.team2Abbrev] ?? 0)
+                ? m.team1Abbrev
+                : m.team2Abbrev;
+            picks.set(playoffPickKey(m.week, m.team1Abbrev, m.team2Abbrev), favorite);
+        }
+    } else if (action === 'win-out') {
+        const me = myTeamAbbrev();
+        for (const m of ctx.remaining) {
+            if (m.team1Abbrev === me || m.team2Abbrev === me) {
+                picks.set(playoffPickKey(m.week, m.team1Abbrev, m.team2Abbrev), me);
+            }
+        }
+    } else if (action === 'share') {
+        try {
+            await navigator.clipboard.writeText(location.href);
+            if (status) status.textContent = 'Link copied';
+        } catch {
+            if (status) status.textContent = 'Copy the address bar to share';
+        }
+        return;
+    }
+    if (status) status.textContent = '';
+    updatePlayoffMachine();
 }
 
 function scheduleTeams() {
@@ -13855,12 +14361,18 @@ async function navigateToView(view, subview, detail) {
         }
     } else if (view === 'history' && sub === 'records') {
         if (setHofRoute(detail)) viewFresh.delete(view);
+    } else if (view === 'standings' && sub === 'machine') {
+        // A link straight to the Machine (or to a shared scenario) arrives
+        // here with the Table already rendered and the view marked fresh.
+        viewFresh.delete(view);
     }
 
     updatePageMetadata(view, sub, detail);
 
     if (view === 'matchups' && sub) {
         activateGenericSubview('matchups', sub);
+    } else if (view === 'standings' && sub) {
+        activateGenericSubview('standings', sub);
     } else if (view === 'stats' && sub) {
         activateGenericSubview('stats', sub);
     } else if (view === 'history' && sub) {

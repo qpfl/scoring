@@ -34,7 +34,10 @@ def test_desktop_homepage_uses_left_aligned_masthead_and_championship_showcase()
 
 def test_mobile_header_uses_compact_masthead_layout():
     styles = WEB_STYLES.read_text(encoding='utf-8')
-    mobile = styles[styles.rindex('@media (max-width: 600px)') :]
+    # The phone-width block that styles the masthead (other sections have
+    # their own 600px blocks later in the file).
+    blocks = styles.split('@media (max-width: 600px)')[1:]
+    mobile = next(block for block in blocks if '\n    header {' in block)
 
     assert 'header {' in mobile
     assert 'padding: 0.25rem 4.5rem 0.625rem 0;' in mobile

@@ -246,10 +246,11 @@ def test_split_runtime_files_have_freshness_and_workflow_coverage():
     # hall_of_fame.json is rebuilt on every scoring run, so it shares the 60s
     # bucket with transactions/drafts (see the test below). The constitution
     # and rule-change history change whenever a rule passes, so a day-long
-    # cache would keep showing managers the old rules.
+    # cache would keep showing managers the old rules. The Ring of Honor files
+    # (manual_honors, ring_of_honor_numbers) change when inductees are added.
     assert (
         'data/shared/(?:hall_of_fame|hall_of_fame_records|transactions|drafts|constitution'
-        '|rule_changes_history)' in vercel
+        '|rule_changes_history|manual_honors|ring_of_honor_numbers)' in vercel
     )
 
 

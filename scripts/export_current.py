@@ -35,6 +35,7 @@ from qpfl import (  # noqa: E402
     team_names,
 )
 from qpfl.availability import COACH_OVERRIDES_FILENAME  # noqa: E402
+from qpfl.config import get_config  # noqa: E402
 from qpfl.injuries import load_injury_statuses  # noqa: E402
 from qpfl.json_scorer import update_standings_json  # noqa: E402
 from qpfl.models import PlayerScore  # noqa: E402
@@ -672,6 +673,18 @@ def build_completed_standings(
     return result
 
 
+def playoff_format() -> dict[str, Any]:
+    """The league's playoff format, for the site's playoff odds and Playoff Machine."""
+    config = get_config()
+    structure = config.playoff_structure
+    return {
+        'regular_season_weeks': config.regular_season_weeks,
+        'playoff_weeks': config.playoff_weeks,
+        'playoff_slots': len(structure.get('championship_seeds', [])),
+        'playoff_structure': structure,
+    }
+
+
 def completed_weeks(data: dict, season: int) -> int:
     """The last week of the season whose games have all finished."""
     completed_by_season = data.get('hall_of_fame', {}).get('completed_through', {})
@@ -766,6 +779,7 @@ def write_split_runtime_data(data: dict, web_dir: Path, season: int) -> None:
             'is_historical': False,
             'is_offseason': data.get('is_offseason', False),
             'trade_deadline_week': data.get('trade_deadline_week', 12),
+            'playoff_format': playoff_format(),
             'teams': data.get('teams', []),
             'schedule': data.get('schedule', []),
             'weeks_available': sorted(
