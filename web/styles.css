@@ -8359,10 +8359,11 @@ a.schedule-row:focus-visible {
     text-align: right;
 }
 
-/* Game log scores are centered so a wider BYE tag lines up with them. */
-.player-modal-table th.game-log-score,
-.player-modal-table td.game-log-score,
-.player-modal-table td.game-log-score .score-breakdown {
+/* The game log is centered throughout, so a wider BYE tag lines up with
+   the scores around it. */
+.player-modal-table.player-game-log-table th,
+.player-modal-table.player-game-log-table td,
+.player-game-log-table .score-breakdown {
     text-align: center;
 }
 
