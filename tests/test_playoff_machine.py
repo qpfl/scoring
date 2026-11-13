@@ -25,13 +25,15 @@ def _league(completed: int = 3):
     """
     schedule = []
     for week in range(1, 16):
-        rotated = TEAMS[:1] + TEAMS[1:][week % 9:] + TEAMS[1:][:week % 9]
+        rotated = TEAMS[:1] + TEAMS[1:][week % 9 :] + TEAMS[1:][: week % 9]
         pairs = [(rotated[i], rotated[-1 - i]) for i in range(5)]
-        schedule.append({
-            'week': week,
-            'is_playoffs': False,
-            'matchups': [{'team1': a, 'team2': b} for a, b in pairs],
-        })
+        schedule.append(
+            {
+                'week': week,
+                'is_playoffs': False,
+                'matchups': [{'team1': a, 'team2': b} for a, b in pairs],
+            }
+        )
     strength = {abbrev: 140 - 6 * index for index, abbrev in enumerate(TEAMS)}
     weeks = []
     record = {abbrev: {'wins': 0, 'rp': 0.0, 'pf': 0.0} for abbrev in TEAMS}
@@ -39,10 +41,12 @@ def _league(completed: int = 3):
         matchups = []
         for game in week['matchups']:
             a, b = game['team1'], game['team2']
-            matchups.append({
-                'team1': {'abbrev': a, 'total_score': strength[a]},
-                'team2': {'abbrev': b, 'total_score': strength[b]},
-            })
+            matchups.append(
+                {
+                    'team1': {'abbrev': a, 'total_score': strength[a]},
+                    'team2': {'abbrev': b, 'total_score': strength[b]},
+                }
+            )
             winner = a if strength[a] > strength[b] else b
             record[winner]['wins'] += 1
             record[winner]['rp'] += 1

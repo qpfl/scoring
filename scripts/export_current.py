@@ -673,7 +673,6 @@ def build_completed_standings(
     return result
 
 
-
 def playoff_format() -> dict[str, Any]:
     """The league's playoff format, for the site's playoff odds and Playoff Machine."""
     config = get_config()
@@ -684,6 +683,7 @@ def playoff_format() -> dict[str, Any]:
         'playoff_slots': len(structure.get('championship_seeds', [])),
         'playoff_structure': structure,
     }
+
 
 def completed_weeks(data: dict, season: int) -> int:
     """The last week of the season whose games have all finished."""
