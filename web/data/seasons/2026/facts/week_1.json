@@ -1021,6 +1021,71 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "S/T",
+      "value": 126,
+      "unit": "pts",
+      "subject": "{team:S/T}",
+      "detail": "beat {team:WJK} 126-74"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "AYP",
+      "value": 52,
+      "unit": "pts",
+      "subject": "{team:AYP}",
+      "detail": "lost to {team:CWR} 52-100"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "S/T",
+      "value": 52,
+      "unit": "margin",
+      "subject": "{team:S/T}",
+      "detail": "beat {team:WJK} 126-74"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "CGK",
+      "value": 9,
+      "unit": "margin",
+      "subject": "{team:CGK}",
+      "detail": "beat {team:AST} 89-80"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "AST",
+      "value": 37,
+      "unit": "pts",
+      "subject": "Bryce Young",
+      "detail": "QB on {team:AST}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "J/J",
+      "value": 25,
+      "unit": "pts",
+      "subject": "{team:J/J}",
+      "detail": "benched D'Andre Swift (31) for De'Von Achane (6), and it cost the game"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "GSA",
+      "value": 40,
+      "unit": "pts",
+      "subject": "Caleb Williams",
+      "detail": "QB for {team:GSA}"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -1033,5 +1098,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:16.777243+00:00"
+  "generated_at": "2026-11-13T22:35:06.819382+00:00"
 }

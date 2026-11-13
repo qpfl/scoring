@@ -1,0 +1,880 @@
+{
+  "season": 2025,
+  "teams": {
+    "S/T": {
+      "team": "S/T",
+      "team_name": "Drunk Darts Don't Count",
+      "record": "10-5",
+      "rank": 1,
+      "teams": 10,
+      "finishes": [
+        "2nd Place"
+      ],
+      "points_for": 1494,
+      "best_week": {
+        "week": 14,
+        "week_label": "Week 14",
+        "score": 140,
+        "opponent": "RPA",
+        "opponent_score": 82,
+        "result": "W"
+      },
+      "worst_week": {
+        "week": 8,
+        "week_label": "Week 8",
+        "score": 48,
+        "opponent": "J/J",
+        "opponent_score": 108,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 14,
+        "week_label": "Week 14",
+        "score": 140,
+        "opponent": "RPA",
+        "opponent_score": 82,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 8,
+        "week_label": "Week 8",
+        "score": 48,
+        "opponent": "J/J",
+        "opponent_score": 108,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Jahmyr Gibbs",
+        "position": "RB",
+        "points": 259,
+        "starts": 16
+      },
+      "most_started": {
+        "player": "Jahmyr Gibbs",
+        "position": "RB",
+        "points": 259,
+        "starts": 16
+      },
+      "lineup_iq": 85.1,
+      "luck": -0.5,
+      "top_add": {
+        "player": "Woody Marks",
+        "position": "RB",
+        "points": 14,
+        "starts": 2,
+        "week": 8
+      },
+      "revenge_wins": [
+        {
+          "week": 10,
+          "week_label": "Week 10",
+          "score": 128,
+          "opponent": "CWR",
+          "opponent_score": 127,
+          "result": "W"
+        },
+        {
+          "week": 12,
+          "week_label": "Week 12",
+          "score": 123,
+          "opponent": "J/J",
+          "opponent_score": 85,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Josh Allen",
+        "position": "QB",
+        "points": 79,
+        "starts": 3
+      }
+    },
+    "CGK": {
+      "team": "CGK",
+      "team_name": "Josh Allen's Deleted Tweets",
+      "record": "11-4",
+      "rank": 2,
+      "teams": 10,
+      "finishes": [
+        "Champion"
+      ],
+      "points_for": 1493,
+      "best_week": {
+        "week": 15,
+        "week_label": "Week 15",
+        "score": 167,
+        "opponent": "S/T",
+        "opponent_score": 129,
+        "result": "W"
+      },
+      "worst_week": {
+        "week": 10,
+        "week_label": "Week 10",
+        "score": 66,
+        "opponent": "RPA",
+        "opponent_score": 85,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 11,
+        "week_label": "Week 11",
+        "score": 137,
+        "opponent": "WJK",
+        "opponent_score": 62,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 7,
+        "week_label": "Week 7",
+        "score": 70,
+        "opponent": "GSA",
+        "opponent_score": 108,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Josh Allen",
+        "position": "QB",
+        "points": 399,
+        "starts": 16
+      },
+      "most_started": {
+        "player": "Josh Allen",
+        "position": "QB",
+        "points": 399,
+        "starts": 16
+      },
+      "lineup_iq": 83.8,
+      "luck": 1.5,
+      "top_add": null,
+      "revenge_wins": [
+        {
+          "week": 12,
+          "week_label": "Week 12",
+          "score": 72,
+          "opponent": "CWR",
+          "opponent_score": 47,
+          "result": "W"
+        },
+        {
+          "week": 13,
+          "week_label": "Week 13",
+          "score": 81,
+          "opponent": "J/J",
+          "opponent_score": 71,
+          "result": "W"
+        },
+        {
+          "week": 14,
+          "week_label": "Week 14",
+          "score": 101,
+          "opponent": "GSA",
+          "opponent_score": 54,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Amon-Ra St. Brown",
+        "position": "WR",
+        "points": 53,
+        "starts": 3
+      }
+    },
+    "CWR": {
+      "team": "CWR",
+      "team_name": "Lamarmageddon",
+      "record": "9-6",
+      "rank": 3,
+      "teams": 10,
+      "finishes": [
+        "3rd Place"
+      ],
+      "points_for": 1343,
+      "best_week": {
+        "week": 10,
+        "week_label": "Week 10",
+        "score": 127,
+        "opponent": "S/T",
+        "opponent_score": 128,
+        "result": "L"
+      },
+      "worst_week": {
+        "week": 12,
+        "week_label": "Week 12",
+        "score": 47,
+        "opponent": "CGK",
+        "opponent_score": 72,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 2,
+        "week_label": "Week 2",
+        "score": 110,
+        "opponent": "WJK",
+        "opponent_score": 42,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 8,
+        "week_label": "Week 8",
+        "score": 68,
+        "opponent": "GSA",
+        "opponent_score": 137,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Jonathan Taylor",
+        "position": "RB",
+        "points": 286,
+        "starts": 15
+      },
+      "most_started": {
+        "player": "Jonathan Taylor",
+        "position": "RB",
+        "points": 286,
+        "starts": 15
+      },
+      "lineup_iq": 75.0,
+      "luck": 0.0,
+      "top_add": {
+        "player": "Oronde Gadsden II",
+        "position": "TE",
+        "points": 5,
+        "starts": 2,
+        "week": 8
+      },
+      "revenge_wins": [
+        {
+          "week": 15,
+          "week_label": "Week 15",
+          "score": 88,
+          "opponent": "AYP",
+          "opponent_score": 59,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Jahmyr Gibbs",
+        "position": "RB",
+        "points": 53,
+        "starts": 3
+      }
+    },
+    "SLS": {
+      "team": "SLS",
+      "team_name": "The Red Tide",
+      "record": "9-6",
+      "rank": 4,
+      "teams": 10,
+      "finishes": [
+        "4th Place"
+      ],
+      "points_for": 1292,
+      "best_week": {
+        "week": 8,
+        "week_label": "Week 8",
+        "score": 115,
+        "opponent": "AST",
+        "opponent_score": 64,
+        "result": "W"
+      },
+      "worst_week": {
+        "week": 1,
+        "week_label": "Week 1",
+        "score": 58,
+        "opponent": "AYP",
+        "opponent_score": 75,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 8,
+        "week_label": "Week 8",
+        "score": 115,
+        "opponent": "AST",
+        "opponent_score": 64,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 16,
+        "week_label": "Semi-Finals",
+        "score": 70,
+        "opponent": "CGK",
+        "opponent_score": 106,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Jalen Hurts",
+        "position": "QB",
+        "points": 303,
+        "starts": 13
+      },
+      "most_started": {
+        "player": "Cameron Dicker",
+        "position": "K",
+        "points": 119,
+        "starts": 15
+      },
+      "lineup_iq": 81.1,
+      "luck": 1.1,
+      "top_add": {
+        "player": "Wan'Dale Robinson",
+        "position": "WR",
+        "points": 28,
+        "starts": 5,
+        "week": 8
+      },
+      "revenge_wins": [
+        {
+          "week": 14,
+          "week_label": "Week 14",
+          "score": 98,
+          "opponent": "AYP",
+          "opponent_score": 61,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Christian McCaffrey",
+        "position": "RB",
+        "points": 53,
+        "starts": 2
+      }
+    },
+    "GSA": {
+      "team": "GSA",
+      "team_name": "No Kings Except Henry",
+      "record": "9-6",
+      "rank": 5,
+      "teams": 10,
+      "finishes": [
+        "5th Place"
+      ],
+      "points_for": 1322,
+      "best_week": {
+        "week": 8,
+        "week_label": "Week 8",
+        "score": 137,
+        "opponent": "CWR",
+        "opponent_score": 68,
+        "result": "W"
+      },
+      "worst_week": {
+        "week": 14,
+        "week_label": "Week 14",
+        "score": 54,
+        "opponent": "CGK",
+        "opponent_score": 101,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 13,
+        "week_label": "Week 13",
+        "score": 127,
+        "opponent": "RPA",
+        "opponent_score": 37,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 14,
+        "week_label": "Week 14",
+        "score": 54,
+        "opponent": "CGK",
+        "opponent_score": 101,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Patrick Mahomes II",
+        "position": "QB",
+        "points": 313,
+        "starts": 14
+      },
+      "most_started": {
+        "player": "Patrick Mahomes II",
+        "position": "QB",
+        "points": 313,
+        "starts": 14
+      },
+      "lineup_iq": 80.0,
+      "luck": 0.4,
+      "top_add": {
+        "player": "Tez Johnson",
+        "position": "WR",
+        "points": 13,
+        "starts": 2,
+        "week": 8
+      },
+      "revenge_wins": [
+        {
+          "week": 15,
+          "week_label": "Week 15",
+          "score": 73,
+          "opponent": "WJK",
+          "opponent_score": 65,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Josh Allen",
+        "position": "QB",
+        "points": 43,
+        "starts": 1
+      }
+    },
+    "AYP": {
+      "team": "AYP",
+      "team_name": "Blowing Y'all to Smithereens",
+      "record": "7-8",
+      "rank": 6,
+      "teams": 10,
+      "finishes": [
+        "6th Place"
+      ],
+      "points_for": 1216,
+      "best_week": {
+        "week": 9,
+        "week_label": "Week 9",
+        "score": 121,
+        "opponent": "J/J",
+        "opponent_score": 45,
+        "result": "W"
+      },
+      "worst_week": {
+        "week": 5,
+        "week_label": "Week 5",
+        "score": 45,
+        "opponent": "AST",
+        "opponent_score": 79,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 9,
+        "week_label": "Week 9",
+        "score": 121,
+        "opponent": "J/J",
+        "opponent_score": 45,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 14,
+        "week_label": "Week 14",
+        "score": 61,
+        "opponent": "SLS",
+        "opponent_score": 98,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Drake Maye",
+        "position": "QB",
+        "points": 309,
+        "starts": 14
+      },
+      "most_started": {
+        "player": "Drake Maye",
+        "position": "QB",
+        "points": 309,
+        "starts": 14
+      },
+      "lineup_iq": 80.9,
+      "luck": -0.3,
+      "top_add": {
+        "player": "Kyle Monangai",
+        "position": "RB",
+        "points": 56,
+        "starts": 6,
+        "week": 8
+      },
+      "revenge_wins": [
+        {
+          "week": 10,
+          "week_label": "Week 10",
+          "score": 90,
+          "opponent": "AST",
+          "opponent_score": 88,
+          "result": "W"
+        },
+        {
+          "week": 11,
+          "week_label": "Week 11",
+          "score": 67,
+          "opponent": "RPA",
+          "opponent_score": 54,
+          "result": "W"
+        },
+        {
+          "week": 13,
+          "week_label": "Week 13",
+          "score": 103,
+          "opponent": "S/T",
+          "opponent_score": 75,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Jared Goff",
+        "position": "QB",
+        "points": 56,
+        "starts": 2
+      }
+    },
+    "J/J": {
+      "team": "J/J",
+      "team_name": "Sydney Sweeney has Great Jean(ty)s",
+      "record": "7-8",
+      "rank": 7,
+      "teams": 10,
+      "finishes": [
+        "7th Place",
+        "Toilet Bowl"
+      ],
+      "points_for": 1186,
+      "best_week": {
+        "week": 4,
+        "week_label": "Week 4",
+        "score": 132,
+        "opponent": "RPA",
+        "opponent_score": 94,
+        "result": "W"
+      },
+      "worst_week": {
+        "week": 10,
+        "week_label": "Week 10",
+        "score": 44,
+        "opponent": "WJK",
+        "opponent_score": 62,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 5,
+        "week_label": "Week 5",
+        "score": 108,
+        "opponent": "WJK",
+        "opponent_score": 38,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 9,
+        "week_label": "Week 9",
+        "score": 45,
+        "opponent": "AYP",
+        "opponent_score": 121,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "George Pickens",
+        "position": "WR",
+        "points": 159,
+        "starts": 13
+      },
+      "most_started": {
+        "player": "Ashton Jeanty",
+        "position": "RB",
+        "points": 132,
+        "starts": 14
+      },
+      "lineup_iq": 82.9,
+      "luck": 0.2,
+      "top_add": {
+        "player": "Shane Steichen",
+        "position": "HC",
+        "points": 6,
+        "starts": 2,
+        "week": 8
+      },
+      "revenge_wins": [
+        {
+          "week": 11,
+          "week_label": "Week 11",
+          "score": 66,
+          "opponent": "SLS",
+          "opponent_score": 64,
+          "result": "W"
+        },
+        {
+          "week": 16,
+          "week_label": "Semi-Finals",
+          "score": 121,
+          "opponent": "AST",
+          "opponent_score": 71,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Lamar Jackson",
+        "position": "QB",
+        "points": 55,
+        "starts": 2
+      }
+    },
+    "WJK": {
+      "team": "WJK",
+      "team_name": "Austin Bowers",
+      "record": "5-10",
+      "rank": 8,
+      "teams": 10,
+      "finishes": [
+        "8th Place",
+        "Toilet Bowl"
+      ],
+      "points_for": 1055,
+      "best_week": {
+        "week": 9,
+        "week_label": "Week 9",
+        "score": 118,
+        "opponent": "AST",
+        "opponent_score": 94,
+        "result": "W"
+      },
+      "worst_week": {
+        "week": 5,
+        "week_label": "Week 5",
+        "score": 38,
+        "opponent": "J/J",
+        "opponent_score": 108,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 9,
+        "week_label": "Week 9",
+        "score": 118,
+        "opponent": "AST",
+        "opponent_score": 94,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 11,
+        "week_label": "Week 11",
+        "score": 62,
+        "opponent": "CGK",
+        "opponent_score": 137,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Justin Herbert",
+        "position": "QB",
+        "points": 244,
+        "starts": 13
+      },
+      "most_started": {
+        "player": "Justin Herbert",
+        "position": "QB",
+        "points": 244,
+        "starts": 13
+      },
+      "lineup_iq": 74.6,
+      "luck": -0.1,
+      "top_add": null,
+      "revenge_wins": [
+        {
+          "week": 10,
+          "week_label": "Week 10",
+          "score": 62,
+          "opponent": "J/J",
+          "opponent_score": 44,
+          "result": "W"
+        },
+        {
+          "week": 12,
+          "week_label": "Week 12",
+          "score": 75,
+          "opponent": "SLS",
+          "opponent_score": 70,
+          "result": "W"
+        },
+        {
+          "week": 13,
+          "week_label": "Week 13",
+          "score": 83,
+          "opponent": "CWR",
+          "opponent_score": 74,
+          "result": "W"
+        },
+        {
+          "week": 16,
+          "week_label": "Semi-Finals",
+          "score": 105,
+          "opponent": "RPA",
+          "opponent_score": 94,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Josh Allen",
+        "position": "QB",
+        "points": 76,
+        "starts": 2
+      }
+    },
+    "RPA": {
+      "team": "RPA",
+      "team_name": "OmaRyan it's So Big",
+      "record": "5-10",
+      "rank": 9,
+      "teams": 10,
+      "finishes": [
+        "9th Place",
+        "Toilet Bowl"
+      ],
+      "points_for": 1080,
+      "best_week": {
+        "week": 4,
+        "week_label": "Week 4",
+        "score": 94,
+        "opponent": "J/J",
+        "opponent_score": 132,
+        "result": "L"
+      },
+      "worst_week": {
+        "week": 13,
+        "week_label": "Week 13",
+        "score": 37,
+        "opponent": "GSA",
+        "opponent_score": 127,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 12,
+        "week_label": "Week 12",
+        "score": 90,
+        "opponent": "AST",
+        "opponent_score": 57,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 13,
+        "week_label": "Week 13",
+        "score": 37,
+        "opponent": "GSA",
+        "opponent_score": 127,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Jaxon Smith-Njigba",
+        "position": "WR",
+        "points": 202,
+        "starts": 14
+      },
+      "most_started": {
+        "player": "Jaxon Smith-Njigba",
+        "position": "WR",
+        "points": 202,
+        "starts": 14
+      },
+      "lineup_iq": 77.5,
+      "luck": 0.4,
+      "top_add": {
+        "player": "Rhamondre Stevenson",
+        "position": "RB",
+        "points": 4,
+        "starts": 1,
+        "week": 8
+      },
+      "revenge_wins": [
+        {
+          "week": 10,
+          "week_label": "Week 10",
+          "score": 85,
+          "opponent": "CGK",
+          "opponent_score": 66,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Patrick Mahomes II",
+        "position": "QB",
+        "points": 61,
+        "starts": 2
+      }
+    },
+    "AST": {
+      "team": "AST",
+      "team_name": "If You Ain't First You're Last",
+      "record": "3-12",
+      "rank": 10,
+      "teams": 10,
+      "finishes": [
+        "10th Place",
+        "Toilet Bowl"
+      ],
+      "points_for": 1125,
+      "best_week": {
+        "week": 14,
+        "week_label": "Week 14",
+        "score": 98,
+        "opponent": "WJK",
+        "opponent_score": 68,
+        "result": "W"
+      },
+      "worst_week": {
+        "week": 17,
+        "week_label": "Championship Week",
+        "score": 37,
+        "opponent": "RPA",
+        "opponent_score": 49,
+        "result": "L"
+      },
+      "biggest_win": {
+        "week": 15,
+        "week_label": "Week 15",
+        "score": 93,
+        "opponent": "J/J",
+        "opponent_score": 51,
+        "result": "W"
+      },
+      "worst_loss": {
+        "week": 3,
+        "week_label": "Week 3",
+        "score": 65,
+        "opponent": "S/T",
+        "opponent_score": 121,
+        "result": "L"
+      },
+      "mvp": {
+        "player": "Jared Goff",
+        "position": "QB",
+        "points": 248,
+        "starts": 12
+      },
+      "most_started": {
+        "player": "Jared Goff",
+        "position": "QB",
+        "points": 248,
+        "starts": 12
+      },
+      "lineup_iq": 75.5,
+      "luck": -2.7,
+      "top_add": {
+        "player": "Rico Dowdle",
+        "position": "RB",
+        "points": 75,
+        "starts": 7,
+        "week": 8
+      },
+      "revenge_wins": [
+        {
+          "week": 14,
+          "week_label": "Week 14",
+          "score": 98,
+          "opponent": "WJK",
+          "opponent_score": 68,
+          "result": "W"
+        },
+        {
+          "week": 15,
+          "week_label": "Week 15",
+          "score": 93,
+          "opponent": "J/J",
+          "opponent_score": 51,
+          "result": "W"
+        }
+      ],
+      "nemesis": {
+        "player": "Jalen Hurts",
+        "position": "QB",
+        "points": 53,
+        "starts": 2
+      }
+    }
+  },
+  "champion": "CGK",
+  "created_at": "2026-11-13T22:37:20.327651+00:00",
+  "updated_at": "2026-11-13T22:37:20.390608+00:00"
+}

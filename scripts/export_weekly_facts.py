@@ -32,6 +32,7 @@ from qpfl.weekly_facts import (
     when,
 )
 from scripts import export_hall_of_fame as hof
+from scripts.weekly_awards import week_awards  # noqa: E402
 
 PLAYOFF_BRACKETS = {'playoffs', 'championship'}
 
@@ -441,6 +442,7 @@ def main() -> None:
         facts['recaps'] = merge_with_weekly(
             generate_recaps(team_games, player_games, season, week), facts['all']
         )
+        facts['awards'] = week_awards(team_games, player_games, season, week, timeline)
         facts['names'] = names
         path = facts_path(season, week)
         changed = write_facts(facts, path)

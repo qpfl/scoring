@@ -859,6 +859,80 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "S/T",
+      "value": 119,
+      "unit": "pts",
+      "subject": "{team:S/T}",
+      "detail": "beat {team:J/J} 119-75"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "AYP",
+      "value": 54,
+      "unit": "pts",
+      "subject": "{team:AYP}",
+      "detail": "lost to {team:SLS} 54-113"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "SLS",
+      "value": 59,
+      "unit": "margin",
+      "subject": "{team:SLS}",
+      "detail": "beat {team:AYP} 113-54"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "AST",
+      "value": 11,
+      "unit": "margin",
+      "subject": "{team:AST}",
+      "detail": "beat {team:WJK} 87-76"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "WJK",
+      "value": 29,
+      "unit": "pts",
+      "subject": "Malik Willis",
+      "detail": "QB on {team:WJK}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "GSA",
+      "value": 24,
+      "unit": "pts",
+      "subject": "{team:GSA}",
+      "detail": "benched Tampa Bay Buccaneers (22) for San Francisco 49ers (-2), and it cost the game"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "SLS",
+      "value": 36,
+      "unit": "pts",
+      "subject": "Joe Burrow",
+      "detail": "QB for {team:SLS}"
+    },
+    {
+      "key": "best_pickup",
+      "title": "Best Pickup",
+      "team": "S/T",
+      "value": 7,
+      "unit": "pts",
+      "subject": "Chris Boswell",
+      "detail": "K, added by {team:S/T} in the last two weeks"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -871,5 +945,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.524580+00:00"
+  "generated_at": "2026-11-13T22:35:07.573785+00:00"
 }

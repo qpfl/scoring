@@ -266,3 +266,35 @@ def test_nfl_games_are_listed_once_whichever_team_code_a_roster_uses():
     lines = _nfl_lines(week)
 
     assert lines[0] == 'Thursday Night Football: Jacksonville Jaguars at Baltimore Ravens'
+
+
+def test_weekly_awards_get_their_own_section():
+    files = _files()
+    files[f'{BASE}/facts/week_3.json'] = {
+        'season': 2026,
+        'week': 3,
+        'headline': [],
+        'all': [],
+        'awards': [
+            {
+                'title': 'Top Score',
+                'subject': '{team:GSA}',
+                'value': 121,
+                'unit': 'pts',
+                'detail': 'beat {team:CGK} 121-89',
+            },
+            {
+                'title': 'Bench MVP',
+                'subject': 'C.J. Stroud',
+                'value': 45.5,
+                'unit': 'pts',
+                'detail': "QB on {team:S/T}'s bench",
+            },
+        ],
+    }
+    _, text = _text(build_newsletter_document(_sources(files)))
+    assert (
+        'Weekly Awards\nTop Score: Griff, 121 (beat Kaminska 121-89)\n'
+        "Bench MVP: C.J. Stroud, 45.5 (QB on Spencer/Tim's bench)\n"
+    ) in text
+    assert text.index('Weekly Awards') < text.index('By the Numbers')

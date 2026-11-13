@@ -1136,6 +1136,71 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "SLS",
+      "value": 106,
+      "unit": "pts",
+      "subject": "{team:SLS}",
+      "detail": "beat {team:CWR} 106-103"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "RPA",
+      "value": 68,
+      "unit": "pts",
+      "subject": "{team:RPA}",
+      "detail": "lost to {team:S/T} 68-104"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "S/T",
+      "value": 36,
+      "unit": "margin",
+      "subject": "{team:S/T}",
+      "detail": "beat {team:RPA} 104-68"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "WJK",
+      "value": 1,
+      "unit": "margin",
+      "subject": "{team:WJK}",
+      "detail": "beat {team:AYP} 73-72"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "AYP",
+      "value": 31,
+      "unit": "pts",
+      "subject": "Drake Maye",
+      "detail": "QB on {team:AYP}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "AYP",
+      "value": 15,
+      "unit": "pts",
+      "subject": "{team:AYP}",
+      "detail": "benched Drake Maye (31) for Sam Darnold (16), and it cost the game"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "AST",
+      "value": 31,
+      "unit": "pts",
+      "subject": "Tetairoa McMillan",
+      "detail": "WR for {team:AST}"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -1148,5 +1213,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.147276+00:00"
+  "generated_at": "2026-11-13T22:35:07.192093+00:00"
 }

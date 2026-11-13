@@ -1139,6 +1139,71 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "RPA",
+      "value": 130,
+      "unit": "pts",
+      "subject": "{team:RPA}",
+      "detail": "beat {team:J/J} 130-70"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "SLS",
+      "value": 58,
+      "unit": "pts",
+      "subject": "{team:SLS}",
+      "detail": "lost to {team:CGK} 58-109"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "RPA",
+      "value": 60,
+      "unit": "margin",
+      "subject": "{team:RPA}",
+      "detail": "beat {team:J/J} 130-70"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "CWR",
+      "value": 5,
+      "unit": "margin",
+      "subject": "{team:CWR}",
+      "detail": "beat {team:WJK} 68-63"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "AST",
+      "value": 37,
+      "unit": "pts",
+      "subject": "Jared Goff",
+      "detail": "QB on {team:AST}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "J/J",
+      "value": 21,
+      "unit": "pts",
+      "subject": "{team:J/J}",
+      "detail": "benched Davante Adams (31) for Christian Watson (10)"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "CGK",
+      "value": 45,
+      "unit": "pts",
+      "subject": "Josh Allen",
+      "detail": "QB for {team:CGK}"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -1151,5 +1216,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:16.903968+00:00"
+  "generated_at": "2026-11-13T22:35:06.947013+00:00"
 }

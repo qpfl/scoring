@@ -782,6 +782,80 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "GSA",
+      "value": 121,
+      "unit": "pts",
+      "subject": "{team:GSA}",
+      "detail": "beat {team:AST} 121-89"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "RPA",
+      "value": 44,
+      "unit": "pts",
+      "subject": "{team:RPA}",
+      "detail": "lost to {team:CWR} 44-76"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "GSA",
+      "value": 32,
+      "unit": "margin",
+      "subject": "{team:GSA}",
+      "detail": "beat {team:AST} 121-89"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "CGK",
+      "value": 7,
+      "unit": "margin",
+      "subject": "{team:CGK}",
+      "detail": "beat {team:S/T} 87-80"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "J/J",
+      "value": 45,
+      "unit": "pts",
+      "subject": "C.J. Stroud",
+      "detail": "QB on {team:J/J}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "CWR",
+      "value": 12,
+      "unit": "pts",
+      "subject": "{team:CWR}",
+      "detail": "benched Rome Odunze (12) for Ladd McConkey (0)"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "J/J",
+      "value": 41,
+      "unit": "pts",
+      "subject": "Jordan Love",
+      "detail": "QB for {team:J/J}"
+    },
+    {
+      "key": "best_pickup",
+      "title": "Best Pickup",
+      "team": "AST",
+      "value": 10,
+      "unit": "pts",
+      "subject": "Seth McGowan",
+      "detail": "RB, added by {team:AST} in the last two weeks"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -794,5 +868,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.789224+00:00"
+  "generated_at": "2026-11-13T22:34:58.211158+00:00"
 }

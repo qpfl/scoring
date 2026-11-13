@@ -1227,6 +1227,80 @@
       ]
     }
   ],
+  "awards": [
+    {
+      "key": "top_score",
+      "title": "Top Score",
+      "team": "SLS",
+      "value": 141,
+      "unit": "pts",
+      "subject": "{team:SLS}",
+      "detail": "beat {team:J/J} 141-107"
+    },
+    {
+      "key": "bottom_score",
+      "title": "Bottom Score",
+      "team": "CWR",
+      "value": 29,
+      "unit": "pts",
+      "subject": "{team:CWR}",
+      "detail": "lost to {team:S/T} 29-100"
+    },
+    {
+      "key": "blowout",
+      "title": "Biggest Blowout",
+      "team": "S/T",
+      "value": 71,
+      "unit": "margin",
+      "subject": "{team:S/T}",
+      "detail": "beat {team:CWR} 100-29"
+    },
+    {
+      "key": "nail_biter",
+      "title": "Nail-biter",
+      "team": "WJK",
+      "value": 11,
+      "unit": "margin",
+      "subject": "{team:WJK}",
+      "detail": "beat {team:GSA} 122-111"
+    },
+    {
+      "key": "bench_mvp",
+      "title": "Bench MVP",
+      "team": "S/T",
+      "value": 30,
+      "unit": "pts",
+      "subject": "Cam Ward",
+      "detail": "QB on {team:S/T}'s bench"
+    },
+    {
+      "key": "benching_blunder",
+      "title": "Benching Blunder",
+      "team": "CWR",
+      "value": 25,
+      "unit": "pts",
+      "subject": "{team:CWR}",
+      "detail": "benched Trevor Lawrence (25) for Lamar Jackson (0)"
+    },
+    {
+      "key": "best_player",
+      "title": "Best Player",
+      "team": "SLS",
+      "value": 49,
+      "unit": "pts",
+      "subject": "Joe Burrow",
+      "detail": "QB for {team:SLS}"
+    },
+    {
+      "key": "best_pickup",
+      "title": "Best Pickup",
+      "team": "GSA",
+      "value": 13,
+      "unit": "pts",
+      "subject": "Mike Gesicki",
+      "detail": "TE, added by {team:GSA} in the last two weeks"
+    }
+  ],
   "names": {
     "GSA": "Griff",
     "CGK": "Kaminska",
@@ -1239,5 +1313,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.652892+00:00"
+  "generated_at": "2026-11-13T22:35:07.706773+00:00"
 }
