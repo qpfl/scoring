@@ -15331,3 +15331,270 @@ span.is-my-team {
         width: 100%;
     }
 }
+
+/* Elo ratings (Hall of Fame → Franchises) */
+.elo-chips {
+    margin-bottom: var(--space-3, 0.75rem);
+}
+
+.elo-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.elo-chip-rating {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+}
+
+.elo-swatch {
+    display: inline-block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 2px;
+}
+
+.elo-chart {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+}
+
+.elo-svg {
+    display: block;
+}
+
+.elo-grid {
+    stroke: var(--border);
+    stroke-width: 1;
+    opacity: 0.6;
+}
+
+.elo-grid-mid {
+    stroke-dasharray: 4 4;
+    opacity: 1;
+}
+
+.elo-season {
+    stroke: var(--border);
+    stroke-width: 1;
+    opacity: 0.35;
+}
+
+.elo-axis {
+    fill: var(--text-muted);
+    font-size: 11px;
+    font-family: var(--font-mono);
+}
+
+.elo-line-muted {
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 1.25;
+    opacity: 0.28;
+}
+
+.elo-line {
+    fill: none;
+    stroke-width: 2;
+    stroke-linejoin: round;
+}
+
+.elo-end-label {
+    fill: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.elo-crosshair {
+    stroke: var(--text-muted);
+    stroke-width: 1;
+}
+
+.elo-hit {
+    fill: transparent;
+    cursor: crosshair;
+    touch-action: pan-y;
+}
+
+.elo-tip {
+    position: absolute;
+    top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-primary);
+    font-size: var(--text-xs);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.elo-tip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+}
+
+.elo-table {
+    margin-top: var(--space-3, 0.75rem);
+    font-size: var(--text-sm);
+}
+
+.elo-table summary {
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.elo-table .num {
+    text-align: right;
+}
+
+/* Manager fingerprint (owner profiles) */
+.fp-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.fp-compare {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+}
+
+.fp-compare select {
+    padding: 0.25rem 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm, 4px);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+.fp-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.25rem 0 0.5rem;
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+}
+
+.fp-key {
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.5rem;
+    border-radius: 2px;
+    margin-left: 0.4rem;
+}
+
+.fp-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.fp-row {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr) minmax(0, 14rem);
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.fp-label {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+
+.fp-track {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.fp-bar {
+    display: block;
+    height: 8px;
+    border-radius: 0 4px 4px 0;
+}
+
+.fp-mine,
+.fp-key.fp-mine {
+    background: #3987e5;
+}
+
+.fp-theirs,
+.fp-key.fp-theirs {
+    background: #d95926;
+}
+
+.fp-bar.fp-theirs {
+    height: 5px;
+}
+
+.fp-empty {
+    width: 0;
+}
+
+.fp-value {
+    display: flex;
+    flex-direction: column;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+}
+
+.fp-value strong {
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+}
+
+.fp-theirs-text {
+    color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+    .fp-row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.3rem 0.75rem;
+    }
+
+    .fp-track {
+        grid-column: 1 / -1;
+        order: 3;
+    }
+
+    .fp-value {
+        align-items: flex-end;
+        text-align: right;
+    }
+}
+
+/* Nemeses */
+.nemeses {
+    margin-bottom: var(--space-4, 1rem);
+}
+
+.nemesis-name {
+    font-size: var(--text-lg);
+}
+
+.elo-tip[hidden] {
+    display: none;
+}

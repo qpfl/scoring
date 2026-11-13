@@ -8,8 +8,15 @@ the team Hall of Fame pages match them (`_matches_franchise`).
 
 from __future__ import annotations
 
+from collections import defaultdict
+from collections.abc import Callable, Iterable
+
+from qpfl.elo import EloHistory
+from qpfl.weekly_facts import CONSOLATION, PlayerGame, TeamGame
 from scripts import export_hall_of_fame as hof
 from scripts.hof_owners import _record, _season_finishes, owner_codes
+
+PLAYER_NEMESES = 5
 
 
 def _ordinal(n: int) -> str:
@@ -64,13 +71,56 @@ def _owner_eras(seasons: list[dict], owner_names: dict[str, str]) -> list[dict]:
     return eras
 
 
+def _player_nemeses(
+    player_games: Iterable[PlayerGame], profile_key_for: Callable[[str], str]
+) -> dict[str, list[dict]]:
+    """The opposing starters who scored the most against each franchise."""
+    totals: dict[str, dict[str, dict]] = defaultdict(dict)
+    for p in sorted(player_games, key=lambda p: p.order):
+        # Counted as Top Players counts them: starters, consolation games out.
+        if not p.starter or p.bracket == CONSOLATION or p.score <= 0:
+            continue
+        key = profile_key_for(p.player_key)
+        for franchise in p.opp_franchises:
+            row = totals[franchise].setdefault(
+                key,
+                {
+                    'player': p.name,
+                    'position': p.position,
+                    'profile_key': key,
+                    'points': 0.0,
+                    'games': 0,
+                },
+            )
+            row['points'] += p.score
+            row['games'] += 1
+            row['player'] = p.name
+    nemeses = {}
+    for franchise, rows in totals.items():
+        top = sorted(rows.values(), key=lambda r: (-r['points'], r['player']))[:PLAYER_NEMESES]
+        for row in top:
+            row['points'] = round(row['points'], 1)
+        nemeses[franchise] = top
+    return nemeses
+
+
 def build_franchise_index(
     all_seasons: list[dict],
     franchises: list[str],
     team_hall_of_fame: dict,
     record_book: dict,
     owner_names: dict[str, str],
+    team_games: Iterable[TeamGame] = (),
+    player_games: Iterable[PlayerGame] = (),
+    profile_key_for: Callable[[str], str] | None = None,
 ) -> list[dict]:
+    elo = EloHistory(team_games)
+    current_elo = {f: elo.current().get(f) for f in franchises if f in elo.ratings}
+    elo_rank = {
+        f: rank for rank, f in enumerate(sorted(current_elo, key=lambda f: -current_elo[f]), 1)
+    }
+    nemeses = _player_nemeses(player_games, profile_key_for or (lambda key: key))
+
     # Every name a team went by each season, in order, from the weekly games.
     names_by_season: dict[tuple[int, str], list[str]] = {}
     for season_data in all_seasons:
@@ -189,6 +239,10 @@ def build_franchise_index(
                 'team_names': _team_names(seasons),
                 'seasons': [{k: v for k, v in s.items() if k != 'names'} for s in seasons],
                 'records_held': held,
+                'elo': current_elo.get(franchise),
+                'elo_rank': elo_rank.get(franchise),
+                'elo_series': [list(point) for point in elo.series.get(franchise, [])],
+                'player_nemeses': nemeses.get(franchise, []),
             }
         )
     return index

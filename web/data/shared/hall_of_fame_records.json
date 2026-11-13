@@ -12717,7 +12717,8 @@
         "games": 9,
         "latest": null
       },
-      "playoff_games": 0
+      "playoff_games": 0,
+      "fingerprint": null
     },
     "GSA": {
       "code": "GSA",
@@ -13715,7 +13716,45 @@
         "games": 109,
         "latest": null
       },
-      "playoff_games": 9
+      "playoff_games": 9,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "95.0 PPG",
+          "percentile": 96
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b122.4 a week",
+          "percentile": 35
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "83.9% of optimal",
+          "percentile": 73
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "+0.6 wins vs all-play",
+          "percentile": 65
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "12-15-1 in close games",
+          "percentile": 42
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "7-3 in the playoffs",
+          "percentile": 95
+        }
+      ]
     },
     "CGK": {
       "code": "CGK",
@@ -14611,7 +14650,45 @@
           "score": 100.0
         }
       },
-      "playoff_games": 9
+      "playoff_games": 9,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "93.2 PPG",
+          "percentile": 88
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b121.4 a week",
+          "percentile": 65
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "84.1% of optimal",
+          "percentile": 81
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "+4.7 wins vs all-play",
+          "percentile": 96
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "12-7-3 in close games",
+          "percentile": 88
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "6-4 in the playoffs",
+          "percentile": 77
+        }
+      ]
     },
     "SLS": {
       "code": "SLS",
@@ -15242,7 +15319,45 @@
           "score": 121.0
         }
       },
-      "playoff_games": 4
+      "playoff_games": 4,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "87.1 PPG",
+          "percentile": 73
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b120.8 a week",
+          "percentile": 73
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "85.2% of optimal",
+          "percentile": 96
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "-0.2 wins vs all-play",
+          "percentile": 50
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "10-12 in close games",
+          "percentile": 50
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "2-6 in the playoffs",
+          "percentile": 23
+        }
+      ]
     },
     "CWR": {
       "code": "CWR",
@@ -16019,7 +16134,45 @@
           "score": 123.0
         }
       },
-      "playoff_games": 4
+      "playoff_games": 4,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "83.5 PPG",
+          "percentile": 50
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b123.7 a week",
+          "percentile": 12
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "81.9% of optimal",
+          "percentile": 42
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "+3.5 wins vs all-play",
+          "percentile": 88
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "14-10 in close games",
+          "percentile": 73
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "4-2 in the playoffs",
+          "percentile": 86
+        }
+      ]
     },
     "TJG": {
       "code": "TJG",
@@ -16735,7 +16888,45 @@
           "score": 72.0
         }
       },
-      "playoff_games": 5
+      "playoff_games": 5,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "85.9 PPG",
+          "percentile": 58
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b123.5 a week",
+          "percentile": 19
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "83.2% of optimal",
+          "percentile": 65
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "-1.3 wins vs all-play",
+          "percentile": 42
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "8-10 in close games",
+          "percentile": 35
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "3-3 in the playoffs",
+          "percentile": 50
+        }
+      ]
     },
     "SRY": {
       "code": "SRY",
@@ -17505,7 +17696,45 @@
           "score": 72.0
         }
       },
-      "playoff_games": 5
+      "playoff_games": 5,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "86.3 PPG",
+          "percentile": 65
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b123.1 a week",
+          "percentile": 27
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "83.0% of optimal",
+          "percentile": 58
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "-2.5 wins vs all-play",
+          "percentile": 27
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "9-12-1 in close games",
+          "percentile": 27
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "3-3 in the playoffs",
+          "percentile": 50
+        }
+      ]
     },
     "JDK": {
       "code": "JDK",
@@ -18118,7 +18347,45 @@
           "score": 77.0
         }
       },
-      "playoff_games": 1
+      "playoff_games": 1,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "81.1 PPG",
+          "percentile": 42
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b119.2 a week",
+          "percentile": 88
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "80.9% of optimal",
+          "percentile": 35
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "-2.1 wins vs all-play",
+          "percentile": 19
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "12-7 in close games",
+          "percentile": 96
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "1-1 in the playoffs",
+          "percentile": 50
+        }
+      ]
     },
     "AYP": {
       "code": "AYP",
@@ -18848,7 +19115,45 @@
           "score": 84.0
         }
       },
-      "playoff_games": 2
+      "playoff_games": 2,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "79.2 PPG",
+          "percentile": 27
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b119.2 a week",
+          "percentile": 81
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "78.5% of optimal",
+          "percentile": 19
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "+1.9 wins vs all-play",
+          "percentile": 73
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "11-10-2 in close games",
+          "percentile": 65
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "0-2 in the playoffs",
+          "percentile": 9
+        }
+      ]
     },
     "JRW": {
       "code": "JRW",
@@ -19594,7 +19899,45 @@
           "score": 77.0
         }
       },
-      "playoff_games": 2
+      "playoff_games": 2,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "79.6 PPG",
+          "percentile": 35
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b121.4 a week",
+          "percentile": 58
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "79.2% of optimal",
+          "percentile": 27
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "-2.3 wins vs all-play",
+          "percentile": 35
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "17-12 in close games",
+          "percentile": 81
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "1-1 in the playoffs",
+          "percentile": 50
+        }
+      ]
     },
     "RPA": {
       "code": "RPA",
@@ -20307,7 +20650,45 @@
           "score": 101.0
         }
       },
-      "playoff_games": 2
+      "playoff_games": 2,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "76.9 PPG",
+          "percentile": 12
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b121.5 a week",
+          "percentile": 50
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "82.1% of optimal",
+          "percentile": 50
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "+0.5 wins vs all-play",
+          "percentile": 58
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "8-9-2 in close games",
+          "percentile": 58
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "1-1 in the playoffs",
+          "percentile": 50
+        }
+      ]
     },
     "RCP": {
       "code": "RCP",
@@ -20774,7 +21155,45 @@
           "score": 151.0
         }
       },
-      "playoff_games": 1
+      "playoff_games": 1,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "91.2 PPG",
+          "percentile": 81
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b130.1 a week",
+          "percentile": 4
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "84.7% of optimal",
+          "percentile": 88
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "-4.1 wins vs all-play",
+          "percentile": 4
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "0-4 in close games",
+          "percentile": 4
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": "0-2 in the playoffs",
+          "percentile": 9
+        }
+      ]
     },
     "WJK": {
       "code": "WJK",
@@ -21566,7 +21985,45 @@
           "score": 59.0
         }
       },
-      "playoff_games": 1
+      "playoff_games": 1,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "71.9 PPG",
+          "percentile": 4
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b122.2 a week",
+          "percentile": 42
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "76.4% of optimal",
+          "percentile": 4
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "+3.3 wins vs all-play",
+          "percentile": 81
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "9-13 in close games",
+          "percentile": 19
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": null,
+          "percentile": null
+        }
+      ]
     },
     "AST": {
       "code": "AST",
@@ -22099,7 +22556,45 @@
         "games": 43,
         "latest": null
       },
-      "playoff_games": 0
+      "playoff_games": 0,
+      "fingerprint": [
+        {
+          "key": "scoring",
+          "label": "Scoring",
+          "detail": "78.1 PPG",
+          "percentile": 19
+        },
+        {
+          "key": "consistency",
+          "label": "Consistency",
+          "detail": "\u00b117.2 a week",
+          "percentile": 96
+        },
+        {
+          "key": "lineup_iq",
+          "label": "Lineup IQ",
+          "detail": "76.7% of optimal",
+          "percentile": 12
+        },
+        {
+          "key": "luck",
+          "label": "Luck",
+          "detail": "-3.7 wins vs all-play",
+          "percentile": 12
+        },
+        {
+          "key": "clutch",
+          "label": "Clutch",
+          "detail": "1-5 in close games",
+          "percentile": 12
+        },
+        {
+          "key": "playoffs",
+          "label": "Playoffs",
+          "detail": null,
+          "percentile": null
+        }
+      ]
     },
     "MPA": {
       "code": "MPA",
@@ -22443,7 +22938,8 @@
         "games": 16,
         "latest": null
       },
-      "playoff_games": 0
+      "playoff_games": 0,
+      "fingerprint": null
     }
   },
   "franchises": [
@@ -23108,6 +23604,587 @@
           "team_name": "All Roads Lead to Rome"
         }
       ],
+      "elo": 1511.1,
+      "elo_rank": 4,
+      "elo_series": [
+        [
+          2020,
+          1,
+          1529.8
+        ],
+        [
+          2020,
+          2,
+          1502.4
+        ],
+        [
+          2020,
+          3,
+          1529.2
+        ],
+        [
+          2020,
+          4,
+          1577.1
+        ],
+        [
+          2020,
+          5,
+          1614.9
+        ],
+        [
+          2020,
+          6,
+          1555.1
+        ],
+        [
+          2020,
+          7,
+          1511.4
+        ],
+        [
+          2020,
+          8,
+          1558.8
+        ],
+        [
+          2020,
+          9,
+          1604.6
+        ],
+        [
+          2020,
+          10,
+          1552.8
+        ],
+        [
+          2020,
+          11,
+          1583.3
+        ],
+        [
+          2020,
+          12,
+          1622.8
+        ],
+        [
+          2020,
+          13,
+          1583.8
+        ],
+        [
+          2020,
+          14,
+          1615.1
+        ],
+        [
+          2020,
+          15,
+          1646.7
+        ],
+        [
+          2020,
+          16,
+          1616.3
+        ],
+        [
+          2021,
+          1,
+          1601.1
+        ],
+        [
+          2021,
+          2,
+          1547.2
+        ],
+        [
+          2021,
+          3,
+          1582.6
+        ],
+        [
+          2021,
+          4,
+          1627.0
+        ],
+        [
+          2021,
+          5,
+          1653.3
+        ],
+        [
+          2021,
+          6,
+          1679.9
+        ],
+        [
+          2021,
+          7,
+          1691.5
+        ],
+        [
+          2021,
+          8,
+          1624.2
+        ],
+        [
+          2021,
+          9,
+          1640.7
+        ],
+        [
+          2021,
+          10,
+          1666.7
+        ],
+        [
+          2021,
+          11,
+          1603.9
+        ],
+        [
+          2021,
+          12,
+          1569.6
+        ],
+        [
+          2021,
+          13,
+          1512.3
+        ],
+        [
+          2021,
+          14,
+          1565.9
+        ],
+        [
+          2021,
+          15,
+          1620.1
+        ],
+        [
+          2021,
+          16,
+          1629.3
+        ],
+        [
+          2022,
+          1,
+          1604.6
+        ],
+        [
+          2022,
+          2,
+          1578.8
+        ],
+        [
+          2022,
+          3,
+          1627.4
+        ],
+        [
+          2022,
+          4,
+          1593.7
+        ],
+        [
+          2022,
+          5,
+          1617.2
+        ],
+        [
+          2022,
+          6,
+          1637.6
+        ],
+        [
+          2022,
+          7,
+          1591.6
+        ],
+        [
+          2022,
+          8,
+          1634.3
+        ],
+        [
+          2022,
+          9,
+          1658.9
+        ],
+        [
+          2022,
+          10,
+          1673.9
+        ],
+        [
+          2022,
+          11,
+          1683.0
+        ],
+        [
+          2022,
+          12,
+          1696.1
+        ],
+        [
+          2022,
+          13,
+          1660.2
+        ],
+        [
+          2022,
+          14,
+          1665.8
+        ],
+        [
+          2022,
+          15,
+          1699.1
+        ],
+        [
+          2022,
+          16,
+          1704.4
+        ],
+        [
+          2022,
+          17,
+          1727.8
+        ],
+        [
+          2023,
+          1,
+          1680.0
+        ],
+        [
+          2023,
+          2,
+          1643.6
+        ],
+        [
+          2023,
+          3,
+          1642.1
+        ],
+        [
+          2023,
+          4,
+          1656.6
+        ],
+        [
+          2023,
+          5,
+          1686.5
+        ],
+        [
+          2023,
+          6,
+          1697.4
+        ],
+        [
+          2023,
+          7,
+          1715.6
+        ],
+        [
+          2023,
+          8,
+          1722.9
+        ],
+        [
+          2023,
+          9,
+          1624.1
+        ],
+        [
+          2023,
+          10,
+          1664.6
+        ],
+        [
+          2023,
+          11,
+          1681.5
+        ],
+        [
+          2023,
+          12,
+          1696.2
+        ],
+        [
+          2023,
+          13,
+          1709.8
+        ],
+        [
+          2023,
+          14,
+          1655.9
+        ],
+        [
+          2023,
+          15,
+          1669.1
+        ],
+        [
+          2023,
+          16,
+          1602.5
+        ],
+        [
+          2023,
+          17,
+          1529.1
+        ],
+        [
+          2024,
+          1,
+          1550.6
+        ],
+        [
+          2024,
+          2,
+          1576.3
+        ],
+        [
+          2024,
+          3,
+          1609.4
+        ],
+        [
+          2024,
+          4,
+          1627.8
+        ],
+        [
+          2024,
+          5,
+          1661.2
+        ],
+        [
+          2024,
+          6,
+          1641.2
+        ],
+        [
+          2024,
+          7,
+          1647.6
+        ],
+        [
+          2024,
+          8,
+          1624.6
+        ],
+        [
+          2024,
+          9,
+          1657.4
+        ],
+        [
+          2024,
+          10,
+          1665.0
+        ],
+        [
+          2024,
+          11,
+          1683.5
+        ],
+        [
+          2024,
+          12,
+          1699.9
+        ],
+        [
+          2024,
+          13,
+          1667.1
+        ],
+        [
+          2024,
+          14,
+          1682.4
+        ],
+        [
+          2024,
+          15,
+          1621.6
+        ],
+        [
+          2024,
+          16,
+          1667.3
+        ],
+        [
+          2024,
+          17,
+          1708.9
+        ],
+        [
+          2025,
+          1,
+          1624.3
+        ],
+        [
+          2025,
+          2,
+          1639.5
+        ],
+        [
+          2025,
+          3,
+          1595.4
+        ],
+        [
+          2025,
+          4,
+          1549.6
+        ],
+        [
+          2025,
+          5,
+          1560.8
+        ],
+        [
+          2025,
+          6,
+          1585.8
+        ],
+        [
+          2025,
+          7,
+          1625.9
+        ],
+        [
+          2025,
+          8,
+          1676.8
+        ],
+        [
+          2025,
+          9,
+          1636.3
+        ],
+        [
+          2025,
+          10,
+          1575.9
+        ],
+        [
+          2025,
+          11,
+          1605.1
+        ],
+        [
+          2025,
+          12,
+          1632.4
+        ],
+        [
+          2025,
+          13,
+          1657.9
+        ],
+        [
+          2025,
+          14,
+          1604.1
+        ],
+        [
+          2025,
+          15,
+          1613.6
+        ],
+        [
+          2025,
+          17,
+          1638.5
+        ],
+        [
+          2026,
+          1,
+          1611.6
+        ],
+        [
+          2026,
+          2,
+          1636.3
+        ],
+        [
+          2026,
+          3,
+          1603.8
+        ],
+        [
+          2026,
+          4,
+          1587.8
+        ],
+        [
+          2026,
+          5,
+          1543.2
+        ],
+        [
+          2026,
+          6,
+          1565.0
+        ],
+        [
+          2026,
+          7,
+          1533.2
+        ],
+        [
+          2026,
+          8,
+          1485.4
+        ],
+        [
+          2026,
+          9,
+          1511.1
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 401.0,
+          "games": 14
+        },
+        {
+          "player": "Dak Prescott",
+          "position": "QB",
+          "profile_key": "dak prescott",
+          "points": 162.0,
+          "games": 7
+        },
+        {
+          "player": "Kyler Murray",
+          "position": "QB",
+          "profile_key": "kyler murray",
+          "points": 151.0,
+          "games": 10
+        },
+        {
+          "player": "Jalen Hurts",
+          "position": "QB",
+          "profile_key": "jalen hurts",
+          "points": 147.0,
+          "games": 7
+        },
+        {
+          "player": "Lamar Jackson",
+          "position": "QB",
+          "profile_key": "lamar jackson",
+          "points": 147.0,
+          "games": 5
+        }
+      ],
       "all_time_lineup": [
         {
           "slot": "QB",
@@ -23716,6 +24793,592 @@
           "team_name": "Josh Allen's Deleted Tweets"
         }
       ],
+      "elo": 1707.3,
+      "elo_rank": 1,
+      "elo_series": [
+        [
+          2020,
+          1,
+          1531.7
+        ],
+        [
+          2020,
+          2,
+          1559.1
+        ],
+        [
+          2020,
+          3,
+          1594.3
+        ],
+        [
+          2020,
+          4,
+          1527.4
+        ],
+        [
+          2020,
+          5,
+          1556.6
+        ],
+        [
+          2020,
+          6,
+          1555.0
+        ],
+        [
+          2020,
+          7,
+          1515.1
+        ],
+        [
+          2020,
+          8,
+          1557.1
+        ],
+        [
+          2020,
+          9,
+          1585.9
+        ],
+        [
+          2020,
+          10,
+          1516.1
+        ],
+        [
+          2020,
+          11,
+          1550.3
+        ],
+        [
+          2020,
+          12,
+          1510.9
+        ],
+        [
+          2020,
+          13,
+          1555.2
+        ],
+        [
+          2020,
+          14,
+          1508.1
+        ],
+        [
+          2020,
+          15,
+          1497.4
+        ],
+        [
+          2020,
+          16,
+          1531.1
+        ],
+        [
+          2021,
+          1,
+          1568.5
+        ],
+        [
+          2021,
+          2,
+          1510.6
+        ],
+        [
+          2021,
+          3,
+          1551.5
+        ],
+        [
+          2021,
+          4,
+          1537.8
+        ],
+        [
+          2021,
+          5,
+          1511.5
+        ],
+        [
+          2021,
+          6,
+          1537.8
+        ],
+        [
+          2021,
+          7,
+          1534.8
+        ],
+        [
+          2021,
+          8,
+          1602.1
+        ],
+        [
+          2021,
+          9,
+          1581.1
+        ],
+        [
+          2021,
+          10,
+          1526.0
+        ],
+        [
+          2021,
+          11,
+          1492.7
+        ],
+        [
+          2021,
+          12,
+          1516.7
+        ],
+        [
+          2021,
+          13,
+          1480.5
+        ],
+        [
+          2021,
+          14,
+          1505.9
+        ],
+        [
+          2021,
+          15,
+          1558.4
+        ],
+        [
+          2021,
+          16,
+          1592.2
+        ],
+        [
+          2022,
+          1,
+          1598.9
+        ],
+        [
+          2022,
+          2,
+          1622.8
+        ],
+        [
+          2022,
+          3,
+          1655.0
+        ],
+        [
+          2022,
+          4,
+          1688.8
+        ],
+        [
+          2022,
+          5,
+          1713.0
+        ],
+        [
+          2022,
+          6,
+          1725.9
+        ],
+        [
+          2022,
+          7,
+          1655.9
+        ],
+        [
+          2022,
+          8,
+          1663.3
+        ],
+        [
+          2022,
+          9,
+          1681.7
+        ],
+        [
+          2022,
+          10,
+          1608.6
+        ],
+        [
+          2022,
+          11,
+          1552.4
+        ],
+        [
+          2022,
+          12,
+          1538.8
+        ],
+        [
+          2022,
+          13,
+          1574.6
+        ],
+        [
+          2022,
+          14,
+          1593.9
+        ],
+        [
+          2022,
+          15,
+          1583.5
+        ],
+        [
+          2022,
+          16,
+          1624.9
+        ],
+        [
+          2022,
+          17,
+          1601.5
+        ],
+        [
+          2023,
+          1,
+          1584.7
+        ],
+        [
+          2023,
+          2,
+          1600.7
+        ],
+        [
+          2023,
+          3,
+          1602.2
+        ],
+        [
+          2023,
+          4,
+          1643.2
+        ],
+        [
+          2023,
+          5,
+          1661.6
+        ],
+        [
+          2023,
+          6,
+          1604.9
+        ],
+        [
+          2023,
+          7,
+          1630.5
+        ],
+        [
+          2023,
+          8,
+          1653.3
+        ],
+        [
+          2023,
+          9,
+          1604.2
+        ],
+        [
+          2023,
+          10,
+          1563.7
+        ],
+        [
+          2023,
+          11,
+          1601.0
+        ],
+        [
+          2023,
+          12,
+          1618.4
+        ],
+        [
+          2023,
+          13,
+          1633.7
+        ],
+        [
+          2023,
+          14,
+          1645.8
+        ],
+        [
+          2023,
+          15,
+          1667.6
+        ],
+        [
+          2023,
+          16,
+          1679.4
+        ],
+        [
+          2023,
+          17,
+          1638.2
+        ],
+        [
+          2024,
+          1,
+          1609.2
+        ],
+        [
+          2024,
+          2,
+          1646.4
+        ],
+        [
+          2024,
+          3,
+          1660.0
+        ],
+        [
+          2024,
+          4,
+          1590.5
+        ],
+        [
+          2024,
+          5,
+          1509.7
+        ],
+        [
+          2024,
+          6,
+          1529.7
+        ],
+        [
+          2024,
+          7,
+          1549.1
+        ],
+        [
+          2024,
+          8,
+          1583.4
+        ],
+        [
+          2024,
+          9,
+          1608.2
+        ],
+        [
+          2024,
+          10,
+          1558.8
+        ],
+        [
+          2024,
+          11,
+          1588.0
+        ],
+        [
+          2024,
+          12,
+          1515.3
+        ],
+        [
+          2024,
+          13,
+          1467.6
+        ],
+        [
+          2024,
+          14,
+          1506.4
+        ],
+        [
+          2024,
+          15,
+          1567.2
+        ],
+        [
+          2024,
+          16,
+          1594.6
+        ],
+        [
+          2024,
+          17,
+          1553.0
+        ],
+        [
+          2025,
+          1,
+          1564.8
+        ],
+        [
+          2025,
+          2,
+          1583.0
+        ],
+        [
+          2025,
+          3,
+          1604.1
+        ],
+        [
+          2025,
+          4,
+          1640.5
+        ],
+        [
+          2025,
+          5,
+          1594.3
+        ],
+        [
+          2025,
+          6,
+          1559.5
+        ],
+        [
+          2025,
+          7,
+          1519.3
+        ],
+        [
+          2025,
+          8,
+          1552.8
+        ],
+        [
+          2025,
+          9,
+          1584.5
+        ],
+        [
+          2025,
+          10,
+          1524.2
+        ],
+        [
+          2025,
+          11,
+          1554.4
+        ],
+        [
+          2025,
+          12,
+          1593.1
+        ],
+        [
+          2025,
+          13,
+          1610.9
+        ],
+        [
+          2025,
+          14,
+          1664.8
+        ],
+        [
+          2025,
+          15,
+          1699.3
+        ],
+        [
+          2025,
+          16,
+          1739.7
+        ],
+        [
+          2025,
+          17,
+          1760.9
+        ],
+        [
+          2026,
+          1,
+          1681.0
+        ],
+        [
+          2026,
+          2,
+          1700.0
+        ],
+        [
+          2026,
+          3,
+          1705.8
+        ],
+        [
+          2026,
+          4,
+          1721.7
+        ],
+        [
+          2026,
+          5,
+          1741.0
+        ],
+        [
+          2026,
+          6,
+          1746.1
+        ],
+        [
+          2026,
+          7,
+          1758.5
+        ],
+        [
+          2026,
+          8,
+          1688.6
+        ],
+        [
+          2026,
+          9,
+          1707.3
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Lamar Jackson",
+          "position": "QB",
+          "profile_key": "lamar jackson",
+          "points": 298.0,
+          "games": 12
+        },
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 283.0,
+          "games": 12
+        },
+        {
+          "player": "Kyler Murray",
+          "position": "QB",
+          "profile_key": "kyler murray",
+          "points": 193.0,
+          "games": 8
+        },
+        {
+          "player": "Tom Brady",
+          "position": "QB",
+          "profile_key": "tom brady",
+          "points": 177.0,
+          "games": 6
+        },
+        {
+          "player": "Ja'Marr Chase",
+          "position": "WR",
+          "profile_key": "ja marr chase",
+          "points": 159.0,
+          "games": 14
+        }
+      ],
       "all_time_lineup": [
         {
           "slot": "QB",
@@ -24199,6 +25862,577 @@
           "week_label": "Championship Week",
           "team": "RPA",
           "team_name": "Canseco's Pharmacist"
+        }
+      ],
+      "elo": 1489.7,
+      "elo_rank": 6,
+      "elo_series": [
+        [
+          2020,
+          1,
+          1468.3
+        ],
+        [
+          2020,
+          2,
+          1426.6
+        ],
+        [
+          2020,
+          3,
+          1399.8
+        ],
+        [
+          2020,
+          4,
+          1381.0
+        ],
+        [
+          2020,
+          5,
+          1354.6
+        ],
+        [
+          2020,
+          6,
+          1417.4
+        ],
+        [
+          2020,
+          7,
+          1484.4
+        ],
+        [
+          2020,
+          8,
+          1451.9
+        ],
+        [
+          2020,
+          9,
+          1423.1
+        ],
+        [
+          2020,
+          10,
+          1409.3
+        ],
+        [
+          2020,
+          11,
+          1433.7
+        ],
+        [
+          2020,
+          12,
+          1414.5
+        ],
+        [
+          2020,
+          13,
+          1467.6
+        ],
+        [
+          2020,
+          14,
+          1436.4
+        ],
+        [
+          2020,
+          15,
+          1481.3
+        ],
+        [
+          2020,
+          16,
+          1433.6
+        ],
+        [
+          2021,
+          1,
+          1428.1
+        ],
+        [
+          2021,
+          2,
+          1482.0
+        ],
+        [
+          2021,
+          3,
+          1497.2
+        ],
+        [
+          2021,
+          4,
+          1451.5
+        ],
+        [
+          2021,
+          5,
+          1418.7
+        ],
+        [
+          2021,
+          6,
+          1436.8
+        ],
+        [
+          2021,
+          7,
+          1439.8
+        ],
+        [
+          2021,
+          8,
+          1394.6
+        ],
+        [
+          2021,
+          9,
+          1440.4
+        ],
+        [
+          2021,
+          10,
+          1495.5
+        ],
+        [
+          2021,
+          11,
+          1516.4
+        ],
+        [
+          2021,
+          12,
+          1550.6
+        ],
+        [
+          2021,
+          13,
+          1507.3
+        ],
+        [
+          2021,
+          14,
+          1548.5
+        ],
+        [
+          2021,
+          15,
+          1585.3
+        ],
+        [
+          2021,
+          16,
+          1576.1
+        ],
+        [
+          2022,
+          1,
+          1504.9
+        ],
+        [
+          2022,
+          2,
+          1472.4
+        ],
+        [
+          2022,
+          3,
+          1438.0
+        ],
+        [
+          2022,
+          4,
+          1374.8
+        ],
+        [
+          2022,
+          5,
+          1351.2
+        ],
+        [
+          2022,
+          6,
+          1403.6
+        ],
+        [
+          2022,
+          7,
+          1379.0
+        ],
+        [
+          2022,
+          8,
+          1371.5
+        ],
+        [
+          2022,
+          9,
+          1415.4
+        ],
+        [
+          2022,
+          10,
+          1442.5
+        ],
+        [
+          2022,
+          11,
+          1425.2
+        ],
+        [
+          2022,
+          12,
+          1412.1
+        ],
+        [
+          2022,
+          13,
+          1384.5
+        ],
+        [
+          2022,
+          14,
+          1449.4
+        ],
+        [
+          2022,
+          15,
+          1509.8
+        ],
+        [
+          2022,
+          16,
+          1528.3
+        ],
+        [
+          2023,
+          1,
+          1468.8
+        ],
+        [
+          2023,
+          2,
+          1448.9
+        ],
+        [
+          2023,
+          3,
+          1501.3
+        ],
+        [
+          2023,
+          4,
+          1503.3
+        ],
+        [
+          2023,
+          5,
+          1473.3
+        ],
+        [
+          2023,
+          6,
+          1530.0
+        ],
+        [
+          2023,
+          7,
+          1477.5
+        ],
+        [
+          2023,
+          8,
+          1492.5
+        ],
+        [
+          2023,
+          9,
+          1522.5
+        ],
+        [
+          2023,
+          10,
+          1557.6
+        ],
+        [
+          2023,
+          11,
+          1520.3
+        ],
+        [
+          2023,
+          12,
+          1551.5
+        ],
+        [
+          2023,
+          13,
+          1527.8
+        ],
+        [
+          2023,
+          14,
+          1464.3
+        ],
+        [
+          2023,
+          15,
+          1506.6
+        ],
+        [
+          2024,
+          1,
+          1461.0
+        ],
+        [
+          2024,
+          2,
+          1493.1
+        ],
+        [
+          2024,
+          3,
+          1542.1
+        ],
+        [
+          2024,
+          4,
+          1564.2
+        ],
+        [
+          2024,
+          5,
+          1530.8
+        ],
+        [
+          2024,
+          6,
+          1474.0
+        ],
+        [
+          2024,
+          7,
+          1445.7
+        ],
+        [
+          2024,
+          8,
+          1424.4
+        ],
+        [
+          2024,
+          9,
+          1399.6
+        ],
+        [
+          2024,
+          10,
+          1379.5
+        ],
+        [
+          2024,
+          11,
+          1396.9
+        ],
+        [
+          2024,
+          12,
+          1377.4
+        ],
+        [
+          2024,
+          13,
+          1425.1
+        ],
+        [
+          2024,
+          14,
+          1409.8
+        ],
+        [
+          2024,
+          15,
+          1367.1
+        ],
+        [
+          2024,
+          16,
+          1342.8
+        ],
+        [
+          2024,
+          17,
+          1309.5
+        ],
+        [
+          2025,
+          1,
+          1366.1
+        ],
+        [
+          2025,
+          2,
+          1347.8
+        ],
+        [
+          2025,
+          3,
+          1404.8
+        ],
+        [
+          2025,
+          4,
+          1367.7
+        ],
+        [
+          2025,
+          5,
+          1356.5
+        ],
+        [
+          2025,
+          6,
+          1399.4
+        ],
+        [
+          2025,
+          7,
+          1385.6
+        ],
+        [
+          2025,
+          8,
+          1397.2
+        ],
+        [
+          2025,
+          9,
+          1382.5
+        ],
+        [
+          2025,
+          10,
+          1442.9
+        ],
+        [
+          2025,
+          11,
+          1421.6
+        ],
+        [
+          2025,
+          12,
+          1446.6
+        ],
+        [
+          2025,
+          13,
+          1421.1
+        ],
+        [
+          2025,
+          14,
+          1393.9
+        ],
+        [
+          2025,
+          15,
+          1379.7
+        ],
+        [
+          2025,
+          16,
+          1347.4
+        ],
+        [
+          2025,
+          17,
+          1376.2
+        ],
+        [
+          2026,
+          1,
+          1474.9
+        ],
+        [
+          2026,
+          2,
+          1516.0
+        ],
+        [
+          2026,
+          3,
+          1548.5
+        ],
+        [
+          2026,
+          4,
+          1516.4
+        ],
+        [
+          2026,
+          5,
+          1561.1
+        ],
+        [
+          2026,
+          6,
+          1515.6
+        ],
+        [
+          2026,
+          7,
+          1503.3
+        ],
+        [
+          2026,
+          8,
+          1529.1
+        ],
+        [
+          2026,
+          9,
+          1489.7
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 247.0,
+          "games": 10
+        },
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 225.0,
+          "games": 9
+        },
+        {
+          "player": "Derrick Henry",
+          "position": "RB",
+          "profile_key": "derrick henry",
+          "points": 196.0,
+          "games": 11
+        },
+        {
+          "player": "Ja'Marr Chase",
+          "position": "WR",
+          "profile_key": "ja marr chase",
+          "points": 193.0,
+          "games": 9
+        },
+        {
+          "player": "Jalen Hurts",
+          "position": "QB",
+          "profile_key": "jalen hurts",
+          "points": 179.0,
+          "games": 6
         }
       ],
       "all_time_lineup": [
@@ -24687,6 +26921,507 @@
           "season": 2022,
           "team": "S/T",
           "team_name": "Dead AAA Battery"
+        }
+      ],
+      "elo": 1591.6,
+      "elo_rank": 2,
+      "elo_series": [
+        [
+          2021,
+          1,
+          1547.7
+        ],
+        [
+          2021,
+          2,
+          1489.8
+        ],
+        [
+          2021,
+          3,
+          1530.7
+        ],
+        [
+          2021,
+          4,
+          1517.1
+        ],
+        [
+          2021,
+          5,
+          1490.7
+        ],
+        [
+          2021,
+          6,
+          1517.1
+        ],
+        [
+          2021,
+          7,
+          1514.0
+        ],
+        [
+          2021,
+          8,
+          1581.3
+        ],
+        [
+          2021,
+          9,
+          1560.4
+        ],
+        [
+          2021,
+          10,
+          1505.3
+        ],
+        [
+          2021,
+          11,
+          1472.0
+        ],
+        [
+          2021,
+          12,
+          1496.0
+        ],
+        [
+          2021,
+          13,
+          1459.8
+        ],
+        [
+          2021,
+          14,
+          1485.2
+        ],
+        [
+          2021,
+          15,
+          1537.7
+        ],
+        [
+          2021,
+          16,
+          1571.5
+        ],
+        [
+          2022,
+          1,
+          1503.8
+        ],
+        [
+          2022,
+          2,
+          1479.9
+        ],
+        [
+          2022,
+          3,
+          1514.4
+        ],
+        [
+          2022,
+          4,
+          1477.9
+        ],
+        [
+          2022,
+          5,
+          1450.3
+        ],
+        [
+          2022,
+          6,
+          1429.9
+        ],
+        [
+          2022,
+          7,
+          1416.5
+        ],
+        [
+          2022,
+          8,
+          1394.6
+        ],
+        [
+          2022,
+          9,
+          1379.2
+        ],
+        [
+          2022,
+          10,
+          1352.0
+        ],
+        [
+          2022,
+          11,
+          1333.3
+        ],
+        [
+          2022,
+          12,
+          1314.2
+        ],
+        [
+          2022,
+          13,
+          1365.7
+        ],
+        [
+          2022,
+          14,
+          1346.4
+        ],
+        [
+          2022,
+          15,
+          1329.3
+        ],
+        [
+          2022,
+          16,
+          1317.6
+        ],
+        [
+          2023,
+          1,
+          1369.4
+        ],
+        [
+          2023,
+          2,
+          1353.5
+        ],
+        [
+          2023,
+          3,
+          1316.1
+        ],
+        [
+          2023,
+          4,
+          1311.0
+        ],
+        [
+          2023,
+          5,
+          1302.6
+        ],
+        [
+          2023,
+          6,
+          1274.1
+        ],
+        [
+          2023,
+          7,
+          1334.2
+        ],
+        [
+          2023,
+          8,
+          1319.1
+        ],
+        [
+          2023,
+          9,
+          1417.8
+        ],
+        [
+          2023,
+          10,
+          1483.0
+        ],
+        [
+          2023,
+          11,
+          1526.7
+        ],
+        [
+          2023,
+          12,
+          1547.4
+        ],
+        [
+          2023,
+          13,
+          1571.0
+        ],
+        [
+          2023,
+          14,
+          1599.3
+        ],
+        [
+          2023,
+          15,
+          1621.8
+        ],
+        [
+          2023,
+          16,
+          1688.5
+        ],
+        [
+          2023,
+          17,
+          1729.7
+        ],
+        [
+          2024,
+          1,
+          1594.9
+        ],
+        [
+          2024,
+          2,
+          1557.6
+        ],
+        [
+          2024,
+          3,
+          1524.5
+        ],
+        [
+          2024,
+          4,
+          1562.3
+        ],
+        [
+          2024,
+          5,
+          1510.7
+        ],
+        [
+          2024,
+          6,
+          1525.6
+        ],
+        [
+          2024,
+          7,
+          1554.0
+        ],
+        [
+          2024,
+          8,
+          1539.7
+        ],
+        [
+          2024,
+          9,
+          1548.9
+        ],
+        [
+          2024,
+          10,
+          1502.3
+        ],
+        [
+          2024,
+          11,
+          1563.0
+        ],
+        [
+          2024,
+          12,
+          1581.3
+        ],
+        [
+          2024,
+          13,
+          1614.1
+        ],
+        [
+          2024,
+          14,
+          1645.8
+        ],
+        [
+          2024,
+          15,
+          1658.4
+        ],
+        [
+          2024,
+          16,
+          1612.7
+        ],
+        [
+          2024,
+          17,
+          1552.1
+        ],
+        [
+          2025,
+          1,
+          1541.7
+        ],
+        [
+          2025,
+          2,
+          1586.0
+        ],
+        [
+          2025,
+          3,
+          1608.1
+        ],
+        [
+          2025,
+          4,
+          1571.7
+        ],
+        [
+          2025,
+          5,
+          1613.7
+        ],
+        [
+          2025,
+          6,
+          1581.1
+        ],
+        [
+          2025,
+          7,
+          1592.5
+        ],
+        [
+          2025,
+          8,
+          1539.1
+        ],
+        [
+          2025,
+          9,
+          1579.7
+        ],
+        [
+          2025,
+          10,
+          1588.3
+        ],
+        [
+          2025,
+          11,
+          1590.5
+        ],
+        [
+          2025,
+          12,
+          1621.8
+        ],
+        [
+          2025,
+          13,
+          1570.6
+        ],
+        [
+          2025,
+          14,
+          1597.9
+        ],
+        [
+          2025,
+          15,
+          1563.3
+        ],
+        [
+          2025,
+          16,
+          1603.1
+        ],
+        [
+          2025,
+          17,
+          1581.9
+        ],
+        [
+          2026,
+          1,
+          1583.5
+        ],
+        [
+          2026,
+          2,
+          1597.8
+        ],
+        [
+          2026,
+          3,
+          1630.4
+        ],
+        [
+          2026,
+          4,
+          1662.5
+        ],
+        [
+          2026,
+          5,
+          1606.9
+        ],
+        [
+          2026,
+          6,
+          1524.2
+        ],
+        [
+          2026,
+          7,
+          1548.3
+        ],
+        [
+          2026,
+          8,
+          1610.4
+        ],
+        [
+          2026,
+          9,
+          1591.6
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 210.0,
+          "games": 9
+        },
+        {
+          "player": "Jonathan Taylor",
+          "position": "RB",
+          "profile_key": "jonathan taylor",
+          "points": 189.0,
+          "games": 10
+        },
+        {
+          "player": "Lamar Jackson",
+          "position": "QB",
+          "profile_key": "lamar jackson",
+          "points": 165.0,
+          "games": 10
+        },
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 165.0,
+          "games": 9
+        },
+        {
+          "player": "Justin Herbert",
+          "position": "QB",
+          "profile_key": "justin herbert",
+          "points": 163.0,
+          "games": 6
         }
       ],
       "all_time_lineup": [
@@ -25254,6 +27989,587 @@
           "team_name": "Booze Cruising With The Ladds"
         }
       ],
+      "elo": 1587.1,
+      "elo_rank": 3,
+      "elo_series": [
+        [
+          2020,
+          1,
+          1452.4
+        ],
+        [
+          2020,
+          2,
+          1515.9
+        ],
+        [
+          2020,
+          3,
+          1457.9
+        ],
+        [
+          2020,
+          4,
+          1524.8
+        ],
+        [
+          2020,
+          5,
+          1464.1
+        ],
+        [
+          2020,
+          6,
+          1523.9
+        ],
+        [
+          2020,
+          7,
+          1456.9
+        ],
+        [
+          2020,
+          8,
+          1433.6
+        ],
+        [
+          2020,
+          9,
+          1475.1
+        ],
+        [
+          2020,
+          10,
+          1489.0
+        ],
+        [
+          2020,
+          11,
+          1454.7
+        ],
+        [
+          2020,
+          12,
+          1424.0
+        ],
+        [
+          2020,
+          13,
+          1462.9
+        ],
+        [
+          2020,
+          14,
+          1499.9
+        ],
+        [
+          2020,
+          15,
+          1510.6
+        ],
+        [
+          2020,
+          16,
+          1541.0
+        ],
+        [
+          2021,
+          1,
+          1555.0
+        ],
+        [
+          2021,
+          2,
+          1579.7
+        ],
+        [
+          2021,
+          3,
+          1544.3
+        ],
+        [
+          2021,
+          4,
+          1557.9
+        ],
+        [
+          2021,
+          5,
+          1587.2
+        ],
+        [
+          2021,
+          6,
+          1614.5
+        ],
+        [
+          2021,
+          7,
+          1573.1
+        ],
+        [
+          2021,
+          8,
+          1603.3
+        ],
+        [
+          2021,
+          9,
+          1557.5
+        ],
+        [
+          2021,
+          10,
+          1577.8
+        ],
+        [
+          2021,
+          11,
+          1611.2
+        ],
+        [
+          2021,
+          12,
+          1576.6
+        ],
+        [
+          2021,
+          13,
+          1595.1
+        ],
+        [
+          2021,
+          14,
+          1541.6
+        ],
+        [
+          2021,
+          15,
+          1487.3
+        ],
+        [
+          2021,
+          16,
+          1526.4
+        ],
+        [
+          2022,
+          1,
+          1563.4
+        ],
+        [
+          2022,
+          2,
+          1585.0
+        ],
+        [
+          2022,
+          3,
+          1536.4
+        ],
+        [
+          2022,
+          4,
+          1506.3
+        ],
+        [
+          2022,
+          5,
+          1482.1
+        ],
+        [
+          2022,
+          6,
+          1463.1
+        ],
+        [
+          2022,
+          7,
+          1533.2
+        ],
+        [
+          2022,
+          8,
+          1555.0
+        ],
+        [
+          2022,
+          9,
+          1510.1
+        ],
+        [
+          2022,
+          10,
+          1534.5
+        ],
+        [
+          2022,
+          11,
+          1553.2
+        ],
+        [
+          2022,
+          12,
+          1571.7
+        ],
+        [
+          2022,
+          13,
+          1606.7
+        ],
+        [
+          2022,
+          14,
+          1570.5
+        ],
+        [
+          2022,
+          15,
+          1537.2
+        ],
+        [
+          2022,
+          16,
+          1548.9
+        ],
+        [
+          2023,
+          1,
+          1492.3
+        ],
+        [
+          2023,
+          2,
+          1521.7
+        ],
+        [
+          2023,
+          3,
+          1469.4
+        ],
+        [
+          2023,
+          4,
+          1503.4
+        ],
+        [
+          2023,
+          5,
+          1485.0
+        ],
+        [
+          2023,
+          6,
+          1474.1
+        ],
+        [
+          2023,
+          7,
+          1414.0
+        ],
+        [
+          2023,
+          8,
+          1466.4
+        ],
+        [
+          2023,
+          9,
+          1443.8
+        ],
+        [
+          2023,
+          10,
+          1477.8
+        ],
+        [
+          2023,
+          11,
+          1428.1
+        ],
+        [
+          2023,
+          12,
+          1407.5
+        ],
+        [
+          2023,
+          13,
+          1443.2
+        ],
+        [
+          2023,
+          14,
+          1497.1
+        ],
+        [
+          2023,
+          15,
+          1454.8
+        ],
+        [
+          2023,
+          16,
+          1479.4
+        ],
+        [
+          2023,
+          17,
+          1425.0
+        ],
+        [
+          2024,
+          1,
+          1493.3
+        ],
+        [
+          2024,
+          2,
+          1536.8
+        ],
+        [
+          2024,
+          3,
+          1487.8
+        ],
+        [
+          2024,
+          4,
+          1450.0
+        ],
+        [
+          2024,
+          5,
+          1530.7
+        ],
+        [
+          2024,
+          6,
+          1588.1
+        ],
+        [
+          2024,
+          7,
+          1627.1
+        ],
+        [
+          2024,
+          8,
+          1650.1
+        ],
+        [
+          2024,
+          9,
+          1561.5
+        ],
+        [
+          2024,
+          10,
+          1610.9
+        ],
+        [
+          2024,
+          11,
+          1550.2
+        ],
+        [
+          2024,
+          12,
+          1521.5
+        ],
+        [
+          2024,
+          13,
+          1489.4
+        ],
+        [
+          2024,
+          14,
+          1430.1
+        ],
+        [
+          2024,
+          15,
+          1468.7
+        ],
+        [
+          2024,
+          16,
+          1505.3
+        ],
+        [
+          2024,
+          17,
+          1542.7
+        ],
+        [
+          2025,
+          1,
+          1551.7
+        ],
+        [
+          2025,
+          2,
+          1581.5
+        ],
+        [
+          2025,
+          3,
+          1600.1
+        ],
+        [
+          2025,
+          4,
+          1618.5
+        ],
+        [
+          2025,
+          5,
+          1664.7
+        ],
+        [
+          2025,
+          6,
+          1697.3
+        ],
+        [
+          2025,
+          7,
+          1625.5
+        ],
+        [
+          2025,
+          8,
+          1574.6
+        ],
+        [
+          2025,
+          9,
+          1589.2
+        ],
+        [
+          2025,
+          10,
+          1580.6
+        ],
+        [
+          2025,
+          11,
+          1551.4
+        ],
+        [
+          2025,
+          12,
+          1512.7
+        ],
+        [
+          2025,
+          13,
+          1473.7
+        ],
+        [
+          2025,
+          14,
+          1496.7
+        ],
+        [
+          2025,
+          15,
+          1544.2
+        ],
+        [
+          2025,
+          16,
+          1504.4
+        ],
+        [
+          2025,
+          17,
+          1554.5
+        ],
+        [
+          2026,
+          1,
+          1574.8
+        ],
+        [
+          2026,
+          2,
+          1585.3
+        ],
+        [
+          2026,
+          3,
+          1604.1
+        ],
+        [
+          2026,
+          4,
+          1576.4
+        ],
+        [
+          2026,
+          5,
+          1557.2
+        ],
+        [
+          2026,
+          6,
+          1577.9
+        ],
+        [
+          2026,
+          7,
+          1609.7
+        ],
+        [
+          2026,
+          8,
+          1547.7
+        ],
+        [
+          2026,
+          9,
+          1587.1
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 284.0,
+          "games": 11
+        },
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 284.0,
+          "games": 12
+        },
+        {
+          "player": "Jalen Hurts",
+          "position": "QB",
+          "profile_key": "jalen hurts",
+          "points": 158.0,
+          "games": 7
+        },
+        {
+          "player": "Josh Jacobs",
+          "position": "RB",
+          "profile_key": "josh jacobs",
+          "points": 158.0,
+          "games": 10
+        },
+        {
+          "player": "Derrick Henry",
+          "position": "RB",
+          "profile_key": "derrick henry",
+          "points": 157.0,
+          "games": 9
+        }
+      ],
       "all_time_lineup": [
         {
           "slot": "QB",
@@ -25760,6 +29076,577 @@
           "team_name": "Joe Ward's Elite Athletic Ability"
         }
       ],
+      "elo": 1381.5,
+      "elo_rank": 9,
+      "elo_series": [
+        [
+          2020,
+          1,
+          1471.2
+        ],
+        [
+          2020,
+          2,
+          1440.6
+        ],
+        [
+          2020,
+          3,
+          1498.7
+        ],
+        [
+          2020,
+          4,
+          1542.4
+        ],
+        [
+          2020,
+          5,
+          1504.6
+        ],
+        [
+          2020,
+          6,
+          1441.8
+        ],
+        [
+          2020,
+          7,
+          1481.7
+        ],
+        [
+          2020,
+          8,
+          1434.2
+        ],
+        [
+          2020,
+          9,
+          1397.0
+        ],
+        [
+          2020,
+          10,
+          1466.8
+        ],
+        [
+          2020,
+          11,
+          1442.7
+        ],
+        [
+          2020,
+          12,
+          1515.0
+        ],
+        [
+          2020,
+          13,
+          1461.9
+        ],
+        [
+          2020,
+          14,
+          1425.0
+        ],
+        [
+          2020,
+          15,
+          1406.1
+        ],
+        [
+          2020,
+          16,
+          1504.6
+        ],
+        [
+          2021,
+          1,
+          1538.7
+        ],
+        [
+          2021,
+          2,
+          1576.0
+        ],
+        [
+          2021,
+          3,
+          1535.2
+        ],
+        [
+          2021,
+          4,
+          1490.8
+        ],
+        [
+          2021,
+          5,
+          1528.4
+        ],
+        [
+          2021,
+          6,
+          1510.3
+        ],
+        [
+          2021,
+          7,
+          1551.8
+        ],
+        [
+          2021,
+          8,
+          1491.4
+        ],
+        [
+          2021,
+          9,
+          1471.5
+        ],
+        [
+          2021,
+          10,
+          1451.2
+        ],
+        [
+          2021,
+          11,
+          1514.1
+        ],
+        [
+          2021,
+          12,
+          1452.9
+        ],
+        [
+          2021,
+          13,
+          1496.2
+        ],
+        [
+          2021,
+          14,
+          1470.8
+        ],
+        [
+          2021,
+          15,
+          1434.0
+        ],
+        [
+          2021,
+          16,
+          1395.0
+        ],
+        [
+          2022,
+          1,
+          1411.6
+        ],
+        [
+          2022,
+          2,
+          1373.8
+        ],
+        [
+          2022,
+          3,
+          1336.5
+        ],
+        [
+          2022,
+          4,
+          1399.7
+        ],
+        [
+          2022,
+          5,
+          1436.7
+        ],
+        [
+          2022,
+          6,
+          1489.1
+        ],
+        [
+          2022,
+          7,
+          1502.6
+        ],
+        [
+          2022,
+          8,
+          1522.0
+        ],
+        [
+          2022,
+          9,
+          1566.9
+        ],
+        [
+          2022,
+          10,
+          1575.7
+        ],
+        [
+          2022,
+          11,
+          1608.7
+        ],
+        [
+          2022,
+          12,
+          1622.3
+        ],
+        [
+          2022,
+          13,
+          1587.4
+        ],
+        [
+          2022,
+          14,
+          1522.5
+        ],
+        [
+          2022,
+          15,
+          1532.8
+        ],
+        [
+          2022,
+          16,
+          1527.5
+        ],
+        [
+          2022,
+          17,
+          1540.9
+        ],
+        [
+          2023,
+          1,
+          1567.5
+        ],
+        [
+          2023,
+          2,
+          1587.5
+        ],
+        [
+          2023,
+          3,
+          1543.4
+        ],
+        [
+          2023,
+          4,
+          1548.5
+        ],
+        [
+          2023,
+          5,
+          1472.2
+        ],
+        [
+          2023,
+          6,
+          1509.2
+        ],
+        [
+          2023,
+          7,
+          1483.6
+        ],
+        [
+          2023,
+          8,
+          1476.4
+        ],
+        [
+          2023,
+          9,
+          1451.0
+        ],
+        [
+          2023,
+          10,
+          1486.1
+        ],
+        [
+          2023,
+          11,
+          1469.2
+        ],
+        [
+          2023,
+          12,
+          1451.8
+        ],
+        [
+          2023,
+          13,
+          1491.0
+        ],
+        [
+          2023,
+          14,
+          1445.9
+        ],
+        [
+          2023,
+          15,
+          1423.4
+        ],
+        [
+          2024,
+          1,
+          1492.3
+        ],
+        [
+          2024,
+          2,
+          1466.6
+        ],
+        [
+          2024,
+          3,
+          1521.0
+        ],
+        [
+          2024,
+          4,
+          1534.7
+        ],
+        [
+          2024,
+          5,
+          1551.3
+        ],
+        [
+          2024,
+          6,
+          1514.6
+        ],
+        [
+          2024,
+          7,
+          1475.5
+        ],
+        [
+          2024,
+          8,
+          1441.2
+        ],
+        [
+          2024,
+          9,
+          1432.0
+        ],
+        [
+          2024,
+          10,
+          1482.3
+        ],
+        [
+          2024,
+          11,
+          1453.0
+        ],
+        [
+          2024,
+          12,
+          1436.6
+        ],
+        [
+          2024,
+          13,
+          1468.8
+        ],
+        [
+          2024,
+          14,
+          1436.9
+        ],
+        [
+          2024,
+          15,
+          1479.7
+        ],
+        [
+          2024,
+          16,
+          1443.1
+        ],
+        [
+          2024,
+          17,
+          1405.7
+        ],
+        [
+          2025,
+          1,
+          1414.0
+        ],
+        [
+          2025,
+          2,
+          1408.7
+        ],
+        [
+          2025,
+          3,
+          1452.8
+        ],
+        [
+          2025,
+          4,
+          1489.9
+        ],
+        [
+          2025,
+          5,
+          1518.1
+        ],
+        [
+          2025,
+          6,
+          1552.9
+        ],
+        [
+          2025,
+          7,
+          1568.0
+        ],
+        [
+          2025,
+          8,
+          1621.4
+        ],
+        [
+          2025,
+          9,
+          1541.6
+        ],
+        [
+          2025,
+          10,
+          1480.6
+        ],
+        [
+          2025,
+          11,
+          1499.1
+        ],
+        [
+          2025,
+          12,
+          1467.8
+        ],
+        [
+          2025,
+          13,
+          1449.9
+        ],
+        [
+          2025,
+          14,
+          1426.9
+        ],
+        [
+          2025,
+          15,
+          1364.6
+        ],
+        [
+          2025,
+          16,
+          1413.8
+        ],
+        [
+          2026,
+          1,
+          1423.3
+        ],
+        [
+          2026,
+          2,
+          1382.2
+        ],
+        [
+          2026,
+          3,
+          1363.4
+        ],
+        [
+          2026,
+          4,
+          1323.8
+        ],
+        [
+          2026,
+          5,
+          1368.3
+        ],
+        [
+          2026,
+          6,
+          1363.1
+        ],
+        [
+          2026,
+          7,
+          1339.0
+        ],
+        [
+          2026,
+          8,
+          1318.9
+        ],
+        [
+          2026,
+          9,
+          1381.5
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 377.0,
+          "games": 13
+        },
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 286.0,
+          "games": 11
+        },
+        {
+          "player": "Lamar Jackson",
+          "position": "QB",
+          "profile_key": "lamar jackson",
+          "points": 268.0,
+          "games": 10
+        },
+        {
+          "player": "Justin Herbert",
+          "position": "QB",
+          "profile_key": "justin herbert",
+          "points": 160.0,
+          "games": 8
+        },
+        {
+          "player": "Davante Adams",
+          "position": "WR",
+          "profile_key": "davante adams",
+          "points": 158.0,
+          "games": 9
+        }
+      ],
       "all_time_lineup": [
         {
           "slot": "QB",
@@ -26171,6 +30058,512 @@
           "team_name": "The Fire Nagy and Pace",
           "player": "Jonathan Taylor",
           "position": "RB"
+        }
+      ],
+      "elo": 1500.7,
+      "elo_rank": 5,
+      "elo_series": [
+        [
+          2021,
+          1,
+          1527.7
+        ],
+        [
+          2021,
+          2,
+          1552.3
+        ],
+        [
+          2021,
+          3,
+          1517.0
+        ],
+        [
+          2021,
+          4,
+          1530.6
+        ],
+        [
+          2021,
+          5,
+          1559.9
+        ],
+        [
+          2021,
+          6,
+          1587.2
+        ],
+        [
+          2021,
+          7,
+          1545.7
+        ],
+        [
+          2021,
+          8,
+          1576.0
+        ],
+        [
+          2021,
+          9,
+          1530.2
+        ],
+        [
+          2021,
+          10,
+          1550.5
+        ],
+        [
+          2021,
+          11,
+          1583.8
+        ],
+        [
+          2021,
+          12,
+          1549.3
+        ],
+        [
+          2021,
+          13,
+          1567.8
+        ],
+        [
+          2021,
+          14,
+          1514.2
+        ],
+        [
+          2021,
+          15,
+          1460.0
+        ],
+        [
+          2021,
+          16,
+          1499.1
+        ],
+        [
+          2022,
+          1,
+          1462.0
+        ],
+        [
+          2022,
+          2,
+          1499.8
+        ],
+        [
+          2022,
+          3,
+          1519.0
+        ],
+        [
+          2022,
+          4,
+          1555.6
+        ],
+        [
+          2022,
+          5,
+          1572.1
+        ],
+        [
+          2022,
+          6,
+          1591.0
+        ],
+        [
+          2022,
+          7,
+          1615.6
+        ],
+        [
+          2022,
+          8,
+          1572.8
+        ],
+        [
+          2022,
+          9,
+          1588.3
+        ],
+        [
+          2022,
+          10,
+          1573.3
+        ],
+        [
+          2022,
+          11,
+          1540.3
+        ],
+        [
+          2022,
+          12,
+          1573.4
+        ],
+        [
+          2022,
+          13,
+          1599.4
+        ],
+        [
+          2022,
+          14,
+          1635.6
+        ],
+        [
+          2022,
+          15,
+          1575.2
+        ],
+        [
+          2022,
+          16,
+          1533.9
+        ],
+        [
+          2022,
+          17,
+          1520.4
+        ],
+        [
+          2023,
+          1,
+          1485.5
+        ],
+        [
+          2023,
+          2,
+          1419.3
+        ],
+        [
+          2023,
+          3,
+          1395.1
+        ],
+        [
+          2023,
+          4,
+          1361.0
+        ],
+        [
+          2023,
+          5,
+          1413.6
+        ],
+        [
+          2023,
+          6,
+          1442.1
+        ],
+        [
+          2023,
+          7,
+          1494.6
+        ],
+        [
+          2023,
+          8,
+          1471.8
+        ],
+        [
+          2023,
+          9,
+          1497.1
+        ],
+        [
+          2023,
+          10,
+          1463.1
+        ],
+        [
+          2023,
+          11,
+          1494.7
+        ],
+        [
+          2023,
+          12,
+          1531.7
+        ],
+        [
+          2023,
+          13,
+          1492.5
+        ],
+        [
+          2023,
+          14,
+          1464.3
+        ],
+        [
+          2023,
+          15,
+          1442.4
+        ],
+        [
+          2023,
+          16,
+          1480.4
+        ],
+        [
+          2023,
+          17,
+          1534.7
+        ],
+        [
+          2024,
+          1,
+          1492.0
+        ],
+        [
+          2024,
+          2,
+          1519.2
+        ],
+        [
+          2024,
+          3,
+          1464.7
+        ],
+        [
+          2024,
+          4,
+          1534.2
+        ],
+        [
+          2024,
+          5,
+          1585.9
+        ],
+        [
+          2024,
+          6,
+          1528.5
+        ],
+        [
+          2024,
+          7,
+          1572.9
+        ],
+        [
+          2024,
+          8,
+          1594.2
+        ],
+        [
+          2024,
+          9,
+          1601.9
+        ],
+        [
+          2024,
+          10,
+          1622.0
+        ],
+        [
+          2024,
+          11,
+          1603.5
+        ],
+        [
+          2024,
+          12,
+          1632.2
+        ],
+        [
+          2024,
+          13,
+          1644.4
+        ],
+        [
+          2024,
+          14,
+          1612.7
+        ],
+        [
+          2024,
+          15,
+          1573.0
+        ],
+        [
+          2024,
+          16,
+          1545.6
+        ],
+        [
+          2024,
+          17,
+          1606.2
+        ],
+        [
+          2025,
+          1,
+          1534.6
+        ],
+        [
+          2025,
+          2,
+          1539.9
+        ],
+        [
+          2025,
+          3,
+          1521.3
+        ],
+        [
+          2025,
+          4,
+          1567.0
+        ],
+        [
+          2025,
+          5,
+          1525.0
+        ],
+        [
+          2025,
+          6,
+          1535.2
+        ],
+        [
+          2025,
+          7,
+          1549.0
+        ],
+        [
+          2025,
+          8,
+          1571.2
+        ],
+        [
+          2025,
+          9,
+          1539.5
+        ],
+        [
+          2025,
+          10,
+          1599.9
+        ],
+        [
+          2025,
+          11,
+          1581.4
+        ],
+        [
+          2025,
+          12,
+          1543.6
+        ],
+        [
+          2025,
+          13,
+          1555.6
+        ],
+        [
+          2025,
+          14,
+          1605.0
+        ],
+        [
+          2025,
+          15,
+          1619.2
+        ],
+        [
+          2025,
+          16,
+          1578.8
+        ],
+        [
+          2025,
+          17,
+          1528.7
+        ],
+        [
+          2026,
+          1,
+          1461.7
+        ],
+        [
+          2026,
+          2,
+          1442.6
+        ],
+        [
+          2026,
+          3,
+          1407.5
+        ],
+        [
+          2026,
+          4,
+          1435.1
+        ],
+        [
+          2026,
+          5,
+          1490.7
+        ],
+        [
+          2026,
+          6,
+          1468.8
+        ],
+        [
+          2026,
+          7,
+          1524.8
+        ],
+        [
+          2026,
+          8,
+          1544.9
+        ],
+        [
+          2026,
+          9,
+          1500.7
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 253.0,
+          "games": 11
+        },
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 223.0,
+          "games": 9
+        },
+        {
+          "player": "Derrick Henry",
+          "position": "RB",
+          "profile_key": "derrick henry",
+          "points": 187.0,
+          "games": 10
+        },
+        {
+          "player": "Lamar Jackson",
+          "position": "QB",
+          "profile_key": "lamar jackson",
+          "points": 184.0,
+          "games": 7
+        },
+        {
+          "player": "Christian McCaffrey",
+          "position": "RB",
+          "profile_key": "christian mccaffrey",
+          "points": 169.0,
+          "games": 8
         }
       ],
       "all_time_lineup": [
@@ -26640,6 +31033,577 @@
           "week_label": "Week 4",
           "team": "AYP",
           "team_name": "Tyrod's Punctured Lung"
+        }
+      ],
+      "elo": 1461.5,
+      "elo_rank": 7,
+      "elo_series": [
+        [
+          2020,
+          1,
+          1528.8
+        ],
+        [
+          2020,
+          2,
+          1465.2
+        ],
+        [
+          2020,
+          3,
+          1530.9
+        ],
+        [
+          2020,
+          4,
+          1483.0
+        ],
+        [
+          2020,
+          5,
+          1509.4
+        ],
+        [
+          2020,
+          6,
+          1511.0
+        ],
+        [
+          2020,
+          7,
+          1467.7
+        ],
+        [
+          2020,
+          8,
+          1500.2
+        ],
+        [
+          2020,
+          9,
+          1537.4
+        ],
+        [
+          2020,
+          10,
+          1494.1
+        ],
+        [
+          2020,
+          11,
+          1463.6
+        ],
+        [
+          2020,
+          12,
+          1494.3
+        ],
+        [
+          2020,
+          13,
+          1450.0
+        ],
+        [
+          2020,
+          14,
+          1470.4
+        ],
+        [
+          2020,
+          15,
+          1438.7
+        ],
+        [
+          2020,
+          16,
+          1405.0
+        ],
+        [
+          2021,
+          1,
+          1413.1
+        ],
+        [
+          2021,
+          2,
+          1388.4
+        ],
+        [
+          2021,
+          3,
+          1373.2
+        ],
+        [
+          2021,
+          4,
+          1425.3
+        ],
+        [
+          2021,
+          5,
+          1387.7
+        ],
+        [
+          2021,
+          6,
+          1361.4
+        ],
+        [
+          2021,
+          7,
+          1372.4
+        ],
+        [
+          2021,
+          8,
+          1432.9
+        ],
+        [
+          2021,
+          9,
+          1416.3
+        ],
+        [
+          2021,
+          10,
+          1461.3
+        ],
+        [
+          2021,
+          11,
+          1506.2
+        ],
+        [
+          2021,
+          12,
+          1540.8
+        ],
+        [
+          2021,
+          13,
+          1577.0
+        ],
+        [
+          2021,
+          14,
+          1535.8
+        ],
+        [
+          2021,
+          15,
+          1483.3
+        ],
+        [
+          2021,
+          16,
+          1449.5
+        ],
+        [
+          2022,
+          1,
+          1412.4
+        ],
+        [
+          2022,
+          2,
+          1390.8
+        ],
+        [
+          2022,
+          3,
+          1428.1
+        ],
+        [
+          2022,
+          4,
+          1482.7
+        ],
+        [
+          2022,
+          5,
+          1466.2
+        ],
+        [
+          2022,
+          6,
+          1413.8
+        ],
+        [
+          2022,
+          7,
+          1459.8
+        ],
+        [
+          2022,
+          8,
+          1477.2
+        ],
+        [
+          2022,
+          9,
+          1458.8
+        ],
+        [
+          2022,
+          10,
+          1450.0
+        ],
+        [
+          2022,
+          11,
+          1506.2
+        ],
+        [
+          2022,
+          12,
+          1525.3
+        ],
+        [
+          2022,
+          13,
+          1552.9
+        ],
+        [
+          2022,
+          14,
+          1547.3
+        ],
+        [
+          2022,
+          15,
+          1553.6
+        ],
+        [
+          2023,
+          1,
+          1544.7
+        ],
+        [
+          2023,
+          2,
+          1515.3
+        ],
+        [
+          2023,
+          3,
+          1559.3
+        ],
+        [
+          2023,
+          4,
+          1557.3
+        ],
+        [
+          2023,
+          5,
+          1504.7
+        ],
+        [
+          2023,
+          6,
+          1470.5
+        ],
+        [
+          2023,
+          7,
+          1452.3
+        ],
+        [
+          2023,
+          8,
+          1490.2
+        ],
+        [
+          2023,
+          9,
+          1539.4
+        ],
+        [
+          2023,
+          10,
+          1504.2
+        ],
+        [
+          2023,
+          11,
+          1460.5
+        ],
+        [
+          2023,
+          12,
+          1445.7
+        ],
+        [
+          2023,
+          13,
+          1410.0
+        ],
+        [
+          2023,
+          14,
+          1455.1
+        ],
+        [
+          2023,
+          15,
+          1421.5
+        ],
+        [
+          2023,
+          16,
+          1396.9
+        ],
+        [
+          2023,
+          17,
+          1351.5
+        ],
+        [
+          2024,
+          1,
+          1384.0
+        ],
+        [
+          2024,
+          2,
+          1356.8
+        ],
+        [
+          2024,
+          3,
+          1328.5
+        ],
+        [
+          2024,
+          4,
+          1314.9
+        ],
+        [
+          2024,
+          5,
+          1290.8
+        ],
+        [
+          2024,
+          6,
+          1347.6
+        ],
+        [
+          2024,
+          7,
+          1341.2
+        ],
+        [
+          2024,
+          8,
+          1355.4
+        ],
+        [
+          2024,
+          9,
+          1444.0
+        ],
+        [
+          2024,
+          10,
+          1393.8
+        ],
+        [
+          2024,
+          11,
+          1376.3
+        ],
+        [
+          2024,
+          12,
+          1358.0
+        ],
+        [
+          2024,
+          13,
+          1425.6
+        ],
+        [
+          2024,
+          14,
+          1484.9
+        ],
+        [
+          2024,
+          15,
+          1524.6
+        ],
+        [
+          2024,
+          16,
+          1548.8
+        ],
+        [
+          2024,
+          17,
+          1586.7
+        ],
+        [
+          2025,
+          1,
+          1594.0
+        ],
+        [
+          2025,
+          2,
+          1549.7
+        ],
+        [
+          2025,
+          3,
+          1492.7
+        ],
+        [
+          2025,
+          4,
+          1518.2
+        ],
+        [
+          2025,
+          5,
+          1451.6
+        ],
+        [
+          2025,
+          6,
+          1426.7
+        ],
+        [
+          2025,
+          7,
+          1498.5
+        ],
+        [
+          2025,
+          8,
+          1465.1
+        ],
+        [
+          2025,
+          9,
+          1544.9
+        ],
+        [
+          2025,
+          10,
+          1549.3
+        ],
+        [
+          2025,
+          11,
+          1570.6
+        ],
+        [
+          2025,
+          12,
+          1543.3
+        ],
+        [
+          2025,
+          13,
+          1594.5
+        ],
+        [
+          2025,
+          14,
+          1545.1
+        ],
+        [
+          2025,
+          15,
+          1497.6
+        ],
+        [
+          2025,
+          17,
+          1472.7
+        ],
+        [
+          2026,
+          1,
+          1443.3
+        ],
+        [
+          2026,
+          2,
+          1418.6
+        ],
+        [
+          2026,
+          3,
+          1386.1
+        ],
+        [
+          2026,
+          4,
+          1377.6
+        ],
+        [
+          2026,
+          5,
+          1427.5
+        ],
+        [
+          2026,
+          6,
+          1510.2
+        ],
+        [
+          2026,
+          7,
+          1454.2
+        ],
+        [
+          2026,
+          8,
+          1524.1
+        ],
+        [
+          2026,
+          9,
+          1461.5
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 328.0,
+          "games": 12
+        },
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 254.0,
+          "games": 10
+        },
+        {
+          "player": "Lamar Jackson",
+          "position": "QB",
+          "profile_key": "lamar jackson",
+          "points": 215.0,
+          "games": 10
+        },
+        {
+          "player": "Dak Prescott",
+          "position": "QB",
+          "profile_key": "dak prescott",
+          "points": 197.0,
+          "games": 9
+        },
+        {
+          "player": "Derrick Henry",
+          "position": "RB",
+          "profile_key": "derrick henry",
+          "points": 182.0,
+          "games": 12
         }
       ],
       "all_time_lineup": [
@@ -27144,6 +32108,582 @@
           "team_name": "If You Ain't First You're Last"
         }
       ],
+      "elo": 1331.6,
+      "elo_rank": 10,
+      "elo_series": [
+        [
+          2020,
+          1,
+          1547.6
+        ],
+        [
+          2020,
+          2,
+          1578.2
+        ],
+        [
+          2020,
+          3,
+          1512.5
+        ],
+        [
+          2020,
+          4,
+          1531.3
+        ],
+        [
+          2020,
+          5,
+          1502.2
+        ],
+        [
+          2020,
+          6,
+          1533.8
+        ],
+        [
+          2020,
+          7,
+          1577.5
+        ],
+        [
+          2020,
+          8,
+          1535.5
+        ],
+        [
+          2020,
+          9,
+          1494.0
+        ],
+        [
+          2020,
+          10,
+          1545.8
+        ],
+        [
+          2020,
+          11,
+          1521.4
+        ],
+        [
+          2020,
+          12,
+          1449.1
+        ],
+        [
+          2020,
+          13,
+          1467.7
+        ],
+        [
+          2020,
+          14,
+          1447.2
+        ],
+        [
+          2020,
+          15,
+          1402.3
+        ],
+        [
+          2020,
+          16,
+          1450.1
+        ],
+        [
+          2021,
+          1,
+          1431.1
+        ],
+        [
+          2021,
+          2,
+          1489.0
+        ],
+        [
+          2021,
+          3,
+          1447.9
+        ],
+        [
+          2021,
+          4,
+          1395.7
+        ],
+        [
+          2021,
+          5,
+          1428.6
+        ],
+        [
+          2021,
+          6,
+          1401.2
+        ],
+        [
+          2021,
+          7,
+          1389.6
+        ],
+        [
+          2021,
+          8,
+          1434.8
+        ],
+        [
+          2021,
+          9,
+          1454.7
+        ],
+        [
+          2021,
+          10,
+          1428.6
+        ],
+        [
+          2021,
+          11,
+          1383.8
+        ],
+        [
+          2021,
+          12,
+          1359.7
+        ],
+        [
+          2021,
+          13,
+          1341.2
+        ],
+        [
+          2021,
+          14,
+          1315.6
+        ],
+        [
+          2021,
+          15,
+          1354.6
+        ],
+        [
+          2021,
+          16,
+          1333.0
+        ],
+        [
+          2022,
+          1,
+          1442.6
+        ],
+        [
+          2022,
+          2,
+          1468.4
+        ],
+        [
+          2022,
+          3,
+          1449.1
+        ],
+        [
+          2022,
+          4,
+          1394.5
+        ],
+        [
+          2022,
+          5,
+          1422.1
+        ],
+        [
+          2022,
+          6,
+          1409.2
+        ],
+        [
+          2022,
+          7,
+          1419.7
+        ],
+        [
+          2022,
+          8,
+          1400.2
+        ],
+        [
+          2022,
+          9,
+          1356.4
+        ],
+        [
+          2022,
+          10,
+          1429.5
+        ],
+        [
+          2022,
+          11,
+          1446.9
+        ],
+        [
+          2022,
+          12,
+          1428.3
+        ],
+        [
+          2022,
+          13,
+          1402.4
+        ],
+        [
+          2022,
+          14,
+          1430.5
+        ],
+        [
+          2022,
+          15,
+          1447.7
+        ],
+        [
+          2023,
+          1,
+          1515.2
+        ],
+        [
+          2023,
+          2,
+          1551.6
+        ],
+        [
+          2023,
+          3,
+          1575.8
+        ],
+        [
+          2023,
+          4,
+          1534.9
+        ],
+        [
+          2023,
+          5,
+          1543.3
+        ],
+        [
+          2023,
+          6,
+          1506.3
+        ],
+        [
+          2023,
+          7,
+          1560.6
+        ],
+        [
+          2023,
+          8,
+          1522.8
+        ],
+        [
+          2023,
+          9,
+          1545.4
+        ],
+        [
+          2023,
+          10,
+          1480.2
+        ],
+        [
+          2023,
+          11,
+          1448.7
+        ],
+        [
+          2023,
+          12,
+          1417.5
+        ],
+        [
+          2023,
+          13,
+          1403.9
+        ],
+        [
+          2023,
+          14,
+          1391.9
+        ],
+        [
+          2023,
+          15,
+          1425.4
+        ],
+        [
+          2023,
+          16,
+          1413.6
+        ],
+        [
+          2023,
+          17,
+          1487.0
+        ],
+        [
+          2024,
+          1,
+          1549.6
+        ],
+        [
+          2024,
+          2,
+          1506.1
+        ],
+        [
+          2024,
+          3,
+          1492.6
+        ],
+        [
+          2024,
+          4,
+          1470.4
+        ],
+        [
+          2024,
+          5,
+          1494.6
+        ],
+        [
+          2024,
+          6,
+          1531.3
+        ],
+        [
+          2024,
+          7,
+          1486.9
+        ],
+        [
+          2024,
+          8,
+          1512.1
+        ],
+        [
+          2024,
+          9,
+          1479.3
+        ],
+        [
+          2024,
+          10,
+          1525.9
+        ],
+        [
+          2024,
+          11,
+          1539.1
+        ],
+        [
+          2024,
+          12,
+          1558.7
+        ],
+        [
+          2024,
+          13,
+          1491.0
+        ],
+        [
+          2024,
+          14,
+          1452.3
+        ],
+        [
+          2024,
+          15,
+          1413.6
+        ],
+        [
+          2024,
+          16,
+          1373.8
+        ],
+        [
+          2024,
+          17,
+          1407.1
+        ],
+        [
+          2025,
+          1,
+          1408.6
+        ],
+        [
+          2025,
+          2,
+          1393.5
+        ],
+        [
+          2025,
+          3,
+          1371.3
+        ],
+        [
+          2025,
+          4,
+          1352.9
+        ],
+        [
+          2025,
+          5,
+          1419.5
+        ],
+        [
+          2025,
+          6,
+          1376.6
+        ],
+        [
+          2025,
+          7,
+          1361.4
+        ],
+        [
+          2025,
+          8,
+          1339.3
+        ],
+        [
+          2025,
+          9,
+          1292.4
+        ],
+        [
+          2025,
+          10,
+          1287.9
+        ],
+        [
+          2025,
+          11,
+          1285.7
+        ],
+        [
+          2025,
+          12,
+          1260.7
+        ],
+        [
+          2025,
+          13,
+          1248.7
+        ],
+        [
+          2025,
+          14,
+          1315.3
+        ],
+        [
+          2025,
+          15,
+          1377.6
+        ],
+        [
+          2025,
+          16,
+          1328.4
+        ],
+        [
+          2025,
+          17,
+          1299.5
+        ],
+        [
+          2026,
+          1,
+          1359.3
+        ],
+        [
+          2026,
+          2,
+          1345.0
+        ],
+        [
+          2026,
+          3,
+          1380.1
+        ],
+        [
+          2026,
+          4,
+          1419.8
+        ],
+        [
+          2026,
+          5,
+          1369.9
+        ],
+        [
+          2026,
+          6,
+          1349.2
+        ],
+        [
+          2026,
+          7,
+          1383.0
+        ],
+        [
+          2026,
+          8,
+          1357.2
+        ],
+        [
+          2026,
+          9,
+          1331.6
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 393.0,
+          "games": 12
+        },
+        {
+          "player": "Jalen Hurts",
+          "position": "QB",
+          "profile_key": "jalen hurts",
+          "points": 206.0,
+          "games": 8
+        },
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 196.0,
+          "games": 9
+        },
+        {
+          "player": "Dak Prescott",
+          "position": "QB",
+          "profile_key": "dak prescott",
+          "points": 183.0,
+          "games": 8
+        },
+        {
+          "player": "Austin Ekeler",
+          "position": "RB",
+          "profile_key": "austin ekeler",
+          "points": 143.0,
+          "games": 8
+        }
+      ],
       "all_time_lineup": [
         {
           "slot": "QB",
@@ -27643,6 +33183,582 @@
           "week_label": "Week 11",
           "team": "WJK",
           "team_name": "Solid as a Brock"
+        }
+      ],
+      "elo": 1447.2,
+      "elo_rank": 8,
+      "elo_series": [
+        [
+          2020,
+          1,
+          1470.2
+        ],
+        [
+          2020,
+          2,
+          1511.9
+        ],
+        [
+          2020,
+          3,
+          1476.7
+        ],
+        [
+          2020,
+          4,
+          1432.9
+        ],
+        [
+          2020,
+          5,
+          1493.6
+        ],
+        [
+          2020,
+          6,
+          1462.0
+        ],
+        [
+          2020,
+          7,
+          1505.3
+        ],
+        [
+          2020,
+          8,
+          1528.6
+        ],
+        [
+          2020,
+          9,
+          1482.8
+        ],
+        [
+          2020,
+          10,
+          1526.1
+        ],
+        [
+          2020,
+          11,
+          1550.2
+        ],
+        [
+          2020,
+          12,
+          1569.4
+        ],
+        [
+          2020,
+          13,
+          1550.8
+        ],
+        [
+          2020,
+          14,
+          1598.0
+        ],
+        [
+          2020,
+          15,
+          1616.8
+        ],
+        [
+          2020,
+          16,
+          1518.3
+        ],
+        [
+          2021,
+          1,
+          1464.5
+        ],
+        [
+          2021,
+          2,
+          1427.1
+        ],
+        [
+          2021,
+          3,
+          1468.3
+        ],
+        [
+          2021,
+          4,
+          1513.9
+        ],
+        [
+          2021,
+          5,
+          1484.7
+        ],
+        [
+          2021,
+          6,
+          1458.1
+        ],
+        [
+          2021,
+          7,
+          1447.0
+        ],
+        [
+          2021,
+          8,
+          1416.8
+        ],
+        [
+          2021,
+          9,
+          1437.8
+        ],
+        [
+          2021,
+          10,
+          1392.8
+        ],
+        [
+          2021,
+          11,
+          1371.8
+        ],
+        [
+          2021,
+          12,
+          1433.0
+        ],
+        [
+          2021,
+          13,
+          1490.3
+        ],
+        [
+          2021,
+          14,
+          1515.9
+        ],
+        [
+          2021,
+          15,
+          1476.8
+        ],
+        [
+          2021,
+          16,
+          1498.5
+        ],
+        [
+          2022,
+          1,
+          1542.8
+        ],
+        [
+          2022,
+          2,
+          1575.3
+        ],
+        [
+          2022,
+          3,
+          1543.1
+        ],
+        [
+          2022,
+          4,
+          1573.2
+        ],
+        [
+          2022,
+          5,
+          1536.1
+        ],
+        [
+          2022,
+          6,
+          1483.8
+        ],
+        [
+          2022,
+          7,
+          1473.3
+        ],
+        [
+          2022,
+          8,
+          1455.9
+        ],
+        [
+          2022,
+          9,
+          1431.3
+        ],
+        [
+          2022,
+          10,
+          1406.9
+        ],
+        [
+          2022,
+          11,
+          1397.9
+        ],
+        [
+          2022,
+          12,
+          1364.8
+        ],
+        [
+          2022,
+          13,
+          1313.3
+        ],
+        [
+          2022,
+          14,
+          1285.1
+        ],
+        [
+          2022,
+          15,
+          1278.9
+        ],
+        [
+          2022,
+          16,
+          1260.3
+        ],
+        [
+          2023,
+          1,
+          1323.2
+        ],
+        [
+          2023,
+          2,
+          1389.3
+        ],
+        [
+          2023,
+          3,
+          1426.7
+        ],
+        [
+          2023,
+          4,
+          1412.2
+        ],
+        [
+          2023,
+          5,
+          1488.5
+        ],
+        [
+          2023,
+          6,
+          1522.8
+        ],
+        [
+          2023,
+          7,
+          1468.5
+        ],
+        [
+          2023,
+          8,
+          1416.0
+        ],
+        [
+          2023,
+          9,
+          1386.1
+        ],
+        [
+          2023,
+          10,
+          1351.0
+        ],
+        [
+          2023,
+          11,
+          1400.7
+        ],
+        [
+          2023,
+          12,
+          1363.7
+        ],
+        [
+          2023,
+          13,
+          1348.3
+        ],
+        [
+          2023,
+          14,
+          1411.8
+        ],
+        [
+          2023,
+          15,
+          1398.7
+        ],
+        [
+          2023,
+          16,
+          1360.7
+        ],
+        [
+          2023,
+          17,
+          1406.1
+        ],
+        [
+          2024,
+          1,
+          1394.1
+        ],
+        [
+          2024,
+          2,
+          1362.1
+        ],
+        [
+          2024,
+          3,
+          1390.3
+        ],
+        [
+          2024,
+          4,
+          1372.0
+        ],
+        [
+          2024,
+          5,
+          1355.4
+        ],
+        [
+          2024,
+          6,
+          1340.4
+        ],
+        [
+          2024,
+          7,
+          1320.9
+        ],
+        [
+          2024,
+          8,
+          1295.8
+        ],
+        [
+          2024,
+          9,
+          1288.1
+        ],
+        [
+          2024,
+          10,
+          1280.5
+        ],
+        [
+          2024,
+          11,
+          1267.2
+        ],
+        [
+          2024,
+          12,
+          1339.9
+        ],
+        [
+          2024,
+          13,
+          1327.7
+        ],
+        [
+          2024,
+          14,
+          1359.6
+        ],
+        [
+          2024,
+          15,
+          1347.0
+        ],
+        [
+          2024,
+          16,
+          1386.9
+        ],
+        [
+          2024,
+          17,
+          1348.9
+        ],
+        [
+          2025,
+          1,
+          1414.2
+        ],
+        [
+          2025,
+          2,
+          1384.4
+        ],
+        [
+          2025,
+          3,
+          1363.4
+        ],
+        [
+          2025,
+          4,
+          1337.8
+        ],
+        [
+          2025,
+          5,
+          1309.7
+        ],
+        [
+          2025,
+          6,
+          1299.5
+        ],
+        [
+          2025,
+          7,
+          1288.0
+        ],
+        [
+          2025,
+          8,
+          1276.5
+        ],
+        [
+          2025,
+          9,
+          1323.3
+        ],
+        [
+          2025,
+          10,
+          1384.4
+        ],
+        [
+          2025,
+          11,
+          1354.2
+        ],
+        [
+          2025,
+          12,
+          1392.0
+        ],
+        [
+          2025,
+          13,
+          1431.0
+        ],
+        [
+          2025,
+          14,
+          1364.4
+        ],
+        [
+          2025,
+          15,
+          1354.8
+        ],
+        [
+          2025,
+          16,
+          1387.2
+        ],
+        [
+          2026,
+          1,
+          1395.9
+        ],
+        [
+          2026,
+          2,
+          1385.4
+        ],
+        [
+          2026,
+          3,
+          1379.7
+        ],
+        [
+          2026,
+          4,
+          1388.2
+        ],
+        [
+          2026,
+          5,
+          1343.6
+        ],
+        [
+          2026,
+          6,
+          1389.1
+        ],
+        [
+          2026,
+          7,
+          1355.3
+        ],
+        [
+          2026,
+          8,
+          1403.0
+        ],
+        [
+          2026,
+          9,
+          1447.2
+        ]
+      ],
+      "player_nemeses": [
+        {
+          "player": "Patrick Mahomes II",
+          "position": "QB",
+          "profile_key": "patrick mahomes",
+          "points": 301.0,
+          "games": 13
+        },
+        {
+          "player": "Josh Allen",
+          "position": "QB",
+          "profile_key": "josh allen",
+          "points": 243.0,
+          "games": 10
+        },
+        {
+          "player": "Jalen Hurts",
+          "position": "QB",
+          "profile_key": "jalen hurts",
+          "points": 204.0,
+          "games": 7
+        },
+        {
+          "player": "Lamar Jackson",
+          "position": "QB",
+          "profile_key": "lamar jackson",
+          "points": 161.0,
+          "games": 7
+        },
+        {
+          "player": "Jonathan Taylor",
+          "position": "RB",
+          "profile_key": "jonathan taylor",
+          "points": 155.0,
+          "games": 11
         }
       ],
       "all_time_lineup": [
@@ -38436,5 +44552,5 @@
     },
     "ppg_min_starts": 16
   },
-  "updated_at": "2026-11-13T17:48:39.205361+00:00"
+  "updated_at": "2026-11-13T20:19:49.624801+00:00"
 }

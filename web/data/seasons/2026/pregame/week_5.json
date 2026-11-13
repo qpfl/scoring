@@ -193,6 +193,11 @@
         "scored_games": 10,
         "points_for": 1071.0,
         "points_against": 680.0
+      },
+      "elo": {
+        "team1": 1588,
+        "team2": 1516,
+        "team1_win_prob": 0.601
       }
     },
     {
@@ -340,6 +345,11 @@
         "scored_games": 12,
         "points_for": 1136.0,
         "points_against": 1005.0
+      },
+      "elo": {
+        "team1": 1576,
+        "team2": 1722,
+        "team1_win_prob": 0.302
       }
     },
     {
@@ -574,6 +584,11 @@
         "scored_games": 17,
         "points_for": 1145.0,
         "points_against": 1249.0
+      },
+      "elo": {
+        "team1": 1388,
+        "team2": 1324,
+        "team1_win_prob": 0.592
       }
     },
     {
@@ -705,6 +720,11 @@
         "scored_games": 4,
         "points_for": 255.0,
         "points_against": 299.0
+      },
+      "elo": {
+        "team1": 1378,
+        "team2": 1420,
+        "team1_win_prob": 0.44
       }
     },
     {
@@ -877,6 +897,11 @@
         "scored_games": 10,
         "points_for": 739.0,
         "points_against": 881.0
+      },
+      "elo": {
+        "team1": 1662,
+        "team2": 1435,
+        "team1_win_prob": 0.787
       }
     }
   ],
@@ -892,5 +917,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:33:50.687835+00:00"
+  "generated_at": "2026-11-13T20:16:25.944898+00:00"
 }

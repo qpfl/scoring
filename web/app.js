@@ -6256,6 +6256,20 @@ function headToHeadTapeRows(team1, team2, matchupNotes) {
     return rows;
 }
 
+// Both sides' Elo coming into the week (qpfl/elo.py, via the pregame notes).
+function eloTapeRows(team1, team2, matchupNotes) {
+    const elo = matchupNotes?.elo;
+    if (!elo || !Number.isFinite(elo.team1_win_prob)) return [];
+    const flip = matchupNotes.team1 !== team1;
+    const [r1, r2] = flip ? [elo.team2, elo.team1] : [elo.team1, elo.team2];
+    // Rounded once, so the two chances always add to 100%.
+    const p1 = Math.round((flip ? 1 - elo.team1_win_prob : elo.team1_win_prob) * 100) / 100;
+    return [
+        ['Elo rating', r1, r2, true, v => Math.round(v).toLocaleString()],
+        ['Elo win chance', p1, 1 - p1, true, v => `${Math.round(v * 100)}%`],
+    ];
+}
+
 function tapeRowsHtml(rows) {
     return rows.map(([label, v1, v2, higherBetter, fmt]) => {
         const better1 = higherBetter ? v1 > v2 : v1 < v2;
@@ -6270,7 +6284,10 @@ function tapeRowsHtml(rows) {
 }
 
 function taleOfTheTapeHtml(team1, team2, week = Infinity, title = 'Tale of the tape', matchupNotes = null) {
-    const h2hRows = headToHeadTapeRows(team1, team2, matchupNotes);
+    const h2hRows = [
+        ...eloTapeRows(team1, team2, matchupNotes),
+        ...headToHeadTapeRows(team1, team2, matchupNotes),
+    ];
     const lines = seasonScoreLines(week);
     const a = lines[team1] || [];
     const b = lines[team2] || [];
@@ -7584,6 +7601,7 @@ function renderTeamHistory() {
             when: escapeHtml(`${p.position} · ${p.gamesStarted} starts`),
             value: hofNumber(p.totalPoints),
         }))),
+        playerNemesesCard(franchise),
         teamHofHeldCard('Records Held', held.filter(row => !row.shame)),
         teamHofHeldCard('Hall of Shame', held.filter(row => row.shame)),
     ].filter(Boolean);
@@ -7600,6 +7618,7 @@ function renderTeamHistory() {
         html += `
             <div class="team-hof-section" id="team-hof-head-to-head">
                 <div class="team-hof-section-title">Head-to-Head Records</div>
+                ${nemesesHtml(nemesisAndVictim(franchiseOpponentRecords(ownerHeadToHead)), row => hofOwnerLink(row.opponent, row.name))}
                 <div class="team-series-grid">
                     ${ownerHeadToHead.map(record => {
                         const games = record.wins + record.losses + record.ties;
@@ -9121,6 +9140,7 @@ function hofOwnerHeadToHeadHtml(profile) {
     return `
         <section class="hof-section" id="owner-head-to-head">
             <h2 class="hof-section-title">Head to Head</h2>
+            ${nemesesHtml(nemesisAndVictim(rows), row => hofOwnerLink(row.opponent, row.name))}
             <div class="table-scroll-wrapper">
                 <table class="owner-stats-table hof-owner-table">
                     <thead><tr><th>Opponent</th><th>Record</th><th>Playoffs</th><th>Points</th><th>Last meeting</th></tr></thead>
@@ -9233,6 +9253,7 @@ function hofOwnerProfileHtml(profile) {
                 ${perfect ? hofOwnerStat('Perfect lineups', String(perfect.count), `of ${perfect.games} tracked games`) : ''}
             </div>
         </section>
+        ${hofFingerprintHtml(profile)}
         ${hofOwnerSeasonsHtml(profile)}
         ${hofOwnerHeadToHeadHtml(profile)}
         ${hofOwnerRecordsHtml(profile)}
@@ -9299,6 +9320,375 @@ function hofFranchisesHtml() {
             <div class="hof-franchise-grid">${franchises.map(hofFranchiseCard).join('')}</div>
             <p class="hof-record-note">Records include the playoffs. Playoff berths count top-four regular-season finishes.</p>
         </section>`;
+}
+
+// ====== ELO, FINGERPRINTS AND NEMESES ======
+// Elo histories and player nemeses come from scripts/hof_franchises.py (the
+// model is qpfl/elo.py), fingerprints from scripts/hof_owners.py. Nemeses
+// reuse the head-to-head lists the owner and team pages already show.
+
+// The palette's three slots that stay distinct for every pair, so up to three
+// franchises can be highlighted at once; the rest stay grey. A franchise keeps
+// its slot while it's highlighted.
+const ELO_COLORS = ['#3987e5', '#d95926', '#199e70'];
+const ELO_HIGHLIGHT_MAX = ELO_COLORS.length;
+const ELO_CHART_HEIGHT = 280;
+const NEMESIS_MIN_GAMES = 4;
+
+const eloChartState = { slots: null };
+let eloChartListeners = null;
+
+function ordinalSuffix(n) {
+    const tens = n % 100;
+    if (tens >= 11 && tens <= 13) return `${n}th`;
+    return `${n}${{ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th'}`;
+}
+
+function eloRatingText(franchise) {
+    if (!Number.isFinite(franchise?.elo)) return null;
+    return Math.round(franchise.elo).toLocaleString();
+}
+
+function eloSlots(franchises) {
+    if (eloChartState.slots) return eloChartState.slots;
+    const byElo = [...franchises].filter(f => Number.isFinite(f.elo)).sort((a, b) => b.elo - a.elo);
+    const mine = myTeamAbbrev();
+    const picks = [];
+    if (mine && franchises.some(f => f.abbrev === mine)) picks.push(mine);
+    for (const f of byElo) {
+        if (picks.length >= 2) break;
+        if (!picks.includes(f.abbrev)) picks.push(f.abbrev);
+    }
+    eloChartState.slots = new Map(picks.map((abbrev, slot) => [abbrev, slot]));
+    return eloChartState.slots;
+}
+
+function toggleEloFranchise(abbrev) {
+    const slots = eloChartState.slots;
+    if (slots.has(abbrev)) {
+        slots.delete(abbrev);
+        return;
+    }
+    if (slots.size >= ELO_HIGHLIGHT_MAX) return;
+    const used = new Set(slots.values());
+    const free = ELO_COLORS.findIndex((_, slot) => !used.has(slot));
+    slots.set(abbrev, free);
+}
+
+function hofEloChipsHtml(franchises) {
+    const slots = eloSlots(franchises);
+    const full = slots.size >= ELO_HIGHLIGHT_MAX;
+    return [...franchises]
+        .sort((a, b) => (b.elo ?? 0) - (a.elo ?? 0))
+        .map(f => {
+            const on = slots.has(f.abbrev);
+            const swatch = on ? `<span class="elo-swatch" style="background:${ELO_COLORS[slots.get(f.abbrev)]}"></span>` : '';
+            return `<button type="button" class="filter-chip elo-chip ${on ? 'active' : ''} ${myTeamClass(f.abbrev)}" aria-pressed="${on}" data-elo-team="${escapeHtml(f.abbrev)}"${!on && full ? ` disabled title="Up to ${ELO_HIGHLIGHT_MAX} at once"` : ''}>${swatch}${escapeHtml(f.abbrev)} <span class="elo-chip-rating">${escapeHtml(eloRatingText(f) || '—')}</span></button>`;
+        }).join('');
+}
+
+function hofEloHtml(franchises) {
+    const rated = franchises.filter(f => f.elo_series?.length);
+    if (!rated.length) return '';
+    const table = [...rated].sort((a, b) => a.elo_rank - b.elo_rank).map(f => `
+        <tr class="${myTeamClass(f.abbrev)}">
+            <td class="num">${escapeHtml(f.elo_rank)}</td>
+            <th scope="row">${teamProfileButton(f.abbrev, f.name, '', 'history')}</th>
+            <td class="num">${escapeHtml(eloRatingText(f))}</td>
+            <td class="num">${escapeHtml(Math.round(Math.max(...f.elo_series.map(p => p[2]))).toLocaleString())}</td>
+        </tr>`).join('');
+    return `
+        <section class="hof-section" id="hof-elo">
+            <h2 class="hof-section-title">Elo Ratings</h2>
+            <div class="transactions-filters elo-chips" role="group" aria-label="Highlight franchises">${hofEloChipsHtml(rated)}</div>
+            <div class="elo-chart" data-elo-chart></div>
+            <details class="elo-table">
+                <summary>Ratings table</summary>
+                <div class="table-scroll-wrapper">
+                    <table class="owner-stats-table hof-owner-table">
+                        <thead><tr><th class="num">Rank</th><th>Franchise</th><th class="num">Elo</th><th class="num">Peak</th></tr></thead>
+                        <tbody>${table}</tbody>
+                    </table>
+                </div>
+            </details>
+            <p class="hof-record-note">Every game since 2020 moves both teams' ratings: everyone starts at 1,500, wins count more the bigger the margin and the bigger the upset, playoff games count 1.25×, and ratings drift a third of the way back to 1,500 between seasons. Highlight up to ${ELO_HIGHLIGHT_MAX} franchises.</p>
+        </section>`;
+}
+
+function eloChartSvg(franchises, width) {
+    const height = ELO_CHART_HEIGHT;
+    const pad = { top: 18, right: 46, bottom: 26, left: 42 };
+    const keys = [...new Set(franchises.flatMap(f => f.elo_series.map(([s, w]) => s * 100 + w)))].sort((a, b) => a - b);
+    const xIndex = new Map(keys.map((key, i) => [key, i]));
+    const ratings = franchises.flatMap(f => f.elo_series.map(p => p[2]));
+    const lo = Math.floor((Math.min(...ratings, 1500) - 20) / 100) * 100;
+    const hi = Math.ceil((Math.max(...ratings, 1500) + 20) / 100) * 100;
+    const plotW = Math.max(1, width - pad.left - pad.right);
+    const plotH = height - pad.top - pad.bottom;
+    const x = i => pad.left + (keys.length > 1 ? (i / (keys.length - 1)) * plotW : plotW / 2);
+    const y = r => pad.top + (1 - (r - lo) / (hi - lo)) * plotH;
+    const slots = eloChartState.slots;
+
+    const grid = [];
+    for (let r = lo; r <= hi; r += 100) {
+        grid.push(`<line class="elo-grid${r === 1500 ? ' elo-grid-mid' : ''}" x1="${pad.left}" x2="${width - pad.right}" y1="${y(r)}" y2="${y(r)}"/>`);
+        grid.push(`<text class="elo-axis" x="${pad.left - 6}" y="${y(r) + 4}" text-anchor="end">${r.toLocaleString()}</text>`);
+    }
+    // A tick and label at each season's first week.
+    let lastSeason = null;
+    keys.forEach((key, i) => {
+        const season = Math.floor(key / 100);
+        if (season === lastSeason) return;
+        lastSeason = season;
+        grid.push(`<line class="elo-season" x1="${x(i)}" x2="${x(i)}" y1="${pad.top}" y2="${height - pad.bottom}"/>`);
+        grid.push(`<text class="elo-axis" x="${x(i) + 3}" y="${height - 8}">${season}</text>`);
+    });
+
+    const path = f => f.elo_series
+        .map(([s, w, r], i) => `${i ? 'L' : 'M'}${x(xIndex.get(s * 100 + w)).toFixed(1)},${y(r).toFixed(1)}`)
+        .join('');
+    const muted = franchises.filter(f => !slots.has(f.abbrev))
+        .map(f => `<path class="elo-line-muted" d="${path(f)}"><title>${escapeHtml(f.abbrev)}</title></path>`);
+    // Direct labels at each highlighted line's end, nudged apart.
+    const ends = [];
+    const lit = franchises.filter(f => slots.has(f.abbrev)).map(f => {
+        const color = ELO_COLORS[slots.get(f.abbrev)];
+        const last = f.elo_series[f.elo_series.length - 1];
+        ends.push({ abbrev: f.abbrev, y: y(last[2]), x: x(xIndex.get(last[0] * 100 + last[1])) });
+        return `<path class="elo-line" stroke="${color}" d="${path(f)}"/>`;
+    });
+    ends.sort((a, b) => a.y - b.y).forEach((end, i, all) => {
+        if (i && end.y - all[i - 1].y < 13) end.y = all[i - 1].y + 13;
+    });
+    const labels = ends.map(end =>
+        `<text class="elo-end-label" x="${end.x + 5}" y="${end.y + 4}">${escapeHtml(end.abbrev)}</text>`);
+
+    return {
+        keys,
+        x,
+        y,
+        pad,
+        svg: `
+            <svg class="elo-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="Elo rating of every franchise by week since 2020">
+                ${grid.join('')}
+                ${muted.join('')}
+                ${lit.join('')}
+                ${labels.join('')}
+                <line class="elo-crosshair" x1="0" x2="0" y1="${pad.top}" y2="${height - pad.bottom}" visibility="hidden"/>
+                <rect class="elo-hit" x="${pad.left}" y="${pad.top}" width="${plotW}" height="${plotH}"/>
+            </svg>`,
+    };
+}
+
+function eloRatingAt(franchise, key) {
+    let rating = null;
+    for (const [s, w, r] of franchise.elo_series) {
+        if (s * 100 + w > key) break;
+        rating = r;
+    }
+    return rating;
+}
+
+function drawEloChart(section, franchises) {
+    const host = section.querySelector('[data-elo-chart]');
+    if (!host) return;
+    const width = Math.max(300, host.clientWidth || 600);
+    const chart = eloChartSvg(franchises, width);
+    host.innerHTML = `${chart.svg}<div class="elo-tip" hidden></div>`;
+    const svg = host.querySelector('svg');
+    const tip = host.querySelector('.elo-tip');
+    const cross = host.querySelector('.elo-crosshair');
+    const hit = host.querySelector('.elo-hit');
+    const { signal } = eloChartListeners;
+    const show = event => {
+        const box = svg.getBoundingClientRect();
+        const px = event.clientX - box.left;
+        const span = chart.keys.length - 1;
+        const plotW = width - chart.pad.left - chart.pad.right;
+        const i = Math.min(span, Math.max(0, Math.round(((px - chart.pad.left) / plotW) * span)));
+        const key = chart.keys[i];
+        const lit = franchises.filter(f => eloChartState.slots.has(f.abbrev))
+            .map(f => ({ f, r: eloRatingAt(f, key) }))
+            .filter(row => row.r !== null)
+            .sort((a, b) => b.r - a.r);
+        cross.setAttribute('x1', chart.x(i));
+        cross.setAttribute('x2', chart.x(i));
+        cross.setAttribute('visibility', 'visible');
+        tip.innerHTML = `
+            <strong>Week ${key % 100}, ${Math.floor(key / 100)}</strong>
+            ${lit.map(({ f, r }) => `<span><i class="elo-swatch" style="background:${ELO_COLORS[eloChartState.slots.get(f.abbrev)]}"></i>${escapeHtml(f.abbrev)} ${Math.round(r).toLocaleString()}</span>`).join('')}
+            ${lit.length ? '' : '<span>Highlight a franchise to compare</span>'}`;
+        tip.hidden = false;
+        const left = Math.min(width - tip.offsetWidth - 4, Math.max(4, chart.x(i) + 10));
+        tip.style.left = `${left}px`;
+    };
+    const hide = () => {
+        tip.hidden = true;
+        cross.setAttribute('visibility', 'hidden');
+    };
+    hit.addEventListener('pointermove', show, { signal });
+    hit.addEventListener('pointerdown', show, { signal });
+    hit.addEventListener('pointerleave', hide, { signal });
+}
+
+function bindEloChart(container) {
+    const section = container.querySelector('#hof-elo');
+    eloChartListeners?.abort();
+    eloChartListeners = new AbortController();
+    if (!section) return;
+    const franchises = hofFranchiseIndex().filter(f => f.elo_series?.length);
+    const { signal } = eloChartListeners;
+    const redraw = () => drawEloChart(section, franchises);
+    section.querySelector('.elo-chips').addEventListener('click', event => {
+        const chip = event.target.closest('[data-elo-team]');
+        if (!chip || chip.disabled) return;
+        toggleEloFranchise(chip.dataset.eloTeam);
+        section.querySelector('.elo-chips').innerHTML = hofEloChipsHtml(franchises);
+        redraw();
+    }, { signal });
+    let width = 0;
+    const observer = new ResizeObserver(() => {
+        const next = section.querySelector('[data-elo-chart]')?.clientWidth || 0;
+        if (Math.abs(next - width) < 2) return;
+        width = next;
+        redraw();
+    });
+    observer.observe(section);
+    signal.addEventListener('abort', () => observer.disconnect());
+    redraw();
+}
+
+// --- Fingerprints ----------------------------------------------------------- #
+
+let hofFingerprintCompare = null;
+
+function hofFingerprintHtml(profile) {
+    const traits = profile.fingerprint;
+    if (!traits) return '';
+    const profiles = data.hall_of_fame_records?.owner_profiles || {};
+    const other = hofFingerprintCompare && hofFingerprintCompare !== profile.code
+        ? profiles[hofFingerprintCompare]
+        : null;
+    const otherTraits = new Map((other?.fingerprint || []).map(t => [t.key, t]));
+    const options = Object.values(profiles)
+        .filter(p => p.fingerprint && p.code !== profile.code)
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(p => `<option value="${escapeHtml(p.code)}"${other?.code === p.code ? ' selected' : ''}>${escapeHtml(p.name)}</option>`)
+        .join('');
+    const rows = traits.map(trait => {
+        const them = otherTraits.get(trait.key);
+        const bar = (t, cls) => (t?.percentile === null || t?.percentile === undefined
+            ? `<span class="fp-bar ${cls} fp-empty"></span>`
+            : `<span class="fp-bar ${cls}" style="width:${Math.max(2, t.percentile)}%"></span>`);
+        const pct = t => (t?.percentile === null || t?.percentile === undefined ? '—' : ordinalSuffix(t.percentile));
+        return `
+            <div class="fp-row">
+                <span class="fp-label">${escapeHtml(trait.label)}</span>
+                <span class="fp-track" role="img" aria-label="${escapeHtml(`${trait.label}: ${pct(trait)} percentile${them ? `; ${other.name} ${pct(them)}` : ''}`)}">
+                    ${bar(trait, 'fp-mine')}
+                    ${other ? bar(them, 'fp-theirs') : ''}
+                </span>
+                <span class="fp-value">
+                    <strong>${escapeHtml(pct(trait))}</strong>
+                    <span>${escapeHtml(trait.detail || 'No games yet')}</span>
+                    ${other ? `<span class="fp-theirs-text">${escapeHtml(pct(them))} · ${escapeHtml(them?.detail || 'No games yet')}</span>` : ''}
+                </span>
+            </div>`;
+    }).join('');
+    return `
+        <section class="hof-section" id="owner-fingerprint" data-owner="${escapeHtml(profile.code)}">
+            <div class="fp-heading">
+                <h2 class="hof-section-title">Manager Fingerprint</h2>
+                <label class="fp-compare">Compare to
+                    <select class="fp-compare-select">
+                        <option value="">Nobody</option>
+                        ${options}
+                    </select>
+                </label>
+            </div>
+            ${other ? `<p class="fp-legend"><span class="fp-key fp-mine"></span>${escapeHtml(profile.name)} <span class="fp-key fp-theirs"></span>${escapeHtml(other.name)}</p>` : ''}
+            <div class="fp-rows">${rows}</div>
+            <p class="hof-record-note">Percentile among the owners with at least 15 regular-season games: higher is better on every bar. Consistency ranks the week-to-week spread of scores (smaller is better), Lineup IQ the share of the best possible lineup's points started, Luck wins above what scoring every team every week would expect, Clutch the record in games decided by under 10.</p>
+        </section>`;
+}
+
+let fingerprintListeners = null;
+
+function bindFingerprintCompare(container) {
+    fingerprintListeners?.abort();
+    fingerprintListeners = new AbortController();
+    container.addEventListener('change', event => {
+        const select = event.target.closest?.('.fp-compare-select');
+        if (!select) return;
+        const section = select.closest('#owner-fingerprint');
+        const profile = data.hall_of_fame_records?.owner_profiles?.[section?.dataset.owner];
+        if (!profile) return;
+        hofFingerprintCompare = select.value || null;
+        section.outerHTML = hofFingerprintHtml(profile);
+        container.querySelector('#owner-fingerprint .fp-compare-select')?.focus();
+    }, { signal: fingerprintListeners.signal });
+}
+
+// --- Nemeses ---------------------------------------------------------------- #
+
+// The opponent with the worst and the best record against, from a
+// head-to-head list ({wins, losses, ties}), among those met at least
+// NEMESIS_MIN_GAMES times. Ties go to the longer series, then by name, so
+// the owner and team pages agree.
+function nemesisAndVictim(rows) {
+    const eligible = rows
+        .map(row => {
+            const games = row.wins + row.losses + (row.ties || 0);
+            return { ...row, games, pct: games ? (row.wins + (row.ties || 0) / 2) / games : 0 };
+        })
+        .filter(row => row.games >= NEMESIS_MIN_GAMES);
+    if (eligible.length < 2) return null;
+    const pick = better => eligible.reduce((best, row) => {
+        if (!best) return row;
+        if (row.pct !== best.pct) return better(row.pct, best.pct) ? row : best;
+        if (row.games !== best.games) return row.games > best.games ? row : best;
+        return String(row.name).localeCompare(String(best.name)) < 0 ? row : best;
+    }, null);
+    return { nemesis: pick((a, b) => a < b), victim: pick((a, b) => a > b) };
+}
+
+function nemesesHtml(pair, nameHtml) {
+    if (!pair) return '';
+    const tile = (label, row) => `
+        <div class="hof-owner-stat nemesis-tile">
+            <span class="hof-owner-stat-label">${escapeHtml(label)}</span>
+            <span class="hof-owner-stat-value nemesis-name">${nameHtml(row)}</span>
+            <span class="hof-owner-stat-detail">${escapeHtml(`${row.wins}-${row.losses}${row.ties ? `-${row.ties}` : ''} · ${Math.round(row.pct * 100)}% in ${row.games} games`)}</span>
+        </div>`;
+    return `<div class="hof-owner-stats nemeses">${tile('Nemesis', pair.nemesis)}${tile('Favourite victim', pair.victim)}</div>`;
+}
+
+// A team page's owner-vs-owner series, summed across this franchise's owners.
+function franchiseOpponentRecords(ownerHeadToHead) {
+    const byOpponent = new Map();
+    ownerHeadToHead.forEach(record => {
+        const row = byOpponent.get(record.opponentId) || {
+            opponent: record.opponentId,
+            name: normalizeCoOwnerLabel(record.opponent) || record.opponentId,
+            wins: 0,
+            losses: 0,
+            ties: 0,
+        };
+        row.wins += record.wins;
+        row.losses += record.losses;
+        row.ties += record.ties || 0;
+        byOpponent.set(record.opponentId, row);
+    });
+    return [...byOpponent.values()];
+}
+
+function playerNemesesCard(franchise) {
+    const rows = franchise?.player_nemeses || [];
+    return teamHofListCard('Player Nemeses', rows.map(row => ({
+        name: playerProfileButton(row.player, '', null, row.position),
+        when: escapeHtml(`${row.position} · ${row.games} ${row.games === 1 ? 'start' : 'starts'} against`),
+        value: hofNumber(row.points),
+    })), { note: 'Points opposing starters scored against this franchise, consolation games out.' });
 }
 
 // A team's Hall of Fame (Teams page), built from the same pieces as the
@@ -9374,6 +9764,7 @@ function teamHofOverviewHtml(franchise, allTime, banners) {
                 ${franchise ? hofOwnerStat('Playoffs', `${franchise.playoff_berths} ${franchise.playoff_berths === 1 ? 'berth' : 'berths'}`, `in ${franchise.seasons.filter(s => s.complete).length} seasons`) : ''}
                 ${best ? hofOwnerStat('Best finish', best.label, String(best.season)) : ''}
                 ${hofOwnerStat('Points per game', hofNumber(Number((allTime.ppg || 0).toFixed(1))), `${hofNumber(allTime.totalPoints || 0)} in ${games} games`)}
+                ${eloRatingText(franchise) ? hofOwnerStat('Elo', eloRatingText(franchise), `${ordinalSuffix(franchise.elo_rank)} of ${hofFranchiseIndex().length}`) : ''}
             </div>
             ${franchise ? `
                 <ol class="hof-franchise-eras team-hof-eras" aria-label="Owners">
@@ -10771,6 +11162,7 @@ const HOF_TAB_RENDERERS = {
     records: hof => hofRecordsHtml(hof),
     owners: hof => hofOwnersHtml(hof),
     franchises: hof => hofSections([
+        ['hof-elo', 'Elo Ratings', hofEloHtml(hofFranchiseIndex())],
         ['hof-franchises', 'Franchises', hofFranchisesHtml()],
         ['hof-rivalries', 'Rivalry Week', hofRivalriesHtml(hof)],
     ]),
@@ -10790,6 +11182,8 @@ function renderHallOfFame() {
     if (tab === 'overview') renderWeeklyFactsCard().catch(() => {});
     if (tab === 'records' || tab === 'players') bindHofRecordFilters(container);
     if (tab === 'records') bindScorigamiGrid(container);
+    bindEloChart(container);
+    bindFingerprintCompare(container);
     // The owner's name for the title only arrives with the records file.
     if (currentHofOwner) updatePageMetadata('history', 'records');
 }

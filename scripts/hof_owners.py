@@ -8,12 +8,18 @@ and the profile always agree.
 
 from __future__ import annotations
 
+import statistics
 from collections import defaultdict
 
 from qpfl.weekly_facts import CONSOLATION, PLAYOFFS, REGULAR, PlayerGame, TeamGame
 from scripts import export_hall_of_fame as hof
 
 TOP_PLAYERS = 10
+# Owners with fewer regular-season games get no fingerprint: a handful of
+# games puts them at the extremes of every trait.
+FINGERPRINT_MIN_GAMES = 15
+# A game decided by less than this is close, for the Clutch trait.
+CLOSE_GAME_MARGIN = 10
 
 
 def owner_codes(abbrev: str, season: int) -> list[str]:
@@ -162,6 +168,130 @@ def _top_players(player_games: list[PlayerGame], profile_key_for) -> dict:
     }
 
 
+def _midrank(values: list[float]):
+    """Percentile (0-100) of a value among `values`, ties sharing their run."""
+    ordered = sorted(values)
+
+    def percentile(value: float) -> int:
+        below = sum(1 for v in ordered if v < value)
+        equal = sum(1 for v in ordered if v == value)
+        return round(100 * (below + equal / 2) / len(ordered))
+
+    return percentile
+
+
+def _win_pct(games: list[TeamGame]) -> float | None:
+    if not games:
+        return None
+    return (sum(g.won for g in games) + sum(not g.won and not g.lost for g in games) / 2) / len(
+        games
+    )
+
+
+def _fingerprints(team_games: list[TeamGame], playoff_records: dict[str, str]) -> dict:
+    """Six traits per owner, each as a percentile among qualifying owners.
+
+    Scoring (regular-season points per game), Consistency (the standard
+    deviation of those scores, lower is better), Lineup IQ (points as a share of
+    the best lineup the roster allowed), Luck (wins above what the all-play
+    record expects, per game), Clutch (win % in games decided by under 10) and
+    Playoffs (playoff win %, from the owner stats table's playoff record so the
+    two always agree).
+    """
+    regular = [g for g in team_games if g.bracket == REGULAR and g.single_game and g.score > 0]
+    # All-play: the share of the week's other scores each team beat.
+    weeks: dict[tuple[int, int], dict[str, float]] = defaultdict(dict)
+    for g in regular:
+        weeks[g.order][g.abbrev] = g.score
+
+    def all_play(g: TeamGame) -> float:
+        others = [s for team, s in weeks[g.order].items() if team != g.abbrev]
+        if not others:
+            return 0.5
+        return (sum(s < g.score for s in others) + sum(s == g.score for s in others) / 2) / len(
+            others
+        )
+
+    by_owner: dict[str, list[TeamGame]] = defaultdict(list)
+    for g in regular:
+        for owner in owner_codes(g.abbrev, g.season):
+            by_owner[owner].append(g)
+    close: dict[str, list[TeamGame]] = defaultdict(list)
+    for g in team_games:
+        if not g.decided or g.score <= 0:
+            continue
+        if g.single_game and abs(g.score - g.opp_score) < CLOSE_GAME_MARGIN:
+            for owner in owner_codes(g.abbrev, g.season):
+                close[owner].append(g)
+
+    raw: dict[str, dict[str, tuple[float, str] | None]] = {}
+    for owner, games in by_owner.items():
+        if len(games) < FINGERPRINT_MIN_GAMES:
+            continue
+        scores = [g.score for g in games]
+        sd = statistics.pstdev(scores)
+        lineup = [g for g in games if g.optimal]
+        luck = sum(g.won + (not g.won and not g.lost) / 2 - all_play(g) for g in games)
+        clutch = close.get(owner, [])
+        playoff_wins, playoff_losses = (
+            int(n) for n in (playoff_records.get(owner) or '0-0').split('-')[:2]
+        )
+        playoff_games = playoff_wins + playoff_losses
+
+        def record(gs: list[TeamGame]) -> str:
+            wins = sum(g.won for g in gs)
+            losses = sum(g.lost for g in gs)
+            return _record(wins, losses, len(gs) - wins - losses)
+
+        raw[owner] = {
+            'scoring': (statistics.fmean(scores), f'{statistics.fmean(scores):.1f} PPG'),
+            'consistency': (-sd, f'±{sd:.1f} a week'),
+            'lineup_iq': (
+                sum(g.score for g in lineup) / sum(g.optimal for g in lineup),
+                f'{100 * sum(g.score for g in lineup) / sum(g.optimal for g in lineup):.1f}% of optimal',
+            )
+            if lineup
+            else None,
+            'luck': (
+                luck / len(games),
+                f'{luck:+.1f} wins vs all-play',
+            ),
+            'clutch': (_win_pct(clutch), f'{record(clutch)} in close games') if clutch else None,
+            'playoffs': (
+                playoff_wins / playoff_games,
+                f'{playoff_wins}-{playoff_losses} in the playoffs',
+            )
+            if playoff_games
+            else None,
+        }
+
+    labels = {
+        'scoring': 'Scoring',
+        'consistency': 'Consistency',
+        'lineup_iq': 'Lineup IQ',
+        'luck': 'Luck',
+        'clutch': 'Clutch',
+        'playoffs': 'Playoffs',
+    }
+    rankers = {
+        key: _midrank([traits[key][0] for traits in raw.values() if traits[key]]) for key in labels
+    }
+    return {
+        owner: [
+            {
+                'key': key,
+                'label': label,
+                'detail': traits[key][1],
+                'percentile': rankers[key](traits[key][0]),
+            }
+            if traits[key]
+            else {'key': key, 'label': label, 'detail': None, 'percentile': None}
+            for key, label in labels.items()
+        ]
+        for owner, traits in raw.items()
+    }
+
+
 def _records_held(record_book: dict) -> dict:
     """Record book entries each owner holds, top three ranks only."""
     held: dict[str, list[dict]] = defaultdict(list)
@@ -255,6 +385,9 @@ def build_owner_profiles(
     top_players = _top_players(player_games, profile_key_for)
     records_held = _records_held(record_book)
     perfect = {row['code']: row for row in perfect_lineups}
+    fingerprints = _fingerprints(
+        team_games, {row['Code']: row.get('Playoff Record', '0-0') for row in owner_stats}
+    )
 
     playoff_games: dict[str, list[TeamGame]] = defaultdict(list)
     for g in team_games:
@@ -312,5 +445,6 @@ def build_owner_profiles(
             'records_held': records_held.get(code, []),
             'perfect_lineups': perfect.get(code),
             'playoff_games': len(playoff_games.get(code, [])),
+            'fingerprint': fingerprints.get(code),
         }
     return profiles

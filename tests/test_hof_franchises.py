@@ -112,3 +112,40 @@ def test_finishes_match_whoever_ran_the_seat_that_season():
     # ...not to J/J, which Joe Ward only joined in 2024.
     jj = hof._season_finish_badges(finishes, 2023, 'J/J', standings_2023, True)
     assert {'type': 'playoff', 'label': '3rd Place'} not in jj
+
+
+def test_franchises_carry_elo_and_player_nemeses():
+    from qpfl import weekly_facts as wf
+    from scripts.export_weekly_facts import franchises_for
+
+    gsa, cgk = franchises_for('GSA'), franchises_for('CGK')
+    team_games = [
+        wf.TeamGame(2025, 1, 'Week 1', wf.REGULAR, 'GSA', gsa, 120, 'CGK', cgk, 100),
+        wf.TeamGame(2025, 1, 'Week 1', wf.REGULAR, 'CGK', cgk, 100, 'GSA', gsa, 120),
+    ]
+
+    def player(name, score, abbrev, opp, bracket=wf.REGULAR, starter=True):
+        return wf.PlayerGame(
+            2025, 1, 'Week 1', bracket, name.lower(), name, 'QB', abbrev,
+            franchises_for(abbrev), score, starter, franchises_for(opp),
+        )  # fmt: skip
+
+    player_games = [
+        player('Allen', 40, 'CGK', 'GSA'),
+        player('Bench', 50, 'CGK', 'GSA', starter=False),
+        player('Toilet', 60, 'CGK', 'GSA', bracket=wf.CONSOLATION),
+    ]
+    seasons = [_season(2025, _week(1, (_team('GSA', 120), _team('CGK', 100))))]
+    book = hof_records.build_record_book(seasons, lambda abbrev, season: abbrev)
+    index = {
+        f['abbrev']: f
+        for f in hof_franchises.build_franchise_index(
+            seasons, ['GSA', 'CGK'], {}, book, {}, team_games, player_games
+        )
+    }
+    assert index['GSA']['elo'] > 1500 > index['CGK']['elo']
+    assert (index['GSA']['elo_rank'], index['CGK']['elo_rank']) == (1, 2)
+    assert index['GSA']['elo_series'][0][:2] == [2025, 1]
+    # Starters only, consolation games out.
+    assert [(r['player'], r['points']) for r in index['GSA']['player_nemeses']] == [('Allen', 40)]
+    assert index['CGK']['player_nemeses'] == []
