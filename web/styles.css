@@ -8484,10 +8484,14 @@ a.schedule-row:focus-visible {
 .confirm-modal.player-modal {
     max-width: 760px;
     max-height: min(90vh, 860px);
+    max-height: min(90dvh, 860px);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .player-modal-header {
+    flex-shrink: 0;
     justify-content: space-between;
 }
 
@@ -8662,12 +8666,14 @@ a.schedule-row:focus-visible {
 }
 
 .player-modal-body {
-    max-height: calc(min(90vh, 860px) - 76px);
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
 }
 
 .player-modal-share {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: var(--space-3);
@@ -9002,10 +9008,10 @@ a.schedule-row:focus-visible {
     .confirm-modal.player-modal {
         width: calc(100% - 1rem);
         max-height: calc(100vh - 1rem);
+        max-height: calc(100dvh - 1rem);
     }
 
     .player-modal-body {
-        max-height: calc(100vh - 148px);
         padding: 1rem;
     }
 
