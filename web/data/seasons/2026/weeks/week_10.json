@@ -1,6 +1,6 @@
 {
   "week": 10,
-  "scored_at": "2026-11-15T05:14:30.541176+00:00",
+  "scored_at": "2026-11-15T16:28:47.524520+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -84,13 +84,12 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 10.0,
           "nfl_opponent": "CAR",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T18:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "ir"
+          "on_bye": false
         },
         {
           "name": "Javonte Williams",
@@ -296,7 +295,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.2,
+          "projected_points": 2.3,
           "nfl_opponent": "NYJ",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -390,10 +389,10 @@
       "total_score": 0.0,
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 92.9,
-      "win_probability": 0.5439,
+      "projected_total": 93.1,
+      "win_probability": 0.5481,
       "starters_remaining": 10,
-      "pregame_total": 92.9,
+      "pregame_total": 93.1,
       "score_rank": 5
     },
     {
@@ -694,7 +693,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.9,
+          "projected_points": -1.0,
           "nfl_opponent": "SF",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T21:25:00+00:00",
@@ -1076,7 +1075,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 1.9,
+          "projected_points": 2.0,
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T21:25:00+00:00",
@@ -1184,10 +1183,10 @@
       "total_score": 18.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 96.8,
-      "win_probability": 0.887,
+      "projected_total": 96.9,
+      "win_probability": 0.8879,
       "starters_remaining": 9,
-      "pregame_total": 86.7,
+      "pregame_total": 86.8,
       "score_rank": 3
     },
     {
@@ -1983,7 +1982,7 @@
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
       "projected_total": 90.8,
-      "win_probability": 0.4561,
+      "win_probability": 0.4519,
       "starters_remaining": 9,
       "pregame_total": 76.8,
       "score_rank": 2
@@ -3703,7 +3702,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.2,
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
@@ -3994,7 +3993,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 72.2,
-      "win_probability": 0.113,
+      "win_probability": 0.1121,
       "starters_remaining": 8,
       "pregame_total": 72.2,
       "score_rank": 9
@@ -5704,13 +5703,12 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 10.0,
             "nfl_opponent": "CAR",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T18:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "ir"
+            "on_bye": false
           },
           {
             "name": "Javonte Williams",
@@ -5916,7 +5914,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.2,
+            "projected_points": 2.3,
             "nfl_opponent": "NYJ",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -6010,10 +6008,10 @@
         "total_score": 0.0,
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 92.9,
-        "win_probability": 0.5439,
+        "projected_total": 93.1,
+        "win_probability": 0.5481,
         "starters_remaining": 10,
-        "pregame_total": 92.9,
+        "pregame_total": 93.1,
         "score_rank": 5
       },
       "team2": {
@@ -6411,7 +6409,7 @@
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
         "projected_total": 90.8,
-        "win_probability": 0.4561,
+        "win_probability": 0.4519,
         "starters_remaining": 9,
         "pregame_total": 76.8,
         "score_rank": 2
@@ -6701,7 +6699,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 1.9,
+            "projected_points": 2.0,
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T21:25:00+00:00",
@@ -6809,10 +6807,10 @@
         "total_score": 18.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 96.8,
-        "win_probability": 0.887,
+        "projected_total": 96.9,
+        "win_probability": 0.8879,
         "starters_remaining": 9,
-        "pregame_total": 86.7,
+        "pregame_total": 86.8,
         "score_rank": 3
       },
       "team2": {
@@ -6913,7 +6911,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.2,
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
@@ -7204,7 +7202,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 72.2,
-        "win_probability": 0.113,
+        "win_probability": 0.1121,
         "starters_remaining": 8,
         "pregame_total": 72.2,
         "score_rank": 9
@@ -7509,7 +7507,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.9,
+            "projected_points": -1.0,
             "nfl_opponent": "SF",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T21:25:00+00:00",
