@@ -1855,6 +1855,14 @@ def handle_respond_trade(data: dict) -> tuple[int, dict]:
                     if player_details['roster_moves']
                     else {}
                 ),
+                # Carry what the proposer attached to the deal into the permanent
+                # log, so the conditions outlive the pending-trade record.
+                **({'conditions': trade['conditions']} if trade.get('conditions') else {}),
+                **(
+                    {'conditional_notes': trade['conditional_notes']}
+                    if trade.get('conditional_notes')
+                    else {}
+                ),
             },
             operation_id,
         )

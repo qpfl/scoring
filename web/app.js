@@ -2711,6 +2711,10 @@ function renderHomeTransactions() {
                             <div class="home-trade-side">Corresponding moves</div>
                             ${tradeRosterMoveLines(tx).map(move => `<div class="home-trade-item">${escapeHtml(move)}</div>`).join('')}
                         ` : ''}
+                        ${tradeConditionLines(tx).length ? `
+                            <div class="home-trade-side">Conditions</div>
+                            ${tradeConditionLines(tx).map(line => `<div class="home-trade-item">${escapeHtml(line)}</div>`).join('')}
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -3029,6 +3033,10 @@ function renderHomeOffseasonTransactions() {
                         ${tradeRosterMoveLines(tx).length ? `
                             <div class="home-trade-side">Corresponding moves</div>
                             ${tradeRosterMoveLines(tx).map(move => `<div class="home-trade-item">${escapeHtml(move)}</div>`).join('')}
+                        ` : ''}
+                        ${tradeConditionLines(tx).length ? `
+                            <div class="home-trade-side">Conditions</div>
+                            ${tradeConditionLines(tx).map(line => `<div class="home-trade-item">${escapeHtml(line)}</div>`).join('')}
                         ` : ''}
                     </div>
                 </div>
@@ -11454,6 +11462,19 @@ function tradeRosterMoveEntries(tx) {
     ]);
 }
 
+// What the proposer attached to the deal: per-asset conditions (keyed like
+// `pick-receive-2027-R2-CGK`) and free-text notes, as readable lines.
+function tradeConditionLines(tx) {
+    const lines = Object.entries(tx.conditions || {}).map(([key, text]) => {
+        const match = String(key).match(/^(player|pick)-(?:give|receive)-(.+)$/);
+        const asset = match ? (match[1] === 'pick' ? displayPickLabel(match[2]) : match[2]) : key;
+        return `${asset}: ${text}`;
+    });
+    const notes = String(tx.conditional_notes || '').trim();
+    if (notes && !lines.some(line => line.endsWith(`: ${notes}`))) lines.push(notes);
+    return lines;
+}
+
 function tradeRosterMoveLines(tx) {
     return tradeRosterMoveEntries(tx).map(({ team, player, verb }) =>
         `${team} ${verb} ${`${player.position || ''} ${player.name || ''}`.trim()}`);
@@ -11543,6 +11564,12 @@ function renderTransactionItem(tx) {
                             <div class="transaction-side-header">Corresponding moves</div>
                             ${tradeRosterMoveEntries(tx).map(({ team, player, verb, direction }) =>
                                 transactionAssetHtml(player, team, tx, direction, `${team} ${verb}`)).join('')}
+                        </div>` : ''}
+                    ${tradeConditionLines(tx).length ? `
+                        <div class="transaction-side">
+                            <div class="transaction-side-header">Conditions</div>
+                            ${tradeConditionLines(tx).map(line =>
+                                transactionAssetRowHtml({ main: `<span>${escapeHtml(line)}</span>` })).join('')}
                         </div>` : ''}
                 </div>
             </div>`;
