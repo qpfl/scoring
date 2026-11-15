@@ -10046,6 +10046,9 @@ td.player-name:hover,
 
 .player-list {
     display: grid;
+    /* minmax(0, 1fr) keeps rows inside their column; an auto track grows to
+       the widest row's content and pushes it past the bin. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.5rem;
 }
 

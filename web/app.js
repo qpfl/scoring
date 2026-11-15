@@ -1139,6 +1139,9 @@ async function prepareViewData(view, subview) {
             ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
             ensureSharedResource('transactions'),
             ensureHomeWeekData(),
+            // The trade builder's season points, position rank and PPG (and
+            // its per-week scoring options) need every scored week.
+            ensureAllSeasonWeeks(),
         ]);
     }
 }
