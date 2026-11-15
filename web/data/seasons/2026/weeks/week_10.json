@@ -1,6 +1,6 @@
 {
   "week": 10,
-  "scored_at": "2026-11-15T16:28:47.524520+00:00",
+  "scored_at": "2026-11-15T20:03:52.352071+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -338,7 +338,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 20.6,
           "nfl_opponent": "NYJ",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -454,7 +454,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -526,7 +526,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -536,7 +536,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 6.2,
           "nfl_opponent": "JAX",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -669,7 +669,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -762,7 +762,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 5.5,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -837,7 +837,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -893,7 +893,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -931,12 +931,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 6.6,
+          "projected_points": 0.0,
           "nfl_opponent": "BAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-17T01:15:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Rome Odunze",
@@ -1258,7 +1259,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 9.8,
           "nfl_opponent": "MIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -1471,15 +1472,18 @@
           "name": "Mike Vrabel",
           "nfl_team": "NE",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -3,
+          "found": true,
           "starter": false,
           "projected_points": -0.7,
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_20+": -3
+          }
         },
         {
           "name": "Todd Monken",
@@ -1506,7 +1510,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1520,7 +1524,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         }
       ],
@@ -1599,7 +1603,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 15.2,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -1732,7 +1736,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.4,
           "nfl_opponent": "MIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -1803,7 +1807,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 4.7,
           "nfl_opponent": "GB",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -2495,7 +2499,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 10.1,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -2614,7 +2618,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2642,7 +2646,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2737,7 +2741,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 16.4,
           "nfl_opponent": "HOU",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -2764,7 +2768,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 7.3,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -2820,7 +2824,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 15.9,
           "nfl_opponent": "IND",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -2909,7 +2913,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3088,7 +3092,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3267,7 +3271,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 14.3,
           "nfl_opponent": "ATL",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -3329,7 +3333,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3367,7 +3371,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 5.0,
           "nfl_opponent": "CLE",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T18:00:00+00:00",
@@ -3491,15 +3495,18 @@
           "name": "Dan Campbell",
           "nfl_team": "DET",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 4,
+          "found": true,
           "starter": false,
           "projected_points": 1.6,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_20+": 4
+          }
         },
         {
           "name": "Seattle Seahawks",
@@ -3620,7 +3627,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3706,7 +3713,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -3791,7 +3798,7 @@
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3805,7 +3812,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3847,7 +3854,7 @@
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3956,12 +3963,13 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "projected_points": 11.3,
+          "projected_points": 0.0,
           "nfl_opponent": "LV",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T21:05:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jakobi Meyers",
@@ -4071,7 +4079,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 14.3,
             "nfl_opponent": "ATL",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -4133,7 +4141,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4171,7 +4179,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.0,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -4295,15 +4303,18 @@
             "name": "Dan Campbell",
             "nfl_team": "DET",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 4,
+            "found": true,
             "starter": false,
             "projected_points": 1.6,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_20+": 4
+            }
           },
           {
             "name": "Seattle Seahawks",
@@ -4477,7 +4488,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 9.8,
             "nfl_opponent": "MIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -4690,15 +4701,18 @@
             "name": "Mike Vrabel",
             "nfl_team": "NE",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -3,
+            "found": true,
             "starter": false,
             "projected_points": -0.7,
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_20+": -3
+            }
           },
           {
             "name": "Todd Monken",
@@ -4725,7 +4739,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4739,7 +4753,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           }
         ],
@@ -5240,7 +5254,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 15.9,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -5329,7 +5343,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5508,7 +5522,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5957,7 +5971,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 20.6,
             "nfl_opponent": "NYJ",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -6026,7 +6040,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 15.2,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -6159,7 +6173,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 5.4,
             "nfl_opponent": "MIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -6230,7 +6244,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 4.7,
             "nfl_opponent": "GB",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -6461,7 +6475,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6517,7 +6531,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6555,12 +6569,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 6.6,
+            "projected_points": 0.0,
             "nfl_opponent": "BAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-17T01:15:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Rome Odunze",
@@ -6829,7 +6844,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6915,7 +6930,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -7000,7 +7015,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7014,7 +7029,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7056,7 +7071,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7165,12 +7180,13 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "projected_points": 11.3,
+            "projected_points": 0.0,
             "nfl_opponent": "LV",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T21:05:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jakobi Meyers",
@@ -7268,7 +7284,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7340,7 +7356,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7350,7 +7366,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 6.2,
             "nfl_opponent": "JAX",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -7483,7 +7499,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7576,7 +7592,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 5.5,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -7708,7 +7724,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 10.1,
             "nfl_opponent": "IND",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -7827,7 +7843,7 @@
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7855,7 +7871,7 @@
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7950,7 +7966,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 16.4,
             "nfl_opponent": "HOU",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T18:00:00+00:00",
@@ -7977,7 +7993,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 7.3,
             "nfl_opponent": "CLE",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T18:00:00+00:00",
