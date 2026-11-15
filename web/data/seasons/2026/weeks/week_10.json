@@ -1,6 +1,6 @@
 {
   "week": 10,
-  "scored_at": "2026-11-15T04:49:31.477339+00:00",
+  "scored_at": "2026-11-15T04:53:12.202047+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1185,7 +1185,7 @@
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
       "projected_total": 96.8,
-      "win_probability": 0.8103,
+      "win_probability": 0.887,
       "starters_remaining": 9,
       "pregame_total": 86.7,
       "score_rank": 3
@@ -3277,21 +3277,6 @@
           "unavailable_reason": "out"
         },
         {
-          "name": "TreVeyon Henderson",
-          "nfl_team": "NE",
-          "position": "RB",
-          "score": 0.0,
-          "found": false,
-          "starter": false,
-          "projected_points": 0.0,
-          "nfl_opponent": "DET",
-          "nfl_is_home": false,
-          "kickoff": "2026-11-15T14:30:00+00:00",
-          "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "ir"
-        },
-        {
           "name": "Jeremiyah Love",
           "nfl_team": "ARI",
           "position": "RB",
@@ -3305,6 +3290,20 @@
           "game_final": false,
           "on_bye": false,
           "unavailable_reason": "ir"
+        },
+        {
+          "name": "Jordan Mason",
+          "nfl_team": "MIN",
+          "position": "RB",
+          "score": 0.0,
+          "found": false,
+          "starter": false,
+          "projected_points": 6.5,
+          "nfl_opponent": "GB",
+          "nfl_is_home": false,
+          "kickoff": "2026-11-15T18:00:00+00:00",
+          "game_final": false,
+          "on_bye": false
         },
         {
           "name": "Ja'Marr Chase",
@@ -3698,18 +3697,19 @@
           "on_bye": true
         },
         {
-          "name": "Jordan Mason",
-          "nfl_team": "MIN",
+          "name": "TreVeyon Henderson",
+          "nfl_team": "NE",
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": true,
-          "projected_points": 6.5,
-          "nfl_opponent": "GB",
+          "starter": false,
+          "projected_points": 0.0,
+          "nfl_opponent": "DET",
           "nfl_is_home": false,
-          "kickoff": "2026-11-15T18:00:00+00:00",
+          "kickoff": "2026-11-15T14:30:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "ir"
         },
         {
           "name": "Rashee Rice",
@@ -3993,10 +3993,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 78.7,
-      "win_probability": 0.1897,
-      "starters_remaining": 9,
-      "pregame_total": 78.7,
+      "projected_total": 72.2,
+      "win_probability": 0.113,
+      "starters_remaining": 8,
+      "pregame_total": 72.2,
       "score_rank": 9
     }
   ],
@@ -4081,21 +4081,6 @@
             "unavailable_reason": "out"
           },
           {
-            "name": "TreVeyon Henderson",
-            "nfl_team": "NE",
-            "position": "RB",
-            "score": 0.0,
-            "found": false,
-            "starter": false,
-            "projected_points": 0.0,
-            "nfl_opponent": "DET",
-            "nfl_is_home": false,
-            "kickoff": "2026-11-15T14:30:00+00:00",
-            "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "ir"
-          },
-          {
             "name": "Jeremiyah Love",
             "nfl_team": "ARI",
             "position": "RB",
@@ -4109,6 +4094,20 @@
             "game_final": false,
             "on_bye": false,
             "unavailable_reason": "ir"
+          },
+          {
+            "name": "Jordan Mason",
+            "nfl_team": "MIN",
+            "position": "RB",
+            "score": 0.0,
+            "found": false,
+            "starter": false,
+            "projected_points": 6.5,
+            "nfl_opponent": "GB",
+            "nfl_is_home": false,
+            "kickoff": "2026-11-15T18:00:00+00:00",
+            "game_final": false,
+            "on_bye": false
           },
           {
             "name": "Ja'Marr Chase",
@@ -6811,7 +6810,7 @@
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
         "projected_total": 96.8,
-        "win_probability": 0.8103,
+        "win_probability": 0.887,
         "starters_remaining": 9,
         "pregame_total": 86.7,
         "score_rank": 3
@@ -6908,18 +6907,19 @@
             "on_bye": true
           },
           {
-            "name": "Jordan Mason",
-            "nfl_team": "MIN",
+            "name": "TreVeyon Henderson",
+            "nfl_team": "NE",
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": true,
-            "projected_points": 6.5,
-            "nfl_opponent": "GB",
+            "starter": false,
+            "projected_points": 0.0,
+            "nfl_opponent": "DET",
             "nfl_is_home": false,
-            "kickoff": "2026-11-15T18:00:00+00:00",
+            "kickoff": "2026-11-15T14:30:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "ir"
           },
           {
             "name": "Rashee Rice",
@@ -7203,10 +7203,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 78.7,
-        "win_probability": 0.1897,
-        "starters_remaining": 9,
-        "pregame_total": 78.7,
+        "projected_total": 72.2,
+        "win_probability": 0.113,
+        "starters_remaining": 8,
+        "pregame_total": 72.2,
         "score_rank": 9
       }
     },

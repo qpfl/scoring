@@ -50760,6 +50760,19 @@
           "points": 0.0,
           "games": 2,
           "starts": 0,
+          "weekly_points": []
+        },
+        {
+          "teams": [
+            "GSA"
+          ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
           "weekly_points": [],
           "ongoing": true
         }
@@ -89769,7 +89782,20 @@
               6,
               1.0
             ]
+          ]
+        },
+        {
+          "teams": [
+            "AYP"
           ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": [],
           "ongoing": true
         }
       ],
@@ -114708,5 +114734,5 @@
   "completed_through": {
     "2026": 9
   },
-  "updated_at": "2026-11-13T19:07:59.421579+00:00"
+  "updated_at": "2026-11-15T04:53:18.661534+00:00"
 }
