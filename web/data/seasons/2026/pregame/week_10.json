@@ -431,7 +431,29 @@
         }
       ],
       "revenge": [],
-      "records": [],
+      "records": [
+        {
+          "id": "pre_record_career",
+          "category": "player",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "Jonathan Taylor is 16 points behind Christian McCaffrey for 2nd in career RB points, with 13.2 projected this week.",
+          "notability": 0.675,
+          "tags": [
+            "career",
+            "player-career-most-points-rb"
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "CWR",
+            "player": "Jonathan Taylor",
+            "position": "RB",
+            "min": 16.0,
+            "over": true
+          }
+        }
+      ],
       "milestones": [],
       "series": {
         "games": 13,
@@ -615,5 +637,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-14T20:24:31.743488+00:00"
+  "generated_at": "2026-11-15T00:17:44.097561+00:00"
 }
