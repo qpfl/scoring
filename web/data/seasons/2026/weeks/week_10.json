@@ -1,6 +1,6 @@
 {
   "week": 10,
-  "scored_at": "2026-11-15T05:07:04.763659+00:00",
+  "scored_at": "2026-11-15T05:08:43.051414+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1475,7 +1475,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.8,
+          "projected_points": -0.7,
           "nfl_opponent": "DET",
           "nfl_is_home": false,
           "kickoff": "2026-11-15T14:30:00+00:00",
@@ -2389,7 +2389,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 80.5,
-      "win_probability": 0.4556,
+      "win_probability": 0.7178,
       "starters_remaining": 10,
       "pregame_total": 80.5,
       "score_rank": 7
@@ -2844,20 +2844,6 @@
           "on_bye": false
         },
         {
-          "name": "Jaylen Warren",
-          "nfl_team": "PIT",
-          "position": "RB",
-          "score": 0.0,
-          "found": false,
-          "starter": true,
-          "projected_points": 13.8,
-          "nfl_opponent": "CIN",
-          "nfl_is_home": false,
-          "kickoff": "2026-11-16T01:20:00+00:00",
-          "game_final": false,
-          "on_bye": false
-        },
-        {
           "name": "Chuba Hubbard",
           "nfl_team": "CAR",
           "position": "RB",
@@ -2896,6 +2882,20 @@
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-11-16T01:20:00+00:00",
+          "game_final": false,
+          "on_bye": false
+        },
+        {
+          "name": "Jordan Mason",
+          "nfl_team": "MIN",
+          "position": "RB",
+          "score": 0.0,
+          "found": false,
+          "starter": false,
+          "projected_points": 6.5,
+          "nfl_opponent": "GB",
+          "nfl_is_home": false,
+          "kickoff": "2026-11-15T18:00:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -3194,10 +3194,10 @@
       ],
       "total_score": -1.0,
       "projection_ready": true,
-      "projected_total": 82.8,
-      "win_probability": 0.5444,
-      "starters_remaining": 8,
-      "pregame_total": 91.0,
+      "projected_total": 68.8,
+      "win_probability": 0.2822,
+      "starters_remaining": 7,
+      "pregame_total": 77.0,
       "score_rank": 10
     },
     {
@@ -3292,16 +3292,16 @@
           "unavailable_reason": "ir"
         },
         {
-          "name": "Jordan Mason",
-          "nfl_team": "MIN",
+          "name": "Jaylen Warren",
+          "nfl_team": "PIT",
           "position": "RB",
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 6.5,
-          "nfl_opponent": "GB",
+          "projected_points": 13.8,
+          "nfl_opponent": "CIN",
           "nfl_is_home": false,
-          "kickoff": "2026-11-15T18:00:00+00:00",
+          "kickoff": "2026-11-16T01:20:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -3495,7 +3495,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.8,
+          "projected_points": 1.6,
           "nfl_opponent": "NE",
           "nfl_is_home": true,
           "kickoff": "2026-11-15T14:30:00+00:00",
@@ -4096,16 +4096,16 @@
             "unavailable_reason": "ir"
           },
           {
-            "name": "Jordan Mason",
-            "nfl_team": "MIN",
+            "name": "Jaylen Warren",
+            "nfl_team": "PIT",
             "position": "RB",
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 6.5,
-            "nfl_opponent": "GB",
+            "projected_points": 13.8,
+            "nfl_opponent": "CIN",
             "nfl_is_home": false,
-            "kickoff": "2026-11-15T18:00:00+00:00",
+            "kickoff": "2026-11-16T01:20:00+00:00",
             "game_final": false,
             "on_bye": false
           },
@@ -4299,7 +4299,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.8,
+            "projected_points": 1.6,
             "nfl_opponent": "NE",
             "nfl_is_home": true,
             "kickoff": "2026-11-15T14:30:00+00:00",
@@ -4694,7 +4694,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.8,
+            "projected_points": -0.7,
             "nfl_opponent": "DET",
             "nfl_is_home": false,
             "kickoff": "2026-11-15T14:30:00+00:00",
@@ -5210,7 +5210,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 80.5,
-        "win_probability": 0.4556,
+        "win_probability": 0.7178,
         "starters_remaining": 10,
         "pregame_total": 80.5,
         "score_rank": 7
@@ -5264,20 +5264,6 @@
             "on_bye": false
           },
           {
-            "name": "Jaylen Warren",
-            "nfl_team": "PIT",
-            "position": "RB",
-            "score": 0.0,
-            "found": false,
-            "starter": true,
-            "projected_points": 13.8,
-            "nfl_opponent": "CIN",
-            "nfl_is_home": false,
-            "kickoff": "2026-11-16T01:20:00+00:00",
-            "game_final": false,
-            "on_bye": false
-          },
-          {
             "name": "Chuba Hubbard",
             "nfl_team": "CAR",
             "position": "RB",
@@ -5316,6 +5302,20 @@
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-11-16T01:20:00+00:00",
+            "game_final": false,
+            "on_bye": false
+          },
+          {
+            "name": "Jordan Mason",
+            "nfl_team": "MIN",
+            "position": "RB",
+            "score": 0.0,
+            "found": false,
+            "starter": false,
+            "projected_points": 6.5,
+            "nfl_opponent": "GB",
+            "nfl_is_home": false,
+            "kickoff": "2026-11-15T18:00:00+00:00",
             "game_final": false,
             "on_bye": false
           },
@@ -5614,10 +5614,10 @@
         ],
         "total_score": -1.0,
         "projection_ready": true,
-        "projected_total": 82.8,
-        "win_probability": 0.5444,
-        "starters_remaining": 8,
-        "pregame_total": 91.0,
+        "projected_total": 68.8,
+        "win_probability": 0.2822,
+        "starters_remaining": 7,
+        "pregame_total": 77.0,
         "score_rank": 10
       }
     },

@@ -47005,7 +47005,20 @@
               8,
               20.0
             ]
+          ]
+        },
+        {
+          "teams": [
+            "GSA"
           ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": [],
           "ongoing": true
         }
       ],
@@ -50764,7 +50777,7 @@
         },
         {
           "teams": [
-            "GSA"
+            "WJK"
           ],
           "start_season": 2026,
           "start_week": 0,
@@ -114734,5 +114747,5 @@
   "completed_through": {
     "2026": 9
   },
-  "updated_at": "2026-11-15T04:53:18.661534+00:00"
+  "updated_at": "2026-11-15T05:08:48.371438+00:00"
 }
