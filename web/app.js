@@ -20940,9 +20940,15 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     const liveStatus = getLivePlayerStatus(profile || requestedName);
 
     if (updateRoute && profile?.profile_key) {
-        playerModalReturnHash = playerModalReturnHashForCurrentView();
+        const alreadyOnProfile = location.hash.startsWith('#player/') && history.state?.playerProfile;
+        // Already on a profile entry (e.g. a double click, or a second click
+        // while data loaded): replace it so Close only has one entry to undo.
+        const writeHistory = alreadyOnProfile ? 'replaceState' : 'pushState';
+        playerModalReturnHash = alreadyOnProfile
+            ? (history.state.returnHash || playerModalReturnHash)
+            : playerModalReturnHashForCurrentView();
         playerModalRenderedReturnHash = playerModalReturnHash;
-        history.pushState(
+        history[writeHistory](
             { playerProfile: true, returnHash: playerModalReturnHash },
             '',
             seasonAwareRoute(`#player/${encodeURIComponent(profile.profile_key)}`)
@@ -21354,6 +21360,7 @@ document.body.addEventListener('click', async (e) => {
         if (isModifiedLinkClick(e)) return;
         e.preventDefault();
         e.stopPropagation();
+        if (playerTarget.getAttribute('aria-busy') === 'true') return;
         playerTarget.setAttribute('aria-busy', 'true');
         try {
             const playerRoute = parseHashRoute((playerTarget.getAttribute('href') || '').replace(/^#/, ''));
