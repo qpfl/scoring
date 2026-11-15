@@ -1139,6 +1139,9 @@ async function prepareViewData(view, subview) {
             ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
             ensureSharedResource('transactions'),
             ensureHomeWeekData(),
+            // The trade builder's season points, position rank and PPG (and
+            // its per-week scoring options) need every scored week.
+            ensureAllSeasonWeeks(),
         ]);
     }
 }
@@ -2708,6 +2711,10 @@ function renderHomeTransactions() {
                             <div class="home-trade-side">Corresponding moves</div>
                             ${tradeRosterMoveLines(tx).map(move => `<div class="home-trade-item">${escapeHtml(move)}</div>`).join('')}
                         ` : ''}
+                        ${tradeConditionLines(tx).length ? `
+                            <div class="home-trade-side">Conditions</div>
+                            ${tradeConditionLines(tx).map(line => `<div class="home-trade-item">${escapeHtml(line)}</div>`).join('')}
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -3026,6 +3033,10 @@ function renderHomeOffseasonTransactions() {
                         ${tradeRosterMoveLines(tx).length ? `
                             <div class="home-trade-side">Corresponding moves</div>
                             ${tradeRosterMoveLines(tx).map(move => `<div class="home-trade-item">${escapeHtml(move)}</div>`).join('')}
+                        ` : ''}
+                        ${tradeConditionLines(tx).length ? `
+                            <div class="home-trade-side">Conditions</div>
+                            ${tradeConditionLines(tx).map(line => `<div class="home-trade-item">${escapeHtml(line)}</div>`).join('')}
                         ` : ''}
                     </div>
                 </div>
@@ -11451,6 +11462,19 @@ function tradeRosterMoveEntries(tx) {
     ]);
 }
 
+// What the proposer attached to the deal: per-asset conditions (keyed like
+// `pick-receive-2027-R2-CGK`) and free-text notes, as readable lines.
+function tradeConditionLines(tx) {
+    const lines = Object.entries(tx.conditions || {}).map(([key, text]) => {
+        const match = String(key).match(/^(player|pick)-(?:give|receive)-(.+)$/);
+        const asset = match ? (match[1] === 'pick' ? displayPickLabel(match[2]) : match[2]) : key;
+        return `${asset}: ${text}`;
+    });
+    const notes = String(tx.conditional_notes || '').trim();
+    if (notes && !lines.some(line => line.endsWith(`: ${notes}`))) lines.push(notes);
+    return lines;
+}
+
 function tradeRosterMoveLines(tx) {
     return tradeRosterMoveEntries(tx).map(({ team, player, verb }) =>
         `${team} ${verb} ${`${player.position || ''} ${player.name || ''}`.trim()}`);
@@ -11540,6 +11564,12 @@ function renderTransactionItem(tx) {
                             <div class="transaction-side-header">Corresponding moves</div>
                             ${tradeRosterMoveEntries(tx).map(({ team, player, verb, direction }) =>
                                 transactionAssetHtml(player, team, tx, direction, `${team} ${verb}`)).join('')}
+                        </div>` : ''}
+                    ${tradeConditionLines(tx).length ? `
+                        <div class="transaction-side">
+                            <div class="transaction-side-header">Conditions</div>
+                            ${tradeConditionLines(tx).map(line =>
+                                transactionAssetRowHtml({ main: `<span>${escapeHtml(line)}</span>` })).join('')}
                         </div>` : ''}
                 </div>
             </div>`;
@@ -13154,8 +13184,10 @@ async function openTradeFromCompare(ctx) {
     tradeScope = compareScope;
 
     const comment = document.getElementById('trade-comment');
+    const conditionalNotes = document.getElementById('trade-conditional-notes');
     const status = document.getElementById('trade-status');
     if (comment) comment.value = '';
+    if (conditionalNotes) conditionalNotes.value = '';
     if (status) {
         status.className = 'submit-status';
         status.textContent = '';
@@ -16240,7 +16272,7 @@ function hasUnsavedManageChanges() {
     );
     const commentIds = [
         'lineup-comment', 'taxi-comment', 'fa-comment', 'release-comment',
-        'trade-comment', 'roster-action-comment'
+        'trade-comment', 'trade-conditional-notes', 'roster-action-comment'
     ];
     const hasComment = commentIds.some(id => document.getElementById(id)?.value.trim());
     return isLineupDirty() || isDepthChartDirty() || isTradeBlockDirty() || hasSelections || hasComment;
@@ -18150,6 +18182,7 @@ async function executeTaxiActivation() {
                 player_to_release: manageState.selectedReleasePlayer || null,
                 week: data.current_week,
                 comment: comment,
+                conditional_notes: conditionalNotes,
                 submitted_at: new Date().toISOString(),
                 operation_id: crypto.randomUUID()
             })
@@ -18443,8 +18476,10 @@ function startTradeForPlayer(playerName) {
     manageState.tradePartner = null;
 
     const comment = document.getElementById('trade-comment');
+    const conditionalNotes = document.getElementById('trade-conditional-notes');
     const status = document.getElementById('trade-status');
     if (comment) comment.value = '';
+    if (conditionalNotes) conditionalNotes.value = '';
     if (status) {
         status.className = 'submit-status';
         status.textContent = '';
@@ -19221,6 +19256,8 @@ async function executeTradeProposal() {
     // Get optional comment
     const commentEl = document.getElementById('trade-comment');
     const comment = commentEl ? commentEl.value.trim() : '';
+    const notesEl = document.getElementById('trade-conditional-notes');
+    const conditionalNotes = notesEl ? notesEl.value.trim() : '';
 
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {
@@ -19257,6 +19294,8 @@ async function executeTradeProposal() {
             manageState.tradeReceivePicks = [];
             manageState.tradeConditions = {};
             manageState.tradeRosterMoves = { release: [], activate: [] };
+            if (commentEl) commentEl.value = '';
+            if (notesEl) notesEl.value = '';
             setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
         } else {
             statusEl.className = 'submit-status error';
@@ -19377,6 +19416,11 @@ function renderPendingTrades() {
                 ${trade.comment ? `
                     <div class="pending-trade-comment">
                         <strong>Message:</strong> "${escapeHtml(trade.comment)}"
+                    </div>
+                ` : ''}
+                ${trade.conditional_notes ? `
+                    <div class="pending-trade-comment">
+                        <strong>Conditions / notes:</strong> "${escapeHtml(trade.conditional_notes)}"
                     </div>
                 ` : ''}
                 ${pendingTradeMovesHtml(trade, isProposer)}
@@ -20940,9 +20984,15 @@ function showPlayerModal(rawName, requestedPosition = '', { updateRoute = true }
     const liveStatus = getLivePlayerStatus(profile || requestedName);
 
     if (updateRoute && profile?.profile_key) {
-        playerModalReturnHash = playerModalReturnHashForCurrentView();
+        const alreadyOnProfile = location.hash.startsWith('#player/') && history.state?.playerProfile;
+        // Already on a profile entry (e.g. a double click, or a second click
+        // while data loaded): replace it so Close only has one entry to undo.
+        const writeHistory = alreadyOnProfile ? 'replaceState' : 'pushState';
+        playerModalReturnHash = alreadyOnProfile
+            ? (history.state.returnHash || playerModalReturnHash)
+            : playerModalReturnHashForCurrentView();
         playerModalRenderedReturnHash = playerModalReturnHash;
-        history.pushState(
+        history[writeHistory](
             { playerProfile: true, returnHash: playerModalReturnHash },
             '',
             seasonAwareRoute(`#player/${encodeURIComponent(profile.profile_key)}`)
@@ -21354,6 +21404,7 @@ document.body.addEventListener('click', async (e) => {
         if (isModifiedLinkClick(e)) return;
         e.preventDefault();
         e.stopPropagation();
+        if (playerTarget.getAttribute('aria-busy') === 'true') return;
         playerTarget.setAttribute('aria-busy', 'true');
         try {
             const playerRoute = parseHashRoute((playerTarget.getAttribute('href') || '').replace(/^#/, ''));
