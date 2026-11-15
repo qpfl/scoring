@@ -28,6 +28,7 @@ def trade_html(
     comment: str | None = None,
     comment_by: str | None = None,
     takes_effect: str | None = None,
+    conditional_notes: str | None = None,
 ) -> str:
     """``proposer``/``partner`` are display labels such as "Griff (GSA)"."""
     title = TRADE_TITLES.get(status, 'Trade proposal')
@@ -41,6 +42,13 @@ def trade_html(
             html.card(
                 '<div style="height:14px;"></div>'
                 + html.quote(comment, f'Message from {comment_by or proposer}')
+            )
+        )
+    if conditional_notes:
+        blocks.append(
+            html.card(
+                '<div style="height:14px;"></div>'
+                + html.quote(conditional_notes, 'Conditions / notes')
             )
         )
     if takes_effect:

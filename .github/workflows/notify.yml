@@ -200,6 +200,7 @@ jobs:
                   status = trade.get('status', '').lower()
                   conditions = trade.get('conditions', {})
                   comment = trade.get('comment', '')
+                  conditional_notes = trade.get('conditional_notes', '')
 
                   # Helper to format item with condition
                   def format_with_condition(item, item_type, direction):
@@ -244,6 +245,9 @@ jobs:
                   if comment:
                       body += f"\nMessage from {TEAM_NAMES.get(proposer, proposer)}:\n\"{comment}\"\n"
 
+                  if conditional_notes:
+                      body += f"\nConditions / notes:\n\"{conditional_notes}\"\n"
+
                   effective_week = trade.get('effective_week')
                   takes_effect = None
                   if status == 'accepted' and isinstance(effective_week, int):
@@ -262,6 +266,7 @@ jobs:
                       comment=comment,
                       comment_by=TEAM_NAMES.get(proposer, proposer),
                       takes_effect=takes_effect,
+                      conditional_notes=conditional_notes,
                   )
                   send_email(subject, body, recipients, html)
 

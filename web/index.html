@@ -669,6 +669,12 @@
                             <p id="trade-room-partner" class="trade-room-hint"></p>
                         </div>
 
+                        <div class="trade-conditions-section" id="trade-conditions-section" style="display: none;">
+                            <h4>Conditions (optional)</h4>
+                            <p class="tx-description-inline">Attach a condition to any player or pick in the deal. Conditions are shown to your partner and included in the trade email.</p>
+                            <div id="trade-conditions-list" class="trade-conditions-list"></div>
+                        </div>
+
                         <!-- Conditional Picks Section -->
                         <div class="conditional-picks-section" id="conditional-picks-section" style="display: none;">
                             <h4>Conditional picks</h4>
@@ -687,7 +693,7 @@
                                 <label for="trade-conditional-notes">Additional Conditions / Notes (optional):</label>
                                 <textarea id="trade-conditional-notes" class="lineup-comment" placeholder="e.g., If Mahomes plays 6+ games, pick goes to AYP instead of GSA..." maxlength="1000"></textarea>
                                 <small style="color: var(--text-muted); font-size: 0.85em;">
-                                    Use this for complex conditionals that can't be configured above. Commissioner will set these up manually.
+                                    Use this for complex conditionals that can't be configured above. Shown to your partner and included in the trade email; the commissioner sets these up manually.
                                 </small>
                             </div>
                             <button id="trade-submit-btn" class="lineup-btn primary">Propose Trade</button>

@@ -1118,6 +1118,7 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
     receive_picks = data.get('receive_picks', [])
     conditions = data.get('conditions', {})
     comment = data.get('comment', '')
+    conditional_notes = data.get('conditional_notes', '')
 
     valid, msg = validate_team(team, password)
     if not valid:
@@ -1137,6 +1138,9 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
         return 400, {'error': 'Invalid trade comment'}
     if not _valid_trade_conditions(conditions):
         return 400, {'error': 'Invalid trade conditions'}
+    if not isinstance(conditional_notes, str) or len(conditional_notes) > MAX_TRADE_COMMENT_LENGTH:
+        return 400, {'error': 'Invalid trade conditional notes'}
+    conditional_notes = conditional_notes.strip()
 
     if not (give_players or give_picks) and not (receive_players or receive_picks):
         return 400, {'error': 'Trade must include players or picks'}
@@ -1168,6 +1172,8 @@ def handle_propose_trade(data: dict) -> tuple[int, dict]:
         trade['conditions'] = conditions
     if comment:
         trade['comment'] = comment
+    if conditional_notes:
+        trade['conditional_notes'] = conditional_notes
     try:
         roster_moves = _clean_roster_moves(data.get('roster_moves'))
     except TransactionError as error:
