@@ -737,6 +737,8 @@ function formatTransactionMessage(tx) {
         const receivesAll = [...receivesPlayers, ...receivesPicks];
 
         msg = `${proposerName} sends ${givesAll.join(', ') || 'nothing'}; ${partnerName} sends ${receivesAll.join(', ') || 'nothing'}`;
+        const conditionLines = tradeConditionLines(tx);
+        if (conditionLines.length) msg += `. Conditions: ${conditionLines.join('; ')}`;
     } else if (txType === 'fa_activation') {
         msg = addedStr ? `Added ${addedStr} from FA Pool` : '';
         if (releasedStr) msg += `, released ${releasedStr}`;
