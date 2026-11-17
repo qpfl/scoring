@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from io import BytesIO
 
 from api.newsletter_export import (
+    WEBSITE_CODE_PATHS,
     _nfl_lines,
     build_newsletter_document,
     load_newsletter_sources,
@@ -236,6 +237,15 @@ def test_admin_newsletter_download_is_commissioner_only_and_read_only(monkeypatc
     monkeypatch.setenv('TEAM_PASSWORD_CGK', 'pw')
     repo = FakeRepo(_files())
     repo.install(monkeypatch)
+    monkeypatch.setattr(
+        transaction,
+        'github_list_commits',
+        lambda path, since: (
+            [_commit('abc', 'Add the playoff bracket', '2026-09-28T12:00:00Z')]
+            if path == 'web/app.js'
+            else []
+        ),
+    )
 
     status, body = transaction.handle_admin_adjust(
         {'team': 'CGK', 'password': 'pw', 'admin_action': 'download_newsletter'}
@@ -251,6 +261,7 @@ def test_admin_newsletter_download_is_commissioner_only_and_read_only(monkeypatc
     assert body['mime_type'].endswith('wordprocessingml.document')
     _, text = _text(base64.b64decode(body['content_base64']))
     assert 'Results, Week 3:' in text
+    assert 'Website Updates\nAdd the playoff bracket\n' in text
     assert repo.put_log == []
 
 
@@ -266,3 +277,51 @@ def test_nfl_games_are_listed_once_whichever_team_code_a_roster_uses():
     lines = _nfl_lines(week)
 
     assert lines[0] == 'Thursday Night Football: Jacksonville Jaguars at Baltimore Ravens'
+
+
+def _commit(sha, message, date, parents=1):
+    return {
+        'sha': sha,
+        'parents': [{'sha': f'p{i}'} for i in range(parents)],
+        'commit': {'message': message, 'committer': {'date': date}},
+    }
+
+
+def test_website_updates_list_each_code_commit_once_oldest_first():
+    newer = _commit('b', 'Fix the trade builder overflow\n\nLonger body.', '2026-09-28T10:00:00Z')
+    older = _commit('a', 'Show trade conditions in My Team', '2026-09-24T10:00:00Z')
+    merge = _commit('m', 'Merge pull request #54 from qpfl/branch', '2026-09-28T11:00:00Z', 2)
+    by_path = {'web/app.js': [newer, older, merge], 'api': [newer]}
+    calls = []
+
+    def list_commits(path, since):
+        calls.append((path, since))
+        return by_path.get(path, [])
+
+    now = datetime(2026, 9, 29, 14, tzinfo=timezone.utc)
+    sources = load_newsletter_sources(_files().get, 2026, list_commits=list_commits, now=now)
+
+    assert sources['website_updates'] == [
+        'Show trade conditions in My Team',
+        'Fix the trade builder overflow',
+    ]
+    assert {path for path, _ in calls} == set(WEBSITE_CODE_PATHS)
+    assert all(since == datetime(2026, 9, 22, 14, tzinfo=timezone.utc) for _, since in calls)
+
+    xml, text = _text(build_newsletter_document(sources))
+    assert text.endswith(
+        'Website Updates\nShow trade conditions in My Team\nFix the trade builder overflow\n'
+    )
+
+
+def test_website_updates_fall_back_when_github_is_unavailable_or_quiet():
+    def broken(path, since):
+        raise RuntimeError('no token')
+
+    sources = load_newsletter_sources(_files().get, 2026, list_commits=broken)
+    assert sources['website_updates'] is None
+    assert _sources()['website_updates'] is None  # no lister: blank bullet to fill in
+
+    quiet = load_newsletter_sources(_files().get, 2026, list_commits=lambda path, since: [])
+    _, text = _text(build_newsletter_document(quiet))
+    assert 'Website Updates\nNo website changes this week.\n' in text
