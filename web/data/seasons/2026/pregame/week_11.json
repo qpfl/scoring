@@ -252,7 +252,29 @@
           ]
         }
       ],
-      "records": [],
+      "records": [
+        {
+          "id": "pre_record_career",
+          "category": "player",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Kansas City Chiefs is 1 point behind Green Bay Packers for 4th in career OL points, with 1.6 projected this week.",
+          "notability": 0.613,
+          "tags": [
+            "career",
+            "player-career-most-points-ol"
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "J/J",
+            "player": "Kansas City Chiefs",
+            "position": "OL",
+            "min": 1.0,
+            "over": true
+          }
+        }
+      ],
       "milestones": [
         {
           "id": "pre_milestone_points",
@@ -513,5 +535,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-17T13:31:44.584047+00:00"
+  "generated_at": "2026-11-17T13:34:53.889695+00:00"
 }
