@@ -183,7 +183,50 @@
         }
       ],
       "revenge": [],
-      "records": [],
+      "records": [
+        {
+          "id": "pre_record_career",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Derrick Henry is 4 points behind Jalen Hurts for 4th in career points, with 13.1 projected this week.",
+          "notability": 0.713,
+          "tags": [
+            "career",
+            "player-career-most-points"
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "RPA",
+            "player": "Derrick Henry",
+            "position": "RB",
+            "min": 4.0,
+            "over": true
+          }
+        },
+        {
+          "id": "pre_record_career",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Justin Jefferson is 1 point behind Davante Adams for 2nd in career WR points, with 7 projected this week.",
+          "notability": 0.675,
+          "tags": [
+            "career",
+            "player-career-most-points-wr"
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "RPA",
+            "player": "Justin Jefferson",
+            "position": "WR",
+            "min": 1.0,
+            "over": true
+          }
+        }
+      ],
       "milestones": [],
       "series": {
         "games": 10,
@@ -535,5 +578,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-17T14:50:36.581732+00:00"
+  "generated_at": "2026-11-17T15:16:05.275148+00:00"
 }
