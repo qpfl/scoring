@@ -86,6 +86,22 @@ NFL_TEAM_NAMES = {
     'WAS': 'Washington Commanders',
 }
 
+# Paths whose changes are visible on the site. Commits that only touch data
+# (scores, lineups, trades, avatars) are the league running, not the site
+# changing, so they stay out of the newsletter's "Website Updates" list.
+WEBSITE_CODE_PATHS = (
+    'web/app.js',
+    'web/index.html',
+    'web/styles.css',
+    'web/ads.js',
+    'web/preview.html',
+    'web/api-config.js',
+    'api',
+    'qpfl',
+    'scripts',
+)
+WEBSITE_UPDATES_DAYS = 7
+
 ROMAN = [(10, 'X'), (9, 'IX'), (5, 'V'), (4, 'IV'), (1, 'I')]
 STANDINGS_COLUMNS = [
     ('Team', 3735),
@@ -102,9 +118,18 @@ STANDINGS_COLUMNS = [
 # --------------------------------------------------------------------------- #
 
 
-def load_newsletter_sources(read: Callable[[str], object], season: int) -> dict:
+def load_newsletter_sources(
+    read: Callable[[str], object],
+    season: int,
+    list_commits: Callable[[str, datetime], list[dict]] | None = None,
+    now: datetime | None = None,
+) -> dict:
     """Gather the JSON the newsletter needs. `read(path)` returns parsed JSON or
     None when the file doesn't exist.
+
+    `list_commits(path, since)` returns GitHub API commit objects on the default
+    branch touching `path` since `since`; it feeds the "Website Updates" bullets.
+    Without it, or if it fails, that section is left blank to fill in by hand.
 
     The results week is the latest week whose games are all final (standings only
     count those), and the preview week is the one after it.
@@ -143,7 +168,50 @@ def load_newsletter_sources(read: Callable[[str], object], season: int) -> dict:
         'facts': facts if isinstance(facts, dict) else None,
         'upcoming_week': results_week + 1,
         'upcoming': week(results_week + 1),
+        'website_updates': _load_website_updates(list_commits, now),
     }
+
+
+def _load_website_updates(
+    list_commits: Callable[[str, datetime], list[dict]] | None, now: datetime | None
+) -> list[str] | None:
+    if list_commits is None:
+        return None
+    since = (now or datetime.now(timezone.utc)) - timedelta(days=WEBSITE_UPDATES_DAYS)
+    commits: list[dict] = []
+    try:
+        for path in WEBSITE_CODE_PATHS:
+            commits.extend(list_commits(path, since) or [])
+    except Exception as e:  # the rest of the newsletter is still worth having
+        print(f'Website updates unavailable: {e}')
+        return None
+    return website_update_lines(commits)
+
+
+def website_update_lines(commits: list[dict]) -> list[str]:
+    """One bullet per code commit, oldest first: the commit's subject line.
+    Merge commits and duplicates (a commit touching several paths) are dropped."""
+    seen: set[str] = set()
+    dated: list[tuple[str, str]] = []
+    for commit in commits:
+        if not isinstance(commit, dict):
+            continue
+        sha = commit.get('sha')
+        if not sha or sha in seen or len(commit.get('parents') or []) > 1:
+            continue
+        seen.add(sha)
+        detail = commit.get('commit') or {}
+        subject = str(detail.get('message') or '').strip().split('\n', 1)[0].strip()
+        if not subject or subject.lower().startswith('merge '):
+            continue
+        when = str((detail.get('committer') or detail.get('author') or {}).get('date') or '')
+        dated.append((when, subject))
+    dated.sort(key=lambda item: item[0])
+    lines: list[str] = []
+    for _when, subject in dated:
+        if subject not in lines:
+            lines.append(subject)
+    return lines
 
 
 # --------------------------------------------------------------------------- #
@@ -549,7 +617,13 @@ def build_newsletter_document(sources: dict, generated_at: datetime | None = Non
 
     # Website updates
     body.append(_paragraph(_run('Website Updates'), style='Heading2'))
-    body.append(_paragraph(bullet=True))
+    website_updates = sources.get('website_updates')
+    if website_updates is None:
+        body.append(_paragraph(bullet=True))
+    elif not website_updates:
+        body.append(_paragraph(_run('No website changes this week.'), indent=720))
+    for line in website_updates or []:
+        body.append(_paragraph(_run(line), bullet=True))
 
     section = (
         '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/>'

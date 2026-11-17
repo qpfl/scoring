@@ -9,6 +9,7 @@ import os
 import random
 import re
 import time
+import urllib.parse
 import urllib.request
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -124,6 +125,36 @@ def github_get_file(path: str):
         if e.code == 404:
             return None, None
         raise
+
+
+def github_list_commits(path: str, since: datetime) -> list[dict]:
+    """Commits on the default branch touching `path` since `since` (all pages)."""
+    headers = _github_headers()
+    if headers is None:
+        raise RuntimeError('Server configuration error - no GitHub token')
+
+    query = urllib.parse.urlencode(
+        {
+            'sha': GITHUB_BRANCH,
+            'path': path,
+            'since': since.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'per_page': 100,
+        }
+    )
+    commits: list[dict] = []
+    for page in range(1, 11):
+        api_url = (
+            f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/commits?{query}&page={page}'
+        )
+        request = urllib.request.Request(api_url, headers=headers)
+        with open_github_with_retry(request) as response:
+            batch = json.loads(response.read().decode())
+        if not isinstance(batch, list):
+            break
+        commits.extend(batch)
+        if len(batch) < 100:
+            break
+    return commits
 
 
 def github_put_file(path: str, content_obj, message: str, sha: str | None) -> None:
@@ -2226,7 +2257,11 @@ def build_newsletter_export() -> tuple[int, dict]:
             newsletter_filename,
         )
 
-        sources = load_newsletter_sources(lambda path: github_get_file(path)[1], CURRENT_SEASON)
+        sources = load_newsletter_sources(
+            lambda path: github_get_file(path)[1],
+            CURRENT_SEASON,
+            list_commits=github_list_commits,
+        )
         content = build_newsletter_document(sources)
     except Exception as e:
         return 500, {'error': f'Failed to build newsletter template: {e}'}
