@@ -3,7 +3,7 @@
 import base64
 import re
 import zipfile
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from io import BytesIO
 
 from api.newsletter_export import (
@@ -12,6 +12,8 @@ from api.newsletter_export import (
     build_newsletter_document,
     load_newsletter_sources,
     newsletter_filename,
+    website_update_lines,
+    website_updates_window,
 )
 from tests.test_api import FakeRepo, transaction
 
@@ -240,7 +242,7 @@ def test_admin_newsletter_download_is_commissioner_only_and_read_only(monkeypatc
     monkeypatch.setattr(
         transaction,
         'github_list_commits',
-        lambda path, since: (
+        lambda path, since, until: (
             [_commit('abc', 'Add the playoff bracket', '2026-09-28T12:00:00Z')]
             if path == 'web/app.js'
             else []
@@ -290,12 +292,13 @@ def _commit(sha, message, date, parents=1):
 def test_website_updates_list_each_code_commit_once_oldest_first():
     newer = _commit('b', 'Fix the trade builder overflow\n\nLonger body.', '2026-09-28T10:00:00Z')
     older = _commit('a', 'Show trade conditions in My Team', '2026-09-24T10:00:00Z')
+    lint = _commit('l', 'Apply ruff format', '2026-09-27T10:00:00Z')
     merge = _commit('m', 'Merge pull request #54 from qpfl/branch', '2026-09-28T11:00:00Z', 2)
-    by_path = {'web/app.js': [newer, older, merge], 'api': [newer]}
+    by_path = {'web/app.js': [newer, older, lint, merge], 'api': [newer]}
     calls = []
 
-    def list_commits(path, since):
-        calls.append((path, since))
+    def list_commits(path, since, until):
+        calls.append((path, since, until))
         return by_path.get(path, [])
 
     now = datetime(2026, 9, 29, 14, tzinfo=timezone.utc)
@@ -305,8 +308,14 @@ def test_website_updates_list_each_code_commit_once_oldest_first():
         'Show trade conditions in My Team',
         'Fix the trade builder overflow',
     ]
-    assert {path for path, _ in calls} == set(WEBSITE_CODE_PATHS)
-    assert all(since == datetime(2026, 9, 22, 14, tzinfo=timezone.utc) for _, since in calls)
+    assert {path for path, _, _ in calls} == set(WEBSITE_CODE_PATHS)
+    # Week 3's file has no kickoffs, so the window is the 7 days up to the
+    # Wednesday before Week 4's Thursday opener (midnight Eastern = 04:00 UTC).
+    window = (
+        datetime(2026, 9, 23, 4, tzinfo=timezone.utc),
+        datetime(2026, 9, 30, 4, tzinfo=timezone.utc),
+    )
+    assert all((since, until) == window for _, since, until in calls)
 
     xml, text = _text(build_newsletter_document(sources))
     assert text.endswith(
@@ -315,13 +324,58 @@ def test_website_updates_list_each_code_commit_once_oldest_first():
 
 
 def test_website_updates_fall_back_when_github_is_unavailable_or_quiet():
-    def broken(path, since):
+    def broken(path, since, until):
         raise RuntimeError('no token')
 
     sources = load_newsletter_sources(_files().get, 2026, list_commits=broken)
     assert sources['website_updates'] is None
     assert _sources()['website_updates'] is None  # no lister: blank bullet to fill in
 
-    quiet = load_newsletter_sources(_files().get, 2026, list_commits=lambda path, since: [])
+    quiet = load_newsletter_sources(_files().get, 2026, list_commits=lambda path, since, until: [])
     _, text = _text(build_newsletter_document(quiet))
     assert 'Website Updates\nNo website changes this week.\n' in text
+
+
+def test_website_updates_window_is_the_newsletter_week_whenever_it_is_downloaded():
+    week_10 = {
+        'teams': [_team('GSA', 0, 1, [_player('NYJ', 'NE', True, '2026-11-13T01:15:00+00:00')])]
+    }
+    week_11 = {
+        'teams': [_team('GSA', 0, 1, [_player('NYJ', 'MIA', True, '2026-11-20T01:15:00+00:00')])]
+    }
+
+    # Thursday night openers (Nov 12 and Nov 19 Eastern): Wednesday to Wednesday, midnight Eastern.
+    window = (
+        datetime(2026, 11, 11, 5, tzinfo=timezone.utc),
+        datetime(2026, 11, 18, 5, tzinfo=timezone.utc),
+    )
+    for now in (
+        datetime(2026, 11, 17, tzinfo=timezone.utc),
+        datetime(2026, 11, 24, tzinfo=timezone.utc),
+    ):
+        assert website_updates_window(week_10, week_11, now) == window
+
+    # Next week not published: 7 days from this week's start.
+    assert website_updates_window(week_10, None) == window
+    # No kickoffs at all: the 7 days before the download.
+    now = datetime(2026, 11, 17, 12, tzinfo=timezone.utc)
+    assert website_updates_window(None, None, now) == (now - timedelta(days=7), now)
+
+
+def test_housekeeping_commits_are_left_out():
+    subjects = [
+        'Apply ruff formatting',
+        'Fix ruff formatting to unblock CI',
+        'Satisfy mypy in projections, data_fetcher, and json_scorer',
+        'Fix checks that went red on main',
+        'Fix mypy errors and stale UI tests so Tests can deploy Pages',
+        'Derive the test values that grow with every scored week',
+        'Bump astral-sh/setup-uv to 10.3.3',
+        'Fix mobile formatting and add top half badges.',
+        'Add Playoff Machine and Rooting Guide to Standings',
+    ]
+    commits = [_commit(str(i), s, f'2026-11-1{i}T00:00:00Z') for i, s in enumerate(subjects)]
+    assert website_update_lines(commits) == [
+        'Fix mobile formatting and add top half badges.',
+        'Add Playoff Machine and Rooting Guide to Standings',
+    ]
