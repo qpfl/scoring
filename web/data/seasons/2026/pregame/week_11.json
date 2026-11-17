@@ -28,6 +28,23 @@
           }
         },
         {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Ja'Marr Chase has scored 20+ in 3 straight starts.",
+          "notability": 0.55,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "GSA",
+            "player": "Ja'Marr Chase",
+            "position": "WR",
+            "min": 20
+          }
+        },
+        {
           "id": "pre_team_streak",
           "category": "team",
           "subjects": [
@@ -63,10 +80,15 @@
             "AST"
           ],
           "template": "George Kittle faces former team {team:AST} (traded away Week 12, 2025; 40 starts, 341 points there, 2022-2025). Averages 13 in 3 starts against them.",
-          "notability": 0.7,
+          "notability": 0.8,
           "tags": [
-            "bench"
-          ]
+            "starter"
+          ],
+          "check": {
+            "type": "win",
+            "team": "GSA",
+            "expect": true
+          }
         },
         {
           "id": "pre_revenge",
@@ -83,7 +105,25 @@
         }
       ],
       "records": [],
-      "milestones": [],
+      "milestones": [
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Evan McPherson needs 1 point for 250 career points as a QPFL starter.",
+          "notability": 0.4,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "GSA",
+            "player": "Evan McPherson",
+            "position": "K",
+            "min": 1.0
+          }
+        }
+      ],
       "series": {
         "games": 3,
         "wins": 3,
@@ -473,5 +513,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-17T13:01:46.786570+00:00"
+  "generated_at": "2026-11-17T13:31:44.584047+00:00"
 }
