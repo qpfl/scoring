@@ -101,6 +101,12 @@ WEBSITE_CODE_PATHS = (
     'scripts',
 )
 WEBSITE_UPDATES_DAYS = 7
+# Commits that keep the repo healthy but change nothing a manager would see.
+HOUSEKEEPING_PATTERNS = re.compile(
+    r'\b(ruff|mypy|lint(ing)?|dependabot|dependenc(y|ies)|tests?|test failures)\b'
+    r'|\bCI\b|\bchecks? (that )?(went red|failing|failed)|^bump\b|^chore\b',
+    re.IGNORECASE,
+)
 
 ROMAN = [(10, 'X'), (9, 'IX'), (5, 'V'), (4, 'IV'), (1, 'I')]
 STANDINGS_COLUMNS = [
@@ -121,15 +127,16 @@ STANDINGS_COLUMNS = [
 def load_newsletter_sources(
     read: Callable[[str], object],
     season: int,
-    list_commits: Callable[[str, datetime], list[dict]] | None = None,
+    list_commits: Callable[[str, datetime, datetime], list[dict]] | None = None,
     now: datetime | None = None,
 ) -> dict:
     """Gather the JSON the newsletter needs. `read(path)` returns parsed JSON or
     None when the file doesn't exist.
 
-    `list_commits(path, since)` returns GitHub API commit objects on the default
-    branch touching `path` since `since`; it feeds the "Website Updates" bullets.
-    Without it, or if it fails, that section is left blank to fill in by hand.
+    `list_commits(path, since, until)` returns GitHub API commit objects on the
+    default branch touching `path` in that window; it feeds the "Website Updates"
+    bullets. Without it, or if it fails, that section is left blank to fill in by
+    hand.
 
     The results week is the latest week whose games are all final (standings only
     count those), and the preview week is the one after it.
@@ -168,20 +175,64 @@ def load_newsletter_sources(
         'facts': facts if isinstance(facts, dict) else None,
         'upcoming_week': results_week + 1,
         'upcoming': week(results_week + 1),
-        'website_updates': _load_website_updates(list_commits, now),
+        'website_updates': _load_website_updates(
+            list_commits,
+            website_updates_window(week(results_week), week(results_week + 1), now),
+        ),
     }
 
 
+def _first_kickoff(week_data: dict | None) -> datetime | None:
+    kickoffs = []
+    for team in (week_data or {}).get('teams') or []:
+        for player in (team.get('roster') or []) + (team.get('taxi_squad') or []):
+            try:
+                kickoffs.append(datetime.fromisoformat(player['kickoff']))
+            except (KeyError, TypeError, ValueError):
+                continue
+    return min(kickoffs) if kickoffs else None
+
+
+def _wednesday_before(kickoff: datetime) -> datetime:
+    """Midnight Eastern starting the Wednesday on or before `kickoff`: newsletters
+    are due Wednesday, so that's where one newsletter's week ends and the next begins."""
+    local = kickoff.astimezone(EASTERN)
+    day = local.date() - timedelta(days=(local.weekday() - 2) % 7)
+    return datetime(day.year, day.month, day.day, tzinfo=EASTERN).astimezone(timezone.utc)
+
+
+def website_updates_window(
+    results: dict | None, upcoming: dict | None, now: datetime | None = None
+) -> tuple[datetime, datetime]:
+    """The newsletter week the results week belongs to: from the Wednesday
+    before its first kickoff to the Wednesday before the next week's. Back-to-back
+    newsletters share a boundary, so each change is listed exactly once whatever
+    day the template is downloaded. Missing kickoffs fall back to 7 days."""
+    span = timedelta(days=WEBSITE_UPDATES_DAYS)
+    start_kickoff, end_kickoff = _first_kickoff(results), _first_kickoff(upcoming)
+    start = _wednesday_before(start_kickoff) if start_kickoff else None
+    end = _wednesday_before(end_kickoff) if end_kickoff else None
+    if start and end and end > start:
+        return start, end
+    if start:
+        return start, start + span
+    if end:
+        return end - span, end
+    now = now or datetime.now(timezone.utc)
+    return now - span, now
+
+
 def _load_website_updates(
-    list_commits: Callable[[str, datetime], list[dict]] | None, now: datetime | None
+    list_commits: Callable[[str, datetime, datetime], list[dict]] | None,
+    window: tuple[datetime, datetime],
 ) -> list[str] | None:
     if list_commits is None:
         return None
-    since = (now or datetime.now(timezone.utc)) - timedelta(days=WEBSITE_UPDATES_DAYS)
+    since, until = window
     commits: list[dict] = []
     try:
         for path in WEBSITE_CODE_PATHS:
-            commits.extend(list_commits(path, since) or [])
+            commits.extend(list_commits(path, since, until) or [])
     except Exception as e:  # the rest of the newsletter is still worth having
         print(f'Website updates unavailable: {e}')
         return None
@@ -190,7 +241,8 @@ def _load_website_updates(
 
 def website_update_lines(commits: list[dict]) -> list[str]:
     """One bullet per code commit, oldest first: the commit's subject line.
-    Merge commits and duplicates (a commit touching several paths) are dropped."""
+    Merges, housekeeping (formatting, lint, CI, tests, dependency bumps) and
+    duplicates (a commit touching several paths) are dropped."""
     seen: set[str] = set()
     dated: list[tuple[str, str]] = []
     for commit in commits:
@@ -202,7 +254,11 @@ def website_update_lines(commits: list[dict]) -> list[str]:
         seen.add(sha)
         detail = commit.get('commit') or {}
         subject = str(detail.get('message') or '').strip().split('\n', 1)[0].strip()
-        if not subject or subject.lower().startswith('merge '):
+        if (
+            not subject
+            or subject.lower().startswith('merge ')
+            or HOUSEKEEPING_PATTERNS.search(subject)
+        ):
             continue
         when = str((detail.get('committer') or detail.get('author') or {}).get('date') or '')
         dated.append((when, subject))

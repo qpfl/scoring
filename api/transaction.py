@@ -127,8 +127,8 @@ def github_get_file(path: str):
         raise
 
 
-def github_list_commits(path: str, since: datetime) -> list[dict]:
-    """Commits on the default branch touching `path` since `since` (all pages)."""
+def github_list_commits(path: str, since: datetime, until: datetime) -> list[dict]:
+    """Commits on the default branch touching `path` in [since, until] (all pages)."""
     headers = _github_headers()
     if headers is None:
         raise RuntimeError('Server configuration error - no GitHub token')
@@ -138,6 +138,7 @@ def github_list_commits(path: str, since: datetime) -> list[dict]:
             'sha': GITHUB_BRANCH,
             'path': path,
             'since': since.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'until': until.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'per_page': 100,
         }
     )
