@@ -1,6 +1,6 @@
 {
   "week": 11,
-  "scored_at": "2026-11-17T18:41:02.338871+00:00",
+  "scored_at": "2026-11-17T23:19:36.451612+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1739,15 +1739,15 @@
         },
         {
           "name": "Josh Downs",
-          "nfl_team": "IND",
+          "nfl_team": "KC",
           "position": "WR",
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 7.0,
-          "nfl_opponent": "HOU",
-          "nfl_is_home": false,
-          "kickoff": "2026-11-20T01:15:00+00:00",
+          "projected_points": 6.7,
+          "nfl_opponent": "ARI",
+          "nfl_is_home": true,
+          "kickoff": "2026-11-22T18:00:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -1909,14 +1909,14 @@
       "taxi_squad": [
         {
           "name": "Kirk Cousins",
-          "nfl_team": "LV",
+          "nfl_team": "MIN",
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 18.3,
-          "nfl_opponent": "DEN",
+          "projected_points": 19.2,
+          "nfl_opponent": "SF",
           "nfl_is_home": false,
-          "kickoff": "2026-11-22T21:25:00+00:00",
+          "kickoff": "2026-11-23T01:20:00+00:00",
           "game_final": false,
           "on_bye": false
         },
@@ -4495,15 +4495,15 @@
           },
           {
             "name": "Josh Downs",
-            "nfl_team": "IND",
+            "nfl_team": "KC",
             "position": "WR",
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 7.0,
-            "nfl_opponent": "HOU",
-            "nfl_is_home": false,
-            "kickoff": "2026-11-20T01:15:00+00:00",
+            "projected_points": 6.7,
+            "nfl_opponent": "ARI",
+            "nfl_is_home": true,
+            "kickoff": "2026-11-22T18:00:00+00:00",
             "game_final": false,
             "on_bye": false
           },
@@ -4665,14 +4665,14 @@
         "taxi_squad": [
           {
             "name": "Kirk Cousins",
-            "nfl_team": "LV",
+            "nfl_team": "MIN",
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 18.3,
-            "nfl_opponent": "DEN",
+            "projected_points": 19.2,
+            "nfl_opponent": "SF",
             "nfl_is_home": false,
-            "kickoff": "2026-11-22T21:25:00+00:00",
+            "kickoff": "2026-11-23T01:20:00+00:00",
             "game_final": false,
             "on_bye": false
           },
