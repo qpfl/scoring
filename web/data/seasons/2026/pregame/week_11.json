@@ -160,6 +160,42 @@
           }
         },
         {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "S/T"
+          ],
+          "template": "The closest projected game of the week: {team:RPA} by 3.2.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "RPA",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Jahmyr Gibbs leads all QPFL RB starters this season with 205 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Trey McBride leads all QPFL TE starters this season with 90 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
           "id": "pre_series_widest",
           "category": "team",
           "subjects": [
@@ -247,6 +283,22 @@
       "team1": "CGK",
       "team2": "J/J",
       "storylines": [
+        {
+          "id": "pre_projection_widest",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "The week's biggest projected favorite: {team:CGK} by 13.7.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "CGK",
+            "expect": true
+          }
+        },
         {
           "id": "pre_player_leader",
           "category": "player",
@@ -578,5 +630,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-17T15:16:05.275148+00:00"
+  "generated_at": "2026-11-17T15:26:41.380570+00:00"
 }
