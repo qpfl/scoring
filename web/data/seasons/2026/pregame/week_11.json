@@ -1,0 +1,449 @@
+{
+  "season": 2026,
+  "week": 11,
+  "week_label": "Week 11",
+  "history_through": [
+    2026,
+    10
+  ],
+  "matchups": [
+    {
+      "team1": "GSA",
+      "team2": "AST",
+      "storylines": [
+        {
+          "id": "pre_series_streak",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "AST"
+          ],
+          "template": "{team:GSA} {has:GSA} won 3 straight against {team:AST}.",
+          "notability": 0.57,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "GSA",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_team_streak",
+          "category": "team",
+          "subjects": [
+            "AST"
+          ],
+          "template": "{team:AST} {has:AST} lost 3 straight.",
+          "notability": 0.42,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "AST",
+            "expect": false
+          }
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "AST"
+          ],
+          "template": "{team:GSA} won the last meeting 121-89 (Week 9, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "GSA",
+            "AST"
+          ],
+          "template": "George Kittle faces former team {team:AST} (traded away Week 12, 2025; 40 starts, 341 points there, 2022-2025). Averages 13 in 3 starts against them.",
+          "notability": 0.7,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "AST",
+            "GSA"
+          ],
+          "template": "Dallas Goedert faces former team {team:GSA} (traded away Week 12, 2025; 21 starts, 138 points there, 2020-2025).",
+          "notability": 0.655,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 3,
+        "wins": 3,
+        "losses": 0,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 3,
+        "points_for": 316.0,
+        "points_against": 199.0
+      }
+    },
+    {
+      "team1": "RPA",
+      "team2": "S/T",
+      "storylines": [
+        {
+          "id": "pre_series_streak",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "RPA"
+          ],
+          "template": "{team:S/T} {has:S/T} won 5 straight against {team:RPA}.",
+          "notability": 0.65,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "S/T",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "S/T"
+          ],
+          "template": "Their most lopsided meeting was a 58-point win: {team:S/T} won 140-82 (Week 14, 2025).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "S/T"
+          ],
+          "template": "{team:S/T} won the last meeting 104-68 (Week 4, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 10,
+        "wins": 3,
+        "losses": 6,
+        "ties": 1,
+        "season": {
+          "wins": 0,
+          "losses": 1,
+          "ties": 0
+        },
+        "scored_games": 10,
+        "points_for": 757.0,
+        "points_against": 850.0
+      }
+    },
+    {
+      "team1": "CGK",
+      "team2": "J/J",
+      "storylines": [
+        {
+          "id": "pre_series_closest",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "Their closest meeting was decided by 1 point: {team:J/J} won 100-99 (Week 15, 2022).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "{team:CGK} won the last meeting 100-90 (Week 6, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "Mike Evans faces former team {team:J/J} (68 starts, 701 points there, 2020-2025).",
+          "notability": 0.6,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 18,
+        "wins": 13,
+        "losses": 5,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 18,
+        "points_for": 1673.0,
+        "points_against": 1466.0
+      }
+    },
+    {
+      "team1": "CWR",
+      "team2": "SLS",
+      "storylines": [
+        {
+          "id": "pre_standings_top",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "SLS"
+          ],
+          "template": "A meeting of playoff-position teams: {team:CWR} (3rd) and {team:SLS} (4th).",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "pre_opponent_scoring",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "SLS"
+          ],
+          "template": "{team:CWR} {has:CWR} averaged 97.7 against {team:SLS} in 9 meetings, 14.2 more than against everyone else.",
+          "notability": 0.494,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "SLS"
+          ],
+          "template": "Their most lopsided meeting was a 55-point win: {team:CWR} won 134-79 (Week 6, 2024).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "SLS"
+          ],
+          "template": "{team:SLS} won the last meeting 106-103 (Week 4, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "CWR",
+            "SLS"
+          ],
+          "template": "Breece Hall faces former team {team:SLS} (traded away 2026 offseason; 35 starts, 409 points there, 2022-2025).",
+          "notability": 0.7,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "SLS",
+            "CWR"
+          ],
+          "template": "Blake Corum faces former team {team:CWR} (traded away 2026 offseason).",
+          "notability": 0.55,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 9,
+        "wins": 5,
+        "losses": 4,
+        "ties": 0,
+        "season": {
+          "wins": 0,
+          "losses": 1,
+          "ties": 0
+        },
+        "scored_games": 9,
+        "points_for": 879.0,
+        "points_against": 788.0
+      }
+    },
+    {
+      "team1": "WJK",
+      "team2": "AYP",
+      "storylines": [
+        {
+          "id": "pre_form_hundreds",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} {has:WJK} scored 100 or more in 3 straight weeks.",
+          "notability": 0.47,
+          "tags": [],
+          "check": {
+            "type": "team_points",
+            "team": "WJK",
+            "min": 100
+          }
+        },
+        {
+          "id": "pre_form_bottom_half",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} {has:AYP} finished in the bottom half of the league 4 weeks running.",
+          "notability": 0.46,
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "AYP",
+            "expect": false
+          }
+        },
+        {
+          "id": "pre_team_streak",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} {has:WJK} won 3 straight.",
+          "notability": 0.42,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "WJK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_form_top_half",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} {has:WJK} finished in the top half of the league 3 weeks running.",
+          "notability": 0.42,
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "WJK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_series_closest",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "Their closest meeting was decided by 1 point: {team:AYP} won 67-66 (Week 7, 2021).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "{team:WJK} won the last meeting 73-72 (Week 4, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "AYP",
+            "WJK"
+          ],
+          "template": "Tyler Bass faces former team {team:WJK} (19 starts, 98 points there, 2021-2022). Averages 6.8 in 5 starts against them.",
+          "notability": 0.545,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 11,
+        "wins": 6,
+        "losses": 5,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 11,
+        "points_for": 753.0,
+        "points_against": 731.0
+      }
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-11-17T05:50:36.284806+00:00"
+}

@@ -1,0 +1,1259 @@
+{
+  "season": 2026,
+  "week": 10,
+  "week_label": "Week 10",
+  "history_through": "2026 Week 9",
+  "headline": [
+    {
+      "id": "player_hot_streak",
+      "category": "player",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "Joe Burrow ({team:SLS}) has scored 30+ in 5 straight starts, the longest streak in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Kaminska passed Griff for first place on the all-time career wins list.",
+      "notability": 0.85,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 9-1, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 94 points, the highest-scoring Week 10 in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_big_games",
+      "category": "player",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "Patrick Mahomes II ({team:GSA}) has 6 career 40-point games, the 3rd-most in league history.",
+      "notability": 0.603,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_versus",
+      "category": "player",
+      "subjects": [
+        "CGK",
+        "AST"
+      ],
+      "template": "Josh Allen ({team:CGK}) has averaged 32 in 13 career games against {team:AST}, the best average by any player against one team (min. 6 games).",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_milestone",
+      "category": "player",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Dak Prescott ({team:RPA}) passed 1,250 career QPFL points as a starter, the 6th player to get there.",
+      "notability": 0.563,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 1,097 points against {team:J/J} through 10 games, the most through 10 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "S/T"
+      ],
+      "template": "{team:CWR} and {team:S/T} are 7-3; teams that started 7-3 have made the playoffs 8 of 9 times.",
+      "notability": 0.594,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "Spencer passed Joe W. for 5th place on the all-time career wins list.",
+      "notability": 0.57,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} won a Week 10 game for the first time, after going 0-6.",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored a combined 202.6 points above their season averages against {team:J/J} through 10 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP}'s 39 was the 2nd-fewest points in franchise history and the fewest since Week 10, 2024.",
+      "notability": 0.528,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 1,004 points through 10 games, the 2nd-most through 10 games in league history.",
+      "notability": 0.495,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_lead",
+      "category": "team",
+      "subjects": [
+        "WJK",
+        "RPA"
+      ],
+      "template": "{team:WJK} beat {team:RPA} to break a tie in the all-time series and take a 6-5 lead.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "bench_player",
+      "category": "player",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "George Pickens ({team:J/J}) scored 32 on the bench, tied for the 2nd-most by a benched WR in league history.",
+      "notability": 0.396,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "J/J"
+      ],
+      "template": "{team:S/T} beat {team:J/J} to even the all-time series at 7-7.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "SLS",
+        "GSA"
+      ],
+      "template": "{team:SLS} beat {team:GSA} by 5; without Joe Burrow's 40 points it would have been a loss.",
+      "notability": 0.342,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "Every game was a scorigami (121-88, 112-39, 100-95, 111-58 and 111-105), first-time finals that take the league to 468 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "WJK",
+        "RPA"
+      ],
+      "template": "{team:WJK} beat {team:RPA} by 6; without Brock Purdy's 37 points it would have been a loss.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_high",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK}'s 111 was the 5th-most points in franchise history.",
+      "notability": 0.305,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "player_hot_streak",
+      "category": "player",
+      "subjects": [
+        "SLS"
+      ],
+      "template": "Joe Burrow ({team:SLS}) has scored 30+ in 5 straight starts, the longest streak in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Kaminska passed Griff for first place on the all-time career wins list.",
+      "notability": 0.85,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 9-1, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 94 points, the highest-scoring Week 10 in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_big_games",
+      "category": "player",
+      "subjects": [
+        "GSA"
+      ],
+      "template": "Patrick Mahomes II ({team:GSA}) has 6 career 40-point games, the 3rd-most in league history.",
+      "notability": 0.603,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_versus",
+      "category": "player",
+      "subjects": [
+        "CGK",
+        "AST"
+      ],
+      "template": "Josh Allen ({team:CGK}) has averaged 32 in 13 career games against {team:AST}, the best average by any player against one team (min. 6 games).",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_record",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} won a Week 10 game for the first time, after going 0-6.",
+      "notability": 0.66,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_milestone",
+      "category": "player",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Dak Prescott ({team:RPA}) passed 1,250 career QPFL points as a starter, the 6th player to get there.",
+      "notability": 0.563,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "standings_leader_run",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} held first place for 6 straight weeks.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 1,097 points against {team:J/J} through 10 games, the most through 10 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "CWR",
+        "S/T"
+      ],
+      "template": "{team:CWR} and {team:S/T} are 7-3; teams that started 7-3 have made the playoffs 8 of 9 times.",
+      "notability": 0.594,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_wins",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "Spencer passed Joe W. for 5th place on the all-time career wins list.",
+      "notability": 0.57,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "CGK",
+        "AST"
+      ],
+      "template": "{team:CGK} {has:CGK} won 5 straight against {team:AST} (series: 5-0).",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored a combined 202.6 points above their season averages against {team:J/J} through 10 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_low",
+      "category": "team",
+      "subjects": [
+        "AYP"
+      ],
+      "template": "{team:AYP}'s 39 was the 2nd-fewest points in franchise history and the fewest since Week 10, 2024.",
+      "notability": 0.528,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 1,004 points through 10 games, the 2nd-most through 10 games in league history.",
+      "notability": 0.495,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "position_group",
+      "category": "league",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK}'s RBs combined for 63, the 3rd-most by any team's RBs in league history.",
+      "notability": 0.388,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_lead",
+      "category": "team",
+      "subjects": [
+        "WJK",
+        "RPA"
+      ],
+      "template": "{team:WJK} beat {team:RPA} to break a tie in the all-time series and take a 6-5 lead.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "bench_player",
+      "category": "player",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "George Pickens ({team:J/J}) scored 32 on the bench, tied for the 2nd-most by a benched WR in league history.",
+      "notability": 0.396,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_even",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "J/J"
+      ],
+      "template": "{team:S/T} beat {team:J/J} to even the all-time series at 7-7.",
+      "notability": 0.4,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "SLS",
+        "GSA"
+      ],
+      "template": "{team:SLS} beat {team:GSA} by 5; without Joe Burrow's 40 points it would have been a loss.",
+      "notability": 0.342,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "Every game was a scorigami (121-88, 112-39, 100-95, 111-58 and 111-105), first-time finals that take the league to 468 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "WJK",
+        "RPA"
+      ],
+      "template": "{team:WJK} beat {team:RPA} by 6; without Brock Purdy's 37 points it would have been a loss.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "team_score_high",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK}'s 111 was the 5th-most points in franchise history.",
+      "notability": 0.305,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "recaps": [
+    {
+      "team1": "SLS",
+      "team2": "GSA",
+      "notes": [
+        {
+          "id": "player_hot_streak",
+          "category": "player",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Joe Burrow ({team:SLS}) has scored 30+ in 5 straight starts, the longest streak in league history.",
+          "notability": 0.8,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "career_big_games",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Patrick Mahomes II ({team:GSA}) has 6 career 40-point games, the 3rd-most in league history.",
+          "notability": 0.603,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "GSA"
+          ],
+          "template": "At 5 points, it was tied for the 2nd-closest of their 12 meetings.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "GSA"
+          ],
+          "template": "{team:GSA} still leads the series 9-3 after 12 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Patrick Mahomes II (QB) led the game with 44 points for {team:GSA}.",
+          "notability": 0.35,
+          "tags": [
+            "Patrick Mahomes II"
+          ]
+        },
+        {
+          "id": "player_swing",
+          "category": "player",
+          "subjects": [
+            "SLS",
+            "GSA"
+          ],
+          "template": "{team:SLS} beat {team:GSA} by 5; without Joe Burrow's 40 points it would have been a loss.",
+          "notability": 0.342,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "{team:SLS} left 15 points on the bench (best possible lineup: 115).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "GSA"
+          ],
+          "template": "Scorigami: the first 100-95 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "WJK",
+      "team2": "RPA",
+      "notes": [
+        {
+          "id": "career_milestone",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Dak Prescott ({team:RPA}) passed 1,250 career QPFL points as a starter, the 6th player to get there.",
+          "notability": 0.563,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_owner_best_score",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "105 was tied for the 5th-best score of {team:RPA}'s 91 career games.",
+          "notability": 0.47,
+          "tags": []
+        },
+        {
+          "id": "h2h_lead",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "{team:WJK} beat {team:RPA} to break a tie in the all-time series and take a 6-5 lead.",
+          "notability": 0.45,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "At 6 points, it was the 2nd-closest of their 11 meetings.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
+          "id": "recap_series_highest_scoring",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "Their 216 combined points were the 2nd-highest-scoring meeting of 11.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_projection_beat",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} beat an 85.6-point projection by 25.4.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Dak Prescott (QB) led the game with 43 points for {team:RPA}.",
+          "notability": 0.35,
+          "tags": [
+            "Dak Prescott"
+          ]
+        },
+        {
+          "id": "team_score_high",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK}'s 111 was the 5th-most points in franchise history.",
+          "notability": 0.305,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "player_swing",
+          "category": "player",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "{team:WJK} beat {team:RPA} by 6; without Brock Purdy's 37 points it would have been a loss.",
+          "notability": 0.3,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} left 20 points on the bench (best possible lineup: 131).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "RPA"
+          ],
+          "template": "Scorigami: the first 111-105 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CGK",
+      "team2": "AST",
+      "notes": [
+        {
+          "id": "owner_passed_wins",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Kaminska passed Griff for first place on the all-time career wins list.",
+          "notability": 0.85,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "title_defense",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Defending champion {team:CGK} {is:CGK} 9-1, the best start to a title defense in league history.",
+          "notability": 0.8,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "same_week_record",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} won a Week 10 game for the first time, after going 0-6.",
+          "notability": 0.66,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "player_versus",
+          "category": "player",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "Josh Allen ({team:CGK}) has averaged 32 in 13 career games against {team:AST}, the best average by any player against one team (min. 6 games).",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "standings_leader_run",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} held first place for 6 straight weeks.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_player_record",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Christian McCaffrey's 42 is the 8th-most by a RB in a QPFL game.",
+          "notability": 0.575,
+          "tags": [
+            "Christian McCaffrey"
+          ]
+        },
+        {
+          "id": "h2h_streak",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "{team:CGK} {has:CGK} won 5 straight against {team:AST} (series: 5-0).",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "The 33-point margin was tied for the largest in 5 meetings between them.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "recap_series_highest_scoring",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "Their 209 combined points were the highest-scoring meeting of 5.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_projection_beat",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} beat a 93.1-point projection by 27.9.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_week_top",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK}'s 121 was the week's highest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "position_group",
+          "category": "league",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK}'s RBs combined for 63, the 3rd-most by any team's RBs in league history.",
+          "notability": 0.388,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_season_high",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "121 was {team:CGK}'s season high.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Christian McCaffrey (RB) led the game with 42 points for {team:CGK}.",
+          "notability": 0.35,
+          "tags": [
+            "Christian McCaffrey"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "AST"
+          ],
+          "template": "Scorigami: the first 121-88 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CWR",
+      "team2": "AYP",
+      "notes": [
+        {
+          "id": "recap_league_blowout",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "A 73-point win, the 19th-largest margin in league history (505 games).",
+          "notability": 0.611,
+          "tags": []
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "The 73-point margin was the largest in 14 meetings between them.",
+          "notability": 0.55,
+          "tags": []
+        },
+        {
+          "id": "team_score_low",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP}'s 39 was the 2nd-fewest points in franchise history and the fewest since Week 10, 2024.",
+          "notability": 0.528,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_season_blowout",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "The 73-point margin is the largest of the 2026 season.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "That's 3 straight for {team:CWR} against {team:AYP}.",
+          "notability": 0.47,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "{team:CWR} leads the series 9-5 after 14 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_projection_beat",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR} beat an 86.7-point projection by 25.3.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_projection_miss",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} fell short of a 72.2-point projection by 33.2.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_week_bottom",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP}'s 39 was the week's lowest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_season_high",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "112 was {team:CWR}'s season high.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "Trevor Lawrence (QB) led the game with 32 points for {team:CWR}.",
+          "notability": 0.35,
+          "tags": [
+            "Trevor Lawrence"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "AYP"
+          ],
+          "template": "Scorigami: the first 112-39 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "S/T",
+      "team2": "J/J",
+      "notes": [
+        {
+          "id": "points_against_high",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Opponents have scored 1,097 points against {team:J/J} through 10 games, the most through 10 games in league history.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "owner_passed_wins",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Spencer passed Joe W. for 5th place on the all-time career wins list.",
+          "notability": 0.57,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "schedule_luck_tough",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Opponents have scored a combined 202.6 points above their season averages against {team:J/J} through 10 games, the most in league history.",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_blowout",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "The 53-point margin was the 2nd-largest in 14 meetings between them.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "pace_high",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} {has:S/T} scored 1,004 points through 10 games, the 2nd-most through 10 games in league history.",
+          "notability": 0.495,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_even",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "{team:S/T} beat {team:J/J} to even the all-time series at 7-7.",
+          "notability": 0.4,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_projection_beat",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} beat an 82.3-point projection by 28.7.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "bench_player",
+          "category": "player",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "George Pickens ({team:J/J}) scored 32 on the bench, tied for the 2nd-most by a benched WR in league history.",
+          "notability": 0.396,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_season_low",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "58 was {team:J/J}'s season low.",
+          "notability": 0.35,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Jahmyr Gibbs (RB) led the game with 36 points for {team:S/T}.",
+          "notability": 0.35,
+          "tags": [
+            "Jahmyr Gibbs"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "{team:J/J} left 42 points on the bench (best possible lineup: 100).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "J/J"
+          ],
+          "template": "Scorigami: the first 111-58 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-11-17T05:50:33.009617+00:00"
+}

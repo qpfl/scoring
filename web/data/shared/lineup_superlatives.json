@@ -13,6 +13,32 @@
       "bench_blunders": [
         {
           "season": 2026,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "J/J",
+          "team_name": "Sydney Sweeney has Great Jean(ty)s",
+          "owner_code": "JDK",
+          "owner": "Joe Kuhl & Censored Ward",
+          "opponent": "S/T",
+          "score": 58,
+          "opponent_score": 111,
+          "benched": {
+            "player": "George Pickens",
+            "position": "WR",
+            "profile_key": "george pickens"
+          },
+          "benched_score": 32,
+          "started": {
+            "player": "Chris Olave",
+            "position": "WR",
+            "profile_key": "chris olave"
+          },
+          "started_score": 3,
+          "margin": 29,
+          "flipped": false
+        },
+        {
+          "season": 2026,
           "week": 3,
           "week_label": "Week 3",
           "team": "AYP",
@@ -244,32 +270,6 @@
           "started_score": 3,
           "margin": 22,
           "flipped": true
-        },
-        {
-          "season": 2026,
-          "week": 2,
-          "week_label": "Week 2",
-          "team": "J/J",
-          "team_name": "Sydney Sweeney has Great Jean(ty)s",
-          "owner_code": "JDK",
-          "owner": "Joe Kuhl & Censored Ward",
-          "opponent": "RPA",
-          "score": 70,
-          "opponent_score": 130,
-          "benched": {
-            "player": "Davante Adams",
-            "position": "WR",
-            "profile_key": "davante adams"
-          },
-          "benched_score": 31,
-          "started": {
-            "player": "Christian Watson",
-            "position": "WR",
-            "profile_key": "christian watson"
-          },
-          "started_score": 10,
-          "margin": 21,
-          "flipped": false
         }
       ],
       "bench_mvps": [
@@ -278,24 +278,40 @@
           "position": "QB",
           "profile_key": "c j stroud",
           "season": 2026,
-          "points": 189,
-          "games": 8
+          "points": 215,
+          "games": 9
         },
         {
           "player": "Tyler Shough",
           "position": "QB",
           "profile_key": "tyler shough",
           "season": 2026,
-          "points": 168,
-          "games": 7
+          "points": 179,
+          "games": 8
         },
         {
           "player": "Matthew Stafford",
           "position": "QB",
           "profile_key": "matthew stafford",
           "season": 2026,
-          "points": 107,
+          "points": 132,
+          "games": 6
+        },
+        {
+          "player": "Jared Goff",
+          "position": "QB",
+          "profile_key": "jared goff",
+          "season": 2026,
+          "points": 118,
           "games": 5
+        },
+        {
+          "player": "Javonte Williams",
+          "position": "RB",
+          "profile_key": "javonte williams",
+          "season": 2026,
+          "points": 110,
+          "games": 8
         },
         {
           "player": "Cam Ward",
@@ -304,14 +320,6 @@
           "season": 2026,
           "points": 106,
           "games": 8
-        },
-        {
-          "player": "Javonte Williams",
-          "position": "RB",
-          "profile_key": "javonte williams",
-          "season": 2026,
-          "points": 104,
-          "games": 7
         },
         {
           "player": "Trevor Lawrence",
@@ -330,14 +338,6 @@
           "games": 5
         },
         {
-          "player": "Jared Goff",
-          "position": "QB",
-          "profile_key": "jared goff",
-          "season": 2026,
-          "points": 92,
-          "games": 4
-        },
-        {
           "player": "Malik Willis",
           "position": "QB",
           "profile_key": "malik willis",
@@ -346,12 +346,12 @@
           "games": 7
         },
         {
-          "player": "Sam Darnold",
-          "position": "QB",
-          "profile_key": "sam darnold",
+          "player": "George Pickens",
+          "position": "WR",
+          "profile_key": "george pickens",
           "season": 2026,
-          "points": 86,
-          "games": 5
+          "points": 88,
+          "games": 7
         }
       ],
       "bench_games": [
@@ -453,6 +453,22 @@
         },
         {
           "season": 2026,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "J/J",
+          "team_name": "Sydney Sweeney has Great Jean(ty)s",
+          "owner_code": "JDK",
+          "owner": "Joe Kuhl & Censored Ward",
+          "opponent": "S/T",
+          "score": 58,
+          "opponent_score": 111,
+          "player": "George Pickens",
+          "position": "WR",
+          "profile_key": "george pickens",
+          "points": 32
+        },
+        {
+          "season": 2026,
           "week": 6,
           "week_label": "Week 6",
           "team": "GSA",
@@ -497,22 +513,6 @@
           "player": "Sam Darnold",
           "position": "QB",
           "profile_key": "sam darnold",
-          "points": 31
-        },
-        {
-          "season": 2026,
-          "week": 3,
-          "week_label": "Week 3",
-          "team": "WJK",
-          "team_name": "Austin Bowers",
-          "owner_code": "WJK",
-          "owner": "Bill",
-          "opponent": "CGK",
-          "score": 100,
-          "opponent_score": 106,
-          "player": "Tyler Shough",
-          "position": "QB",
-          "profile_key": "tyler shough",
           "points": 31
         }
       ],
@@ -681,6 +681,22 @@
       "unavailable_starters": [
         {
           "season": 2026,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "WJK",
+          "team_name": "Austin Bowers",
+          "owner_code": "WJK",
+          "owner": "Bill",
+          "opponent": "RPA",
+          "score": 111,
+          "opponent_score": 105,
+          "player": "Tyler Loop",
+          "position": "K",
+          "profile_key": "tyler loop",
+          "reason": "ir"
+        },
+        {
+          "season": 2026,
           "week": 9,
           "week_label": "Week 9",
           "team": "AST",
@@ -774,6 +790,13 @@
           "owner": "Arnav",
           "team": "AYP",
           "count": 2
+        },
+        {
+          "season": 2026,
+          "owner_code": "WJK",
+          "owner": "Bill",
+          "team": "WJK",
+          "count": 1
         }
       ],
       "special_teams": [
@@ -806,6 +829,21 @@
           "unit": "D/ST",
           "gap": 15,
           "margin": 7
+        },
+        {
+          "season": 2026,
+          "week": 10,
+          "week_label": "Week 10",
+          "team": "SLS",
+          "team_name": "Burrow my Dicker in my Strange Nabers til it Hurts",
+          "owner_code": "SLS",
+          "owner": "Stephen",
+          "opponent": "GSA",
+          "score": 100,
+          "opponent_score": 95,
+          "unit": "D/ST",
+          "gap": 11,
+          "margin": 5
         },
         {
           "season": 2026,
@@ -860,8 +898,17 @@
           "owner": "Arnav",
           "team": "AYP",
           "count": 2,
-          "games": 9,
-          "rate": 0.222
+          "games": 10,
+          "rate": 0.2
+        },
+        {
+          "season": 2026,
+          "owner_code": "CWR",
+          "owner": "Redacted Reardon & Jack Reardon",
+          "team": "CWR",
+          "count": 1,
+          "games": 10,
+          "rate": 0.1
         },
         {
           "season": 2026,
@@ -869,8 +916,8 @@
           "owner": "Ryan A.",
           "team": "RPA",
           "count": 1,
-          "games": 9,
-          "rate": 0.111
+          "games": 10,
+          "rate": 0.1
         },
         {
           "season": 2026,
@@ -878,7 +925,7 @@
           "owner": "Anagh",
           "team": "AST",
           "count": 0,
-          "games": 9,
+          "games": 10,
           "rate": 0.0
         },
         {
@@ -887,7 +934,7 @@
           "owner": "Bill",
           "team": "WJK",
           "count": 0,
-          "games": 9,
+          "games": 10,
           "rate": 0.0
         },
         {
@@ -896,7 +943,7 @@
           "owner": "Connor Kaminska",
           "team": "CGK",
           "count": 0,
-          "games": 9,
+          "games": 10,
           "rate": 0.0
         },
         {
@@ -905,7 +952,7 @@
           "owner": "Griff",
           "team": "GSA",
           "count": 0,
-          "games": 9,
+          "games": 10,
           "rate": 0.0
         },
         {
@@ -914,16 +961,7 @@
           "owner": "Joe Kuhl & Censored Ward",
           "team": "J/J",
           "count": 0,
-          "games": 9,
-          "rate": 0.0
-        },
-        {
-          "season": 2026,
-          "owner_code": "CWR",
-          "owner": "Redacted Reardon & Jack Reardon",
-          "team": "CWR",
-          "count": 0,
-          "games": 9,
+          "games": 10,
           "rate": 0.0
         },
         {
@@ -932,7 +970,7 @@
           "owner": "Spencer Yoder & Tim Grazier",
           "team": "S/T",
           "count": 0,
-          "games": 9,
+          "games": 10,
           "rate": 0.0
         },
         {
@@ -941,7 +979,7 @@
           "owner": "Stephen",
           "team": "SLS",
           "count": 0,
-          "games": 9,
+          "games": 10,
           "rate": 0.0
         }
       ]
@@ -7048,19 +7086,19 @@
         "seasons": 6
       },
       {
+        "player": "Jared Goff",
+        "position": "QB",
+        "profile_key": "jared goff",
+        "points": 1184,
+        "games": 60,
+        "seasons": 6
+      },
+      {
         "player": "Tua Tagovailoa",
         "position": "QB",
         "profile_key": "tua tagovailoa",
         "points": 1172,
         "games": 65,
-        "seasons": 6
-      },
-      {
-        "player": "Jared Goff",
-        "position": "QB",
-        "profile_key": "jared goff",
-        "points": 1158,
-        "games": 59,
         "seasons": 6
       },
       {
@@ -7075,16 +7113,16 @@
         "player": "Justin Herbert",
         "position": "QB",
         "profile_key": "justin herbert",
-        "points": 848,
-        "games": 45,
+        "points": 864,
+        "games": 46,
         "seasons": 7
       },
       {
         "player": "Matthew Stafford",
         "position": "QB",
         "profile_key": "matthew stafford",
-        "points": 822,
-        "games": 43,
+        "points": 847,
+        "games": 44,
         "seasons": 7
       },
       {
@@ -7431,6 +7469,22 @@
     "unavailable_starters": [
       {
         "season": 2026,
+        "week": 10,
+        "week_label": "Week 10",
+        "team": "WJK",
+        "team_name": "Austin Bowers",
+        "owner_code": "WJK",
+        "owner": "Bill",
+        "opponent": "RPA",
+        "score": 111,
+        "opponent_score": 105,
+        "player": "Tyler Loop",
+        "position": "K",
+        "profile_key": "tyler loop",
+        "reason": "ir"
+      },
+      {
+        "season": 2026,
         "week": 9,
         "week_label": "Week 9",
         "team": "AST",
@@ -7572,22 +7626,6 @@
         "position": "K",
         "profile_key": "justin tucker",
         "reason": "bye"
-      },
-      {
-        "season": 2024,
-        "week": 14,
-        "week_label": "Week 14",
-        "team": "WJK",
-        "team_name": "Solid as a Brock",
-        "owner_code": "WJK",
-        "owner": "Bill",
-        "opponent": "J/J",
-        "score": 82,
-        "opponent_score": 77,
-        "player": "Indianapolis Colts",
-        "position": "OL",
-        "profile_key": "indianapolis colts::ol",
-        "reason": "bye"
       }
     ],
     "unavailable_counts": [
@@ -7595,8 +7633,8 @@
         "owner_code": "WJK",
         "owner": "Bill",
         "team": "WJK",
-        "count": 10,
-        "seasons": 5
+        "count": 11,
+        "seasons": 6
       },
       {
         "owner_code": "CGK",
@@ -7816,20 +7854,20 @@
     ],
     "perfect_lineups": [
       {
+        "owner_code": "CWR",
+        "owner": "Redacted Reardon & Jack Reardon",
+        "team": "CWR",
+        "count": 5,
+        "games": 108,
+        "rate": 0.046,
+        "seasons": 7
+      },
+      {
         "owner_code": "AYP",
         "owner": "Arnav",
         "team": "AYP",
         "count": 4,
-        "games": 107,
-        "rate": 0.037,
-        "seasons": 7
-      },
-      {
-        "owner_code": "CWR",
-        "owner": "Redacted Reardon & Jack Reardon",
-        "team": "CWR",
-        "count": 4,
-        "games": 107,
+        "games": 108,
         "rate": 0.037,
         "seasons": 7
       },
@@ -7838,7 +7876,7 @@
         "owner": "Ryan A.",
         "team": "RPA",
         "count": 3,
-        "games": 90,
+        "games": 91,
         "rate": 0.033,
         "seasons": 6
       },
@@ -7865,7 +7903,7 @@
         "owner": "Joe Kuhl & Censored Ward",
         "team": "J/J",
         "count": 2,
-        "games": 74,
+        "games": 75,
         "rate": 0.027,
         "seasons": 5
       },
@@ -7874,7 +7912,7 @@
         "owner": "Spencer Yoder & Tim Grazier",
         "team": "S/T",
         "count": 2,
-        "games": 76,
+        "games": 77,
         "rate": 0.026,
         "seasons": 5
       },
@@ -7883,7 +7921,7 @@
         "owner": "Connor Kaminska",
         "team": "CGK",
         "count": 2,
-        "games": 109,
+        "games": 110,
         "rate": 0.018,
         "seasons": 7
       },
@@ -7892,7 +7930,7 @@
         "owner": "Stephen",
         "team": "SLS",
         "count": 1,
-        "games": 77,
+        "games": 78,
         "rate": 0.013,
         "seasons": 5
       },
@@ -7901,11 +7939,11 @@
         "owner": "Bill",
         "team": "WJK",
         "count": 1,
-        "games": 104,
+        "games": 105,
         "rate": 0.01,
         "seasons": 7
       }
     ]
   },
-  "updated_at": "2026-11-13T17:48:39.223842+00:00"
+  "updated_at": "2026-11-17T05:50:31.106443+00:00"
 }
