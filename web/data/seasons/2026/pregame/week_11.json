@@ -165,6 +165,16 @@
       "team2": "J/J",
       "storylines": [
         {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Josh Allen leads all QPFL QB starters this season with 241 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
           "id": "pre_series_closest",
           "category": "team",
           "subjects": [
@@ -195,7 +205,7 @@
             "CGK",
             "J/J"
           ],
-          "template": "Mike Evans faces former team {team:J/J} (68 starts, 701 points there, 2020-2025).",
+          "template": "Mike Evans faces former team {team:J/J} (68 starts, 701 points there, 2020-2025). On the bench for now.",
           "notability": 0.6,
           "tags": [
             "bench"
@@ -203,7 +213,25 @@
         }
       ],
       "records": [],
-      "milestones": [],
+      "milestones": [
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Chicago Bears needs 8 points for 250 career points as a QPFL starter.",
+          "notability": 0.4,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "CGK",
+            "player": "Chicago Bears",
+            "position": "D/ST",
+            "min": 8.0
+          }
+        }
+      ],
       "series": {
         "games": 18,
         "wins": 13,
@@ -445,5 +473,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-17T05:50:36.284806+00:00"
+  "generated_at": "2026-11-17T12:28:13.675913+00:00"
 }
