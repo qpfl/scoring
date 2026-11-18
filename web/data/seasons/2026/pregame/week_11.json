@@ -409,6 +409,40 @@
       "team2": "SLS",
       "storylines": [
         {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Joe Burrow has scored 20+ in 6 straight starts.",
+          "notability": 0.7,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "SLS",
+            "player": "Joe Burrow",
+            "position": "QB",
+            "min": 20
+          }
+        },
+        {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Bucky Irving has scored 20+ in 3 straight starts.",
+          "notability": 0.55,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "SLS",
+            "player": "Bucky Irving",
+            "position": "RB",
+            "min": 20
+          }
+        },
+        {
           "id": "pre_standings_top",
           "category": "team",
           "subjects": [
@@ -474,7 +508,7 @@
             "SLS",
             "CWR"
           ],
-          "template": "Blake Corum faces former team {team:CWR} (traded away 2026 offseason).",
+          "template": "Blake Corum faces former team {team:CWR} (traded away 2026 offseason). On the bench for now.",
           "notability": 0.55,
           "tags": [
             "bench"
@@ -630,5 +664,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-17T23:19:48.080046+00:00"
+  "generated_at": "2026-11-18T00:04:37.311595+00:00"
 }
