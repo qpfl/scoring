@@ -1,6 +1,6 @@
 {
   "week": 11,
-  "scored_at": "2026-11-18T17:47:27.674181+00:00",
+  "scored_at": "2026-11-18T17:55:33.790697+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -486,19 +486,18 @@
           "on_bye": true
         },
         {
-          "name": "RJ Harvey",
-          "nfl_team": "DEN",
+          "name": "Emmett Johnson",
+          "nfl_team": "KC",
           "position": "RB",
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
-          "nfl_opponent": "LV",
+          "projected_points": 8.7,
+          "nfl_opponent": "ARI",
           "nfl_is_home": true,
-          "kickoff": "2026-11-22T21:25:00+00:00",
+          "kickoff": "2026-11-22T18:00:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "ir"
+          "on_bye": false
         },
         {
           "name": "Puka Nacua",
@@ -738,19 +737,6 @@
           "projected_points": 17.6,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
-          "kickoff": "2026-11-22T18:00:00+00:00",
-          "game_final": false,
-          "on_bye": false
-        },
-        {
-          "name": "Emmett Johnson",
-          "nfl_team": "KC",
-          "position": "RB",
-          "score": 0.0,
-          "found": false,
-          "projected_points": 8.7,
-          "nfl_opponent": "ARI",
-          "nfl_is_home": true,
           "kickoff": "2026-11-22T18:00:00+00:00",
           "game_final": false,
           "on_bye": false
@@ -5209,19 +5195,18 @@
             "on_bye": true
           },
           {
-            "name": "RJ Harvey",
-            "nfl_team": "DEN",
+            "name": "Emmett Johnson",
+            "nfl_team": "KC",
             "position": "RB",
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
-            "nfl_opponent": "LV",
+            "projected_points": 8.7,
+            "nfl_opponent": "ARI",
             "nfl_is_home": true,
-            "kickoff": "2026-11-22T21:25:00+00:00",
+            "kickoff": "2026-11-22T18:00:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "ir"
+            "on_bye": false
           },
           {
             "name": "Puka Nacua",
@@ -5461,19 +5446,6 @@
             "projected_points": 17.6,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
-            "kickoff": "2026-11-22T18:00:00+00:00",
-            "game_final": false,
-            "on_bye": false
-          },
-          {
-            "name": "Emmett Johnson",
-            "nfl_team": "KC",
-            "position": "RB",
-            "score": 0.0,
-            "found": false,
-            "projected_points": 8.7,
-            "nfl_opponent": "ARI",
-            "nfl_is_home": true,
             "kickoff": "2026-11-22T18:00:00+00:00",
             "game_final": false,
             "on_bye": false
