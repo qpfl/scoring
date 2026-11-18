@@ -18184,7 +18184,6 @@ async function executeTaxiActivation() {
                 player_to_release: manageState.selectedReleasePlayer || null,
                 week: data.current_week,
                 comment: comment,
-                conditional_notes: conditionalNotes,
                 submitted_at: new Date().toISOString(),
                 operation_id: crypto.randomUUID()
             })
