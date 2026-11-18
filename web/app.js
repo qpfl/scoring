@@ -14,6 +14,100 @@ let maintenanceState = { enabled: false, message: '', since: null };
 
 const resourceCache = new Map();
 
+// ---------------------------------------------------------------------------
+// Submission helpers
+//
+// describeSubmitError: turns a caught error into an honest status message.
+// Only genuine fetch failures are reported as connection problems; bugs in
+// the page (ReferenceError etc.) and non-JSON server replies say what they
+// are instead, and every error is logged to the console.
+//
+// guardSubmission: wraps an action so repeat presses are ignored while it is
+// in flight and the pressed button (plus the button that opened the confirm
+// modal, if any) is disabled and greyed out. With manageButtons, buttons are
+// re-enabled when the action finishes unless it returned true (success) —
+// those stay disabled until the post-success data reload re-renders them.
+// Actions that already disable their own buttons pass manageButtons: false
+// and only get the lock and the grey "busy" styling.
+// ---------------------------------------------------------------------------
+function describeSubmitError(error, action = 'Request') {
+    console.error(`${action} failed:`, error);
+    const name = error?.name || '';
+    const message = String(error?.message || error || '');
+    if (name === 'AbortError') {
+        return 'The request timed out - please try again';
+    }
+    if (name === 'TypeError' && /fetch|network|load failed|connection|offline/i.test(message)) {
+        return 'Network error - please check your connection and try again';
+    }
+    if (name === 'SyntaxError') {
+        return 'The server sent an unexpected response. Refresh to check whether it went through before trying again.';
+    }
+    return `Site error: ${message || name || 'unknown error'}. Refresh to check whether it went through, and let the commissioner know.`;
+}
+
+let lastPressedButton = null;
+let confirmModalOpener = null;
+const submissionsInFlight = new Set();
+const SUBMIT_SUCCESS_LOCK_MS = 8000;
+
+document.addEventListener('click', event => {
+    const button = event.target instanceof Element ? event.target.closest('button') : null;
+    if (button) lastPressedButton = button;
+}, true);
+
+function guardSubmission(name, action, { manageButtons = true } = {}) {
+    return async function guardedSubmission(...args) {
+        if (submissionsInFlight.has(name)) return undefined;
+        submissionsInFlight.add(name);
+        const buttons = [...new Set([lastPressedButton, confirmModalOpener])]
+            .filter(button => button?.isConnected);
+        const wasDisabled = new Map(buttons.map(button => [button, button.disabled]));
+        buttons.forEach(button => {
+            button.classList.add('is-busy');
+            button.setAttribute('aria-busy', 'true');
+            if (manageButtons) button.disabled = true;
+        });
+        let succeeded = false;
+        try {
+            succeeded = (await action.apply(this, args)) === true;
+            return succeeded;
+        } finally {
+            submissionsInFlight.delete(name);
+            buttons.forEach(button => {
+                button.removeAttribute('aria-busy');
+                const release = () => {
+                    button.classList.remove('is-busy');
+                    if (manageButtons) button.disabled = wasDisabled.get(button);
+                };
+                // After a success the button stays greyed out and disabled
+                // while the post-success data reload re-renders the page; if
+                // it is still on the page after that, restore it.
+                if (manageButtons && succeeded) setTimeout(release, SUBMIT_SUCCESS_LOCK_MS);
+                else release();
+            });
+        }
+    };
+}
+
+// Function declarations below are hoisted, so they can be wrapped here, before
+// any click handler is bound to them.
+/* eslint-disable no-func-assign */
+executeTaxiActivation = guardSubmission('taxi-activation', executeTaxiActivation);
+executeFaActivation = guardSubmission('fa-activation', executeFaActivation);
+executeRelease = guardSubmission('release', executeRelease);
+executeTradeProposal = guardSubmission('trade-proposal', executeTradeProposal);
+executeTradeResponse = guardSubmission('trade-response', executeTradeResponse);
+cancelTrade = guardSubmission('trade-cancel', cancelTrade);
+handleTeamNameChange = guardSubmission('team-name', handleTeamNameChange);
+handleAvatarUpload = guardSubmission('avatar', handleAvatarUpload, { manageButtons: false });
+submitLineup = guardSubmission('lineup', submitLineup, { manageButtons: false });
+saveTradeBlock = guardSubmission('trade-block', saveTradeBlock, { manageButtons: false });
+saveDepthChart = guardSubmission('depth-chart', saveDepthChart, { manageButtons: false });
+handleNflDraftClear = guardSubmission('nfl-draft', handleNflDraftClear, { manageButtons: false });
+handleNflDraftSubmit = guardSubmission('nfl-draft', handleNflDraftSubmit, { manageButtons: false });
+/* eslint-enable no-func-assign */
+
 async function fetchJsonResource(path, { forceRefresh = false, optional = false } = {}) {
     if (forceRefresh) resourceCache.delete(path);
     if (!forceRefresh && resourceCache.has(path)) return resourceCache.get(path);
@@ -14652,7 +14746,7 @@ function attachRuleChangeHandlers(loggedIn) {
                     submitBtn.disabled = false;
                 }
             } catch (e) {
-                if (statusEl) statusEl.textContent = 'Network error.';
+                if (statusEl) statusEl.textContent = describeSubmitError(e, 'Rule change proposal');
                 submitBtn.disabled = false;
             }
         });
@@ -14747,7 +14841,7 @@ function attachVoteAndCommentHandlers(loggedIn) {
                     btn.disabled = false;
                 }
             } catch (e) {
-                if (statusEl) statusEl.textContent = 'Network error.';
+                if (statusEl) statusEl.textContent = describeSubmitError(e, 'Rule change comment');
                 btn.disabled = false;
             }
         });
@@ -15397,8 +15491,8 @@ async function handleTeamNameChange() {
             statusEl.textContent = result.error || 'Failed to update team name';
         }
     } catch (e) {
-        console.error('Team name change error:', e);
-        statusEl.innerHTML = '<span class="error">Network error - please try again</span>';
+        statusEl.className = 'submit-status error';
+        statusEl.textContent = describeSubmitError(e, 'Team name change');
     }
 }
 
@@ -15516,8 +15610,8 @@ async function handleAvatarUpload() {
             uploadBtn.disabled = false;
         }
     } catch (e) {
-        console.error('Avatar upload error:', e);
-        statusEl.innerHTML = '<span class="error">Network error - please try again</span>';
+        statusEl.className = 'submit-status error';
+        statusEl.textContent = describeSubmitError(e, 'Avatar upload');
         uploadBtn.disabled = false;
     }
 }
@@ -15584,7 +15678,7 @@ async function submitLineup() {
         }
     } catch (error) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again. Make sure you are on the deployed site.';
+        statusEl.textContent = describeSubmitError(error, 'Lineup submission');
         submitBtn.disabled = false;
     }
 }
@@ -18196,13 +18290,14 @@ async function executeTaxiActivation() {
             statusEl.textContent = result.message;
             // Reload data
             setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
+            return true;
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
         }
     } catch (e) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again';
+        statusEl.textContent = describeSubmitError(e, 'Taxi activation');
     }
 }
 
@@ -18365,13 +18460,14 @@ async function executeFaActivation() {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
             setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
+            return true;
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
         }
     } catch (e) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again';
+        statusEl.textContent = describeSubmitError(e, 'FA activation');
     }
 }
 
@@ -18457,13 +18553,14 @@ async function executeRelease() {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
             setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
+            return true;
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
         }
     } catch (e) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again';
+        statusEl.textContent = describeSubmitError(e, 'Release');
     }
 }
 
@@ -19298,13 +19395,14 @@ async function executeTradeProposal() {
             if (commentEl) commentEl.value = '';
             if (notesEl) notesEl.value = '';
             setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
+            return true;
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
         }
     } catch (e) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again';
+        statusEl.textContent = describeSubmitError(e, 'Trade proposal');
     }
 }
 
@@ -19569,13 +19667,14 @@ async function executeTradeResponse(tradeId, accept, rosterMoves = null) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
             setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
+            return true;
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
         }
     } catch (e) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again';
+        statusEl.textContent = describeSubmitError(e, 'Trade response');
     }
 }
 
@@ -19602,13 +19701,14 @@ async function cancelTrade(tradeId) {
             statusEl.className = 'submit-status success';
             statusEl.textContent = result.message;
             setTimeout(() => loadData(null, { forceRefresh: true }), 2000);
+            return true;
         } else {
             statusEl.className = 'submit-status error';
             statusEl.textContent = result.error;
         }
     } catch (e) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again';
+        statusEl.textContent = describeSubmitError(e, 'Trade cancellation');
     }
 }
 
@@ -19731,7 +19831,7 @@ async function saveTradeBlock() {
         }
     } catch (e) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again';
+        statusEl.textContent = describeSubmitError(e, 'Trade block save');
     }
 
     submitBtn.disabled = false;
@@ -20111,7 +20211,7 @@ async function saveDepthChart() {
         }
     } catch (e) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again';
+        statusEl.textContent = describeSubmitError(e, 'Depth chart save');
     }
 
     renderDepthChartTab();
@@ -20257,9 +20357,13 @@ function showConfirmModal(options) {
     const confirmBtn = document.getElementById('confirm-modal-confirm-btn');
     confirmBtn.textContent = confirmText || 'Confirm';
     confirmBtn.classList.toggle('danger', isDanger || false);
+    confirmBtn.classList.remove('is-busy');
     confirmBtn.disabled = false;
 
     pendingConfirmCallback = onConfirm;
+    // activeElement isn't the tapped button on iOS Safari, so also remember
+    // the last pressed button; it is greyed out while the action runs.
+    confirmModalOpener = lastPressedButton;
     confirmModalReturnFocus = document.activeElement;
     openModalOverlay(
         document.getElementById('confirm-modal-overlay'),
@@ -20270,11 +20374,13 @@ function showConfirmModal(options) {
 function hideConfirmModal() {
     closeModalOverlay(document.getElementById('confirm-modal-overlay'));
     pendingConfirmCallback = null;
+    confirmModalOpener = null;
     if (confirmModalReturnFocus?.isConnected) confirmModalReturnFocus.focus();
     confirmModalReturnFocus = null;
 }
 
 function executeConfirmedTransaction() {
+    document.getElementById('confirm-modal-confirm-btn').disabled = true;
     if (pendingConfirmCallback) {
         pendingConfirmCallback();
     }
@@ -21810,7 +21916,7 @@ async function handleNflDraftClear() {
         }
     } catch (error) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again.';
+        statusEl.textContent = describeSubmitError(error, 'NFL draft clear');
         submitBtn.disabled = false;
         clearBtn.disabled = false;
     }
@@ -21859,7 +21965,7 @@ async function handleNflDraftSubmit() {
         }
     } catch (error) {
         statusEl.className = 'submit-status error';
-        statusEl.textContent = 'Network error - please try again.';
+        statusEl.textContent = describeSubmitError(error, 'NFL draft picks');
         submitBtn.disabled = false;
     }
 }

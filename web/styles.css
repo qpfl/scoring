@@ -15169,3 +15169,16 @@ span.is-my-team {
     border: 1px solid var(--loss);
     border-radius: var(--radius-sm);
 }
+
+/* Grey out a button while the action it started is in flight (and after it
+   succeeds, until the page re-renders) so the press visibly registered. */
+button.is-busy,
+button.is-busy:hover,
+button.is-busy:disabled {
+    background: var(--bg-hover) !important;
+    border-color: var(--border) !important;
+    color: var(--text-muted) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    cursor: progress !important;
+}
