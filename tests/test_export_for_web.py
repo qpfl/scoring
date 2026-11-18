@@ -149,3 +149,32 @@ def test_optimal_lineup_leaves_a_slot_empty_rather_than_start_a_negative_score()
     assert efficiency['actual_points'] == 17
     assert efficiency['optimal_points'] == 20
     assert efficiency['points_left_on_table'] == 3
+
+
+def test_team_stats_streak_follows_week_order_not_list_order():
+    # Week files once loaded in name order (1, 10, 11, 2, ...), so a team
+    # that lost week 10 after winning week 9 showed a W1 streak.
+    def week(num, score_a, score_b):
+        return {
+            'week': num,
+            'matchups': [
+                {
+                    'team1': {'abbrev': 'AAA', 'total_score': score_a},
+                    'team2': {'abbrev': 'BBB', 'total_score': score_b},
+                }
+            ],
+        }
+
+    results = [(100, 90)] * 9 + [(80, 95)]  # AAA wins weeks 1-9, loses week 10
+    weeks = [week(n, *results[n - 1]) for n in range(1, 11)]
+    scrambled = sorted(weeks, key=lambda w: str(w['week']))
+    standings = [
+        {'abbrev': 'AAA', 'wins': 9, 'losses': 1, 'ties': 0},
+        {'abbrev': 'BBB', 'wins': 1, 'losses': 9, 'ties': 0},
+    ]
+
+    stats = calculate_team_stats(scrambled, standings)
+
+    assert stats['AAA']['streak'] == {'type': 'L', 'count': 1}
+    assert stats['BBB']['streak'] == {'type': 'W', 'count': 1}
+    assert stats['AAA']['worst_week_num'] == 10

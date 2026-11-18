@@ -905,7 +905,12 @@ def calculate_team_stats(weeks: list, standings: list) -> dict:
         reg_season_weeks = (s0.get('wins') or 0) + (s0.get('losses') or 0) + (s0.get('ties') or 0)
     else:
         reg_season_weeks = REGULAR_SEASON_WEEKS
-    regular_weeks = [w for w in weeks if (w.get('week') or 0) <= reg_season_weeks]
+    # Process in week order: the streak and best/worst-week number read the
+    # per-team lists positionally, so an out-of-order list gives wrong answers.
+    regular_weeks = sorted(
+        (w for w in weeks if (w.get('week') or 0) <= reg_season_weeks),
+        key=lambda w: w.get('week') or 0,
+    )
 
     # Process each week's matchups
     for week_data in regular_weeks:

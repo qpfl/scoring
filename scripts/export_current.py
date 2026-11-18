@@ -1022,7 +1022,10 @@ def export_current_season(data_dir: Path, web_dir: Path, season: int = 2026) -> 
 
     if weeks_dir.exists():
         weeks = []
-        for week_file in sorted(weeks_dir.glob('week_*.json')):
+        # Sort by week number: a plain name sort puts week_10 before week_2,
+        # which scrambles anything order-dependent (streaks, best-week number).
+        week_files = sorted(weeks_dir.glob('week_*.json'), key=lambda p: int(p.stem.split('_')[1]))
+        for week_file in week_files:
             week_data = load_json(week_file)
             if week_data:
                 weeks.append(week_data)
