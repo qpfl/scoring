@@ -871,5 +871,90 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.524580+00:00"
+  "awards": [
+    {
+      "id": "mvp",
+      "label": "MVP",
+      "emoji": "\u2b50",
+      "team": "SLS",
+      "value": 36.0,
+      "player": "Joe Burrow",
+      "position": "QB"
+    },
+    {
+      "id": "high_score",
+      "label": "High score",
+      "emoji": "\ud83d\udd25",
+      "team": "S/T",
+      "value": 119.0,
+      "opp": "J/J"
+    },
+    {
+      "id": "low_score",
+      "label": "Low score",
+      "emoji": "\ud83e\uddca",
+      "team": "AYP",
+      "value": 54.0,
+      "opp": "SLS"
+    },
+    {
+      "id": "blowout",
+      "label": "Biggest blowout",
+      "emoji": "\u2694\ufe0f",
+      "team": "SLS",
+      "value": 59.0,
+      "opp": "AYP",
+      "score": [
+        113.0,
+        54.0
+      ]
+    },
+    {
+      "id": "nail_biter",
+      "label": "Nail-biter",
+      "emoji": "\ud83d\ude2c",
+      "team": "AST",
+      "value": 11.0,
+      "opp": "WJK",
+      "score": [
+        87.0,
+        76.0
+      ]
+    },
+    {
+      "id": "upset",
+      "label": "Upset of the week",
+      "emoji": "\u26a1",
+      "team": "AST",
+      "value": -8.5,
+      "opp": "WJK",
+      "score": [
+        87.0,
+        76.0
+      ],
+      "projected": [
+        73.3,
+        81.8
+      ]
+    },
+    {
+      "id": "bench_mvp",
+      "label": "Bench MVP",
+      "emoji": "\ud83e\ude91",
+      "team": "WJK",
+      "value": 29.0,
+      "player": "Malik Willis",
+      "position": "QB"
+    },
+    {
+      "id": "left_on_bench",
+      "label": "Most left on the bench",
+      "emoji": "\ud83e\udd26",
+      "team": "WJK",
+      "value": 40.0,
+      "score": 76.0,
+      "optimal": 116.0
+    }
+  ],
+  "generated_at": "2026-11-19T02:04:46.083889+00:00"
 }

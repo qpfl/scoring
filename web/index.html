@@ -91,6 +91,7 @@
                     <a href="#transactions" class="nav-btn" data-view="transactions">Transactions</a>
                     <a href="#history" class="nav-btn" data-view="history">League</a>
                     <a href="#drafts" class="nav-btn" data-view="drafts">Drafts</a>
+                    <a href="#tok" class="nav-btn" data-view="tok">QPFLTok</a>
                 </div>
             </div>
         </nav>
@@ -124,9 +125,12 @@
         </section>
         <div id="home-view" class="view-container active">
             <div class="home-container">
+                <!-- Shown once the live season's title game is in (web/charts-seasons.js). -->
+                <a href="#teams/history" id="home-wrapped-banner" class="home-tok-teaser home-wrapped-banner" hidden></a>
                 <!-- Season Content - During weeks 1-17 -->
                 <div id="home-season-content" class="home-section">
                     <aside id="home-deadlines" class="home-deadlines" aria-label="Upcoming deadlines" hidden></aside>
+                    <a href="#tok" id="home-tok-teaser" class="home-tok-teaser" data-route="#tok" hidden></a>
                     <div class="home-dashboard">
                         <section class="home-card home-panel home-panel-matchups" aria-labelledby="home-matchups-title">
                             <h2 class="home-card-title" id="home-matchups-title">
@@ -199,6 +203,8 @@
                 </div>
             </div>
         </div>
+
+        <div id="tok-view" class="view-container" aria-label="QPFLTok"></div>
 
         <div id="matchups-view" class="view-container">
             <div class="subnav" role="tablist" aria-label="Matchup views">
@@ -281,10 +287,12 @@
                     <strong>How it works:</strong> Before any week is complete, all teams share an equal 40% baseline: four playoff spots across ten teams. After that, each remaining matchup is simulated 5,000 times using team scoring averages and league-wide scoring variation. Early results are stabilized with three games at the league average, so actual team performance supplies 25% of the forecast after Week 1, 40% after Week 2, and 50% after Week 3 before gaining more weight each week. Movement compares the current odds with the model after the previous completed week, shown in percentage points (pp): going from 42% to 55% is +13 pp. Partial weeks do not count. For entertainment only — assumes lineups and rosters stay constant. Odds are capped at 1–99% until a team mathematically clinches a playoff spot or is eliminated.
                 </p>
             </div>
+            <div id="standings-charts" class="standings-charts"></div>
             <div id="weekly-rank-history-card" class="weekly-rank-card" style="display:none;"></div>
             </div>
             <div class="subview" id="standings-machine-subview" role="tabpanel" aria-labelledby="standings-machine-tab" hidden>
                 <div id="playoff-machine" class="playoff-machine"></div>
+                <div id="machine-charts" class="standings-charts"></div>
             </div>
         </div>
 
@@ -362,9 +370,12 @@
             <div class="subview active" id="stats-leaders-subview" role="tabpanel" aria-labelledby="stats-leaders-tab">
                 <div class="stats-position-selector" id="stats-position-selector" role="tablist" aria-label="Player position"></div>
                 <div class="stats-leaders-container" id="stats-leaders-container" role="tabpanel"></div>
+                <div id="stats-leaders-charts" class="standings-charts"></div>
             </div>
             <div class="subview" id="stats-team-subview" role="tabpanel" aria-labelledby="stats-team-tab" hidden>
                 <div class="team-stats-content" id="team-stats-container"></div>
+                <div id="team-stats-charts" class="standings-charts"></div>
+                <div id="team-stats-player-charts" class="standings-charts"></div>
             </div>
             <div class="subview" id="stats-lineups-subview" role="tabpanel" aria-labelledby="stats-lineups-tab" hidden>
                 <div class="lineups-content" id="lineups-container"></div>
@@ -410,6 +421,7 @@
                 <div class="transactions-filters" id="transactions-type-filters" role="group" aria-label="Transaction type filters"></div>
                 <div class="transactions-filters" id="transactions-team-filters" role="group" aria-label="Team filters"></div>
                 <div id="transactions-blowouts"></div>
+                <div id="transactions-charts" class="standings-charts"></div>
                 <div id="transactions-container" aria-live="polite"></div>
             </div>
         </div>
@@ -424,6 +436,7 @@
             <div class="subview active" id="drafts-history-subview" role="tabpanel" aria-labelledby="drafts-history-tab">
                 <div class="drafts-tabs" id="drafts-tabs" role="tablist" aria-label="Draft seasons"></div>
                 <div class="drafts-content" id="drafts-container" role="tabpanel"></div>
+                <div id="drafts-charts" class="standings-charts"></div>
             </div>
             <div class="subview" id="drafts-picks-subview" role="tabpanel" aria-labelledby="drafts-picks-tab" hidden>
                 <div class="picks-filters" id="pick-tracker-type-filters" role="group" aria-label="Draft type"></div>
@@ -1068,6 +1081,13 @@
     </div>
 
     <script src="api-config.js" defer></script>
+    <script src="charts.js" defer></script>
+    <script src="tok.js" defer></script>
+    <script src="charts-standings.js" defer></script>
+    <script src="charts-luck.js" defer></script>
+    <script src="charts-managers.js" defer></script>
+    <script src="charts-players.js" defer></script>
+    <script src="charts-seasons.js" defer></script>
     <script src="app.js" defer></script>
     <script src="ads.js" defer></script>
     

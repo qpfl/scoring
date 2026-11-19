@@ -794,5 +794,90 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.789224+00:00"
+  "awards": [
+    {
+      "id": "mvp",
+      "label": "MVP",
+      "emoji": "\u2b50",
+      "team": "J/J",
+      "value": 41.0,
+      "player": "Jordan Love",
+      "position": "QB"
+    },
+    {
+      "id": "high_score",
+      "label": "High score",
+      "emoji": "\ud83d\udd25",
+      "team": "GSA",
+      "value": 121.0,
+      "opp": "AST"
+    },
+    {
+      "id": "low_score",
+      "label": "Low score",
+      "emoji": "\ud83e\uddca",
+      "team": "RPA",
+      "value": 44.0,
+      "opp": "CWR"
+    },
+    {
+      "id": "blowout",
+      "label": "Biggest blowout",
+      "emoji": "\u2694\ufe0f",
+      "team": "GSA",
+      "value": 32.0,
+      "opp": "AST",
+      "score": [
+        121.0,
+        89.0
+      ]
+    },
+    {
+      "id": "nail_biter",
+      "label": "Nail-biter",
+      "emoji": "\ud83d\ude2c",
+      "team": "CGK",
+      "value": 7.0,
+      "opp": "S/T",
+      "score": [
+        87.0,
+        80.0
+      ]
+    },
+    {
+      "id": "upset",
+      "label": "Upset of the week",
+      "emoji": "\u26a1",
+      "team": "CGK",
+      "value": -8.9,
+      "opp": "S/T",
+      "score": [
+        87.0,
+        80.0
+      ],
+      "projected": [
+        87.9,
+        96.8
+      ]
+    },
+    {
+      "id": "bench_mvp",
+      "label": "Bench MVP",
+      "emoji": "\ud83e\ude91",
+      "team": "J/J",
+      "value": 45.0,
+      "player": "C.J. Stroud",
+      "position": "QB"
+    },
+    {
+      "id": "left_on_bench",
+      "label": "Most left on the bench",
+      "emoji": "\ud83e\udd26",
+      "team": "CWR",
+      "value": 32.0,
+      "score": 76.0,
+      "optimal": 108.0
+    }
+  ],
+  "generated_at": "2026-11-19T02:04:46.354372+00:00"
 }

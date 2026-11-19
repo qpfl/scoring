@@ -301,7 +301,7 @@ template only if it's missing.
 
 ---
 
-## Phase 6: Trade and draft grades
+## Phase 6: Trade and draft grades (superseded by PLAN_qpfltok_and_charts.md)
 
 **Trades.** Build on `tradeVerdict` (`app.js:8510`) and `normalizedTradeSides` (`:8456`):
 - **Letter grades:** A+ to F for each side, from the verdict's points-produced margin
@@ -325,7 +325,7 @@ only count for 2026 (`data/off_roster_scores`); the UI notes that.
 
 ---
 
-## Phase 7: Elo, fingerprints and nemeses (Hall of Fame)
+## Phase 7: Elo, fingerprints and nemeses (Hall of Fame) (superseded by PLAN_qpfltok_and_charts.md)
 
 **Elo** (`hof_franchises.py`):
 - **Model:** start at 1500, K=24, with a margin-of-victory multiplier
@@ -352,7 +352,7 @@ this franchise, from `PlayerGame` `opp_franchises`.
 
 ---
 
-## Phase 8: Weekly Awards and Season Wrapped
+## Phase 8: Weekly Awards and Season Wrapped (superseded by PLAN_qpfltok_and_charts.md)
 
 **Weekly Awards card.**
 - **Where:** on Matchups → This Week once every game for the week is final.

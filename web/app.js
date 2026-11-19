@@ -861,6 +861,11 @@ const SHARED_RESOURCES = {
         path: 'data/shared/hall_of_fame_records.json',
         read: payload => payload || {},
     },
+    // Cross-season chart data for the charts and QPFLTok (scripts/export_charts.py).
+    charts: {
+        path: 'data/shared/charts.json',
+        read: payload => payload || {},
+    },
     // Stats → Lineups (scripts/hof_lineups.py).
     lineup_superlatives: {
         path: 'data/shared/lineup_superlatives.json',
@@ -1159,13 +1164,15 @@ async function prepareViewData(view, subview) {
         const requests = [
             ensureAllSeasonWeeks(),
             ensureSharedResource('hall_of_fame'),
+            // Weekly awards' names and the Preview's week in history.
+            ensureSharedResource('charts').catch(() => null),
         ];
         if (data.season === LIVE_SEASON) {
             requests.push(ensureCurrentSeasonFiles({ rosters: true }));
         }
         await Promise.all(requests);
     } else if (view === 'standings') {
-        await ensureAllSeasonWeeks();
+        await Promise.all([ensureAllSeasonWeeks(), ensureSharedResource('charts').catch(() => null)]);
     } else if (view === 'teams') {
         const requests = [ensureAllSeasonWeeks()];
         if (data.season === LIVE_SEASON) {
@@ -1183,6 +1190,7 @@ async function prepareViewData(view, subview) {
         }
         if (subview === 'history') {
             requests.push(
+                ensureSharedResource('charts').catch(() => null),
                 ensureSharedResource('banners'),
                 ensureSharedResource('hall_of_fame_records'),
                 ensureSharedResource('drafts'),
@@ -1191,7 +1199,8 @@ async function prepareViewData(view, subview) {
         }
         await Promise.all(requests);
     } else if (view === 'stats') {
-        const requests = [ensureAllSeasonWeeks()];
+        // charts.json carries the owner names the player charts label teams with.
+        const requests = [ensureAllSeasonWeeks(), ensureSharedResource('charts').catch(() => null)];
         if (subview === 'lineups') requests.push(ensureSharedResource('lineup_superlatives'));
         // Leaders rank current players on their full season, which needs the
         // current rosters to know whose off-roster weeks count.
@@ -1212,10 +1221,12 @@ async function prepareViewData(view, subview) {
                 ensureSharedResource('hall_of_fame_records'),
                 ensureSharedResource('drafts'),
                 ensureManualHonors(),
+                ensureSharedResource('charts').catch(() => null),
             ]);
         }
     } else if (view === 'transactions') {
         await Promise.all([
+            ensureSharedResource('charts').catch(() => null),
             ensureSharedResource('transactions'),
             ensureSharedResource('hall_of_fame'),
             ensureSharedResource('drafts'),
@@ -1224,12 +1235,26 @@ async function prepareViewData(view, subview) {
         ]);
     } else if (view === 'drafts' && subview !== 'challenge') {
         await Promise.all([
+            ensureSharedResource('charts').catch(() => null),
             ensureSharedResource('drafts'),
             ensureSharedResource('hall_of_fame'),
             ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
             // Backs the trade history behind each traded pick chip.
             ensureSharedResource('transactions'),
         ]);
+    } else if (view === 'tok') {
+        // Last week's scores for the recap, every week for the playoff sim
+        // behind the rooting guide, and rosters for the holiday slate.
+        if (data.season === LIVE_SEASON) {
+            await Promise.all([
+                ensureAllSeasonWeeks(),
+                ensureCurrentSeasonFiles({ rosters: true }),
+                ensureSharedResource('charts').catch(() => null),
+                ensureSharedResource('hall_of_fame').catch(() => null),
+                ensureSharedResource('transactions').catch(() => null),
+                ensureSharedResource('drafts').catch(() => null),
+            ]);
+        }
     } else if (view === 'manage') {
         await Promise.all([
             ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
@@ -1248,6 +1273,7 @@ async function prepareViewData(view, subview) {
 // per-subview lazy-rendering happens inside the per-view renderer.
 const VIEW_RENDERERS = {
     home: () => renderHome(),
+    tok: subview => renderTok(subview),
     matchups: subview => {
         renderWeekSelector();
         renderMatchups();
@@ -1266,6 +1292,8 @@ const VIEW_RENDERERS = {
     stats: subview => {
         renderStatsLeaders();
         renderTeamStats();
+        renderTeamStatsCharts();
+        renderPlayerStatsCharts();
         if (subview === 'lineups') renderLineupsTab();
     },
     history: subview => {
@@ -1273,10 +1301,16 @@ const VIEW_RENDERERS = {
         else if (subview === 'rules') { renderConstitution(); renderRuleChanges(); }
         else renderHallOfFame();
     },
-    transactions: () => renderTransactions(),
+    transactions: () => {
+        renderTransactions();
+        renderTransactionCharts();
+    },
     drafts: subview => {
         if (subview === 'picks') renderPickTracker();
-        else if (subview !== 'challenge') renderDrafts();
+        else if (subview !== 'challenge') {
+            renderDrafts();
+            renderDraftCharts();
+        }
     },
 };
 
@@ -1315,7 +1349,11 @@ const DEFAULT_SUBVIEW = {
     drafts: 'history',
 };
 
+// Views that only make sense for the live season.
+const LIVE_SEASON_VIEWS = new Set(['manage', 'tok']);
+
 const PAGE_DESCRIPTIONS = {
+    tok: 'QPFLTok: swipe through this week in the QPFL, one chart at a time.',
     home: 'The latest QPFL matchups, standings, performances, and league activity.',
     matchups: 'View weekly QPFL matchups, scores, rosters, and the season schedule.',
     standings: 'Track the QPFL standings, rank points, records, and playoff outlook.',
@@ -1329,6 +1367,7 @@ const PAGE_DESCRIPTIONS = {
 
 function pageTitleFor(view, subview, detail) {
     const season = currentSeason || data?.season;
+    if (view === 'tok') return 'QPFLTok · QPFL';
     if (view === 'matchups') {
         if (subview === 'schedule') return `${season} Schedule · QPFL`;
         if (subview === 'preview') return `Week ${previewWeek() || currentWeek} Preview · QPFL`;
@@ -1565,6 +1604,7 @@ function renderWeekSelector() {
 
 function renderHome() {
     const isOffseason = data.is_offseason || data.is_historical;
+    renderHomeWrappedBanner().catch(() => {});
 
     const seasonContent = document.getElementById('home-season-content');
     const offseasonContent = document.getElementById('home-offseason-content');
@@ -1868,6 +1908,7 @@ function renderNewsletterReminder() {
 
 function renderHomeSeason() {
     renderHomeDeadlines();
+    renderHomeTokTeaser();
     const matchupsContainer = document.getElementById('home-matchups');
     const scoredWeek = data.weeks.find(w => w.week === currentWeek);
     const scheduledWeek = data.schedule.find(w => w.week === currentWeek);
@@ -4593,6 +4634,7 @@ function renderStandings() {
     renderPlayoffOdds();
     renderWeeklyRankHistory(postseasonContext.completedThrough, displayedStandings);
     renderWhatIfStandings(postseasonContext.completedThrough, displayedStandings);
+    renderStandingsCharts();
 }
 
 // ====== LINEUPS (Stats → Lineups) ======
@@ -5007,7 +5049,8 @@ function renderWhatIfStandings(completedThrough, standings) {
                 <button type="button" class="stats-pos-btn ${id === view ? 'active' : ''}" aria-pressed="${id === view}" data-whatif-view="${id}">${escapeHtml(label)}</button>`).join('')}
         </div>
         <p class="whatif-note">${escapeHtml(WHATIF_NOTES[view])} Through Week ${weeks.at(-1).week}.</p>
-        ${whatIfTableHtml(view, computeWhatIf(view, weeks), actualRank)}`;
+        ${whatIfTableHtml(view, computeWhatIf(view, weeks), actualRank)}
+        ${whatIfChartsHtml(view)}`;
     if (!slot.dataset.bound) {
         slot.dataset.bound = '1';
         slot.addEventListener('click', event => {
@@ -6119,6 +6162,7 @@ function renderPlayoffMachine() {
         playoffMachineState.bound = true;
     }
     updatePlayoffMachine({ syncRoute: false });
+    renderMachineCharts();
 }
 
 function updatePlayoffMachine({ syncRoute = true } = {}) {
@@ -6744,7 +6788,8 @@ async function renderMatchupsPreviewTab() {
     ].join('');
     container.innerHTML = `
         <p class="preview-intro">${escapeHtml(`Week ${week}`)} at a glance. Notes use games through Week ${completedThroughWeek()}.</p>
-        ${html || '<p class="pm-empty">Nothing notable yet for this week.</p>'}`;
+        ${html || '<p class="pm-empty">Nothing notable yet for this week.</p>'}
+        ${weekHistorySectionHtml(week)}`;
     const picker = container.querySelector('#preview-rooting-team');
     picker?.addEventListener('change', () => {
         previewRootingTeam = picker.value;
@@ -7642,6 +7687,7 @@ function renderTeamHistory() {
         </div>
         <nav class="hof-index" aria-label="Hall of Fame sections">${sections.map(sectionLink).join('')}</nav>
         ${teamHofOverviewHtml(franchise, allTime, teamBanners)}
+        ${wrappedSectionHtml(currentTeam)}
     `;
 
     if (teamBanners.length > 0) {
@@ -7789,6 +7835,7 @@ function renderTeamHistory() {
         `;
     }
 
+    html += managerSections(['nemeses', 'season-arcs'], { team: currentTeam });
     container.innerHTML = html;
 }
 
@@ -8568,7 +8615,8 @@ function hofRecordsHtml(hof) {
                     <h2 class="hof-section-title">${escapeHtml(c.title)}</h2>
                     <div class="hof-record-grid">${cards.join('')}</div>
                 </section>`;
-        }).join('')}`;
+        }).join('')}
+        ${category === 'all' ? managerSections(['streaks']) : ''}`;
 }
 
 // ====== SCORIGAMI ======
@@ -8603,50 +8651,45 @@ function scorigamiGridSvg(block) {
     const xMax = Math.ceil(Math.max(...cells.map(c => c.w), xMin + step) / step) * step;
     const yMin = 0;
     const yMax = Math.ceil(Math.max(...cells.map(c => c.l), step) / step) * step;
-    const pad = { left: 40, bottom: 34, top: 8, right: 8 };
-    const plotW = (xMax - xMin + 1) * size;
-    const plotH = (yMax - yMin + 1) * size;
-    const width = pad.left + plotW + pad.right;
-    const height = pad.top + plotH + pad.bottom;
-    const x = score => pad.left + (score - xMin) * size;
-    const y = score => pad.top + plotH - (score - yMin + 1) * size;
     const newest = block.recent?.[0];
-    const xTicks = [];
-    for (let v = xMin; v <= xMax; v += step) xTicks.push(v);
-    const yTicks = [];
-    for (let v = yMin; v <= yMax; v += step) yTicks.push(v);
     // Where a final can land: the losing score never tops the winning one.
     const top = Math.min(xMax, yMax);
-    const possible = [
+    const possible = ({ x, y }) => `<polygon class="sg-possible" points="${[
         [x(xMin), y(yMin) + size],
         [x(xMax) + size, y(yMin) + size],
         [x(xMax) + size, y(top)],
         [x(top), y(top)],
         [x(xMin), y(xMin)],
-    ].map(point => point.join(',')).join(' ');
-    const rects = cells.map(cell => {
-        const level = cell.count >= 3 ? 3 : cell.count;
-        const isNewest = newest && newest.w === cell.w && newest.l === cell.l;
-        return `<rect class="sg-cell sg-count-${level}${isNewest ? ' sg-newest' : ''}" x="${x(cell.w)}" y="${y(cell.l)}" width="${size}" height="${size}" data-sg="${cell.w}-${cell.l}"><title>${escapeHtml(scorigamiCellText(cell))}</title></rect>`;
-    }).join('');
-    const ring = newest
+    ].map(point => point.join(',')).join(' ')}"/>`;
+    const ring = ({ x, y }) => (newest
         ? `<circle class="sg-ring" cx="${x(newest.w) + size / 2}" cy="${y(newest.l) + size / 2}" r="${size * 2.5}"/>`
-        : '';
-    return `
-        <svg class="scorigami-grid" viewBox="0 0 ${width} ${height}" role="img"
-             aria-label="${escapeHtml(`Scorigami grid: ${block.unique} unique final scores from ${block.games} games, winning score across, losing score up.`)}">
-            <polygon class="sg-possible" points="${possible}"/>
-            ${xTicks.map(v => `
-                <line class="sg-gridline" x1="${x(v)}" y1="${pad.top}" x2="${x(v)}" y2="${pad.top + plotH}"/>
-                <text class="sg-tick" x="${x(v)}" y="${pad.top + plotH + 14}" text-anchor="middle">${v}</text>`).join('')}
-            ${yTicks.map(v => `
-                <line class="sg-gridline" x1="${pad.left}" y1="${y(v) + size}" x2="${pad.left + plotW}" y2="${y(v) + size}"/>
-                <text class="sg-tick" x="${pad.left - 6}" y="${y(v) + size + 3}" text-anchor="end">${v}</text>`).join('')}
-            ${rects}
-            ${ring}
-            <text class="sg-axis" x="${pad.left + plotW / 2}" y="${height - 4}" text-anchor="middle">Winning score</text>
-            <text class="sg-axis" x="12" y="${pad.top + plotH / 2}" text-anchor="middle" transform="rotate(-90 12 ${pad.top + plotH / 2})">Losing score</text>
-        </svg>`;
+        : '');
+    return heatGrid({
+        cells: cells.map(cell => {
+            const level = cell.count >= 3 ? 3 : cell.count;
+            const isNewest = newest && newest.w === cell.w && newest.l === cell.l;
+            return {
+                x: cell.w,
+                y: cell.l,
+                cls: `sg-count-${level}${isNewest ? ' sg-newest' : ''}`,
+                attrs: { 'data-sg': `${cell.w}-${cell.l}` },
+                title: scorigamiCellText(cell),
+            };
+        }),
+        xDomain: { min: xMin, max: xMax },
+        yDomain: { min: yMin, max: yMax },
+        cellSize: size,
+        step,
+        pad: { left: 40, bottom: 34, top: 8, right: 8 },
+        yUp: true,
+        prefix: 'sg',
+        className: 'scorigami-grid',
+        label: `Scorigami grid: ${block.unique} unique final scores from ${block.games} games, winning score across, losing score up.`,
+        xLabel: 'Winning score',
+        yLabel: 'Losing score',
+        underlay: possible,
+        overlay: ring,
+    });
 }
 
 function scorigamiSectionHtml(block) {
@@ -9038,6 +9081,12 @@ const HOF_SECTION_TABS = {
     'hof-team-records': 'records',
     'hof-player-records': 'records',
     'hof-rivalries': 'franchises',
+    'chart-finish-history': 'franchises',
+    'chart-elo': 'franchises',
+    'chart-head-to-head': 'franchises',
+    'chart-score-distribution': 'franchises',
+    'chart-fingerprints': 'owners',
+    'chart-streaks': 'records',
 };
 
 function hofRoute(tab = 'overview', detail = '') {
@@ -9346,7 +9395,9 @@ function hofOwnersHtml(hof) {
     if (currentHofOwner && !profile) {
         return `<p class="hof-empty">No owner profile for ${escapeHtml(currentHofOwner)}. ${hofLink('owners', 'See all owners')}</p>`;
     }
-    return profile ? hofOwnerProfileHtml(profile) : hofOwnerStatsHtml(hof);
+    return profile
+        ? hofOwnerProfileHtml(profile)
+        : hofOwnerStatsHtml(hof) + managerSections(['fingerprints']);
 }
 
 // Every franchise seat across its owners (scripts/hof_franchises.py).
@@ -9400,7 +9451,9 @@ function hofFranchisesHtml() {
             <h2 class="hof-section-title">Franchises</h2>
             <div class="hof-franchise-grid">${franchises.map(hofFranchiseCard).join('')}</div>
             <p class="hof-record-note">Records include the playoffs. Playoff berths count top-four regular-season finishes.</p>
-        </section>`;
+        </section>
+        ${renderChartSection('finish-history', {}, { highlight: myTeamAbbrev() })}
+        ${managerSections(['elo', 'head-to-head', 'score-distribution'])}`;
 }
 
 // A team's Hall of Fame (Teams page), built from the same pieces as the
@@ -10951,6 +11004,9 @@ async function renderMatchupWeeklyFacts(season, week) {
 
     const { facts, list } = notes;
     let { headline, rest } = notes;
+    const awards = renderChartSection('weekly-awards', {
+        awardsInput: { awards: facts.awards, season, week, names: facts.names || {} },
+    }, { highlight: myTeamAbbrev() });
     // Notes about a single matchup live in that matchup's Recap; this keeps
     // the rest of the league's.
     if (matchupDrawerMode(true) === 'recap') {
@@ -10963,11 +11019,11 @@ async function renderMatchupWeeklyFacts(season, week) {
         rest = rest.filter(fact => !inRecap.has(fact.template));
         if (!headline.length && rest.length) headline = rest.splice(0, PREGAME_NOTES_SHOWN);
         if (!headline.length) {
-            slot.innerHTML = '';
+            slot.innerHTML = awards;
             return;
         }
     }
-    slot.innerHTML = `
+    slot.innerHTML = `${awards}
         <section class="matchup-weekly-facts" aria-label="This Week in QPFL History">
             <div class="hof-section-title">This Week in QPFL History</div>
             <div class="weekly-facts-week">${escapeHtml(`${season} · ${facts.week_label || `Week ${week}`}`)}</div>
@@ -15776,7 +15832,7 @@ function setRouteSeason(season) {
 
 function updateNavigationLinks() {
     document.querySelectorAll('.nav-btn[data-view]').forEach(link => {
-        const targetSeason = link.dataset.view === 'manage' ? LIVE_SEASON : currentSeason;
+        const targetSeason = LIVE_SEASON_VIEWS.has(link.dataset.view) ? LIVE_SEASON : currentSeason;
         link.href = seasonAwareRoute(`#${link.dataset.view}`, targetSeason);
     });
     document.querySelectorAll('[data-home-link]').forEach(link => {
@@ -15876,6 +15932,10 @@ async function navigateToView(view, subview, detail) {
 
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
     document.getElementById(`${view}-view`).classList.add('active');
+    // QPFLTok takes over the whole screen; it re-reads the feed (NEW badges,
+    // spotlight, a deep-linked clip) every time it opens.
+    document.body.classList.toggle('tok-mode', view === 'tok');
+    if (view === 'tok') viewFresh.delete('tok');
 
     // Apply detail to view-level state BEFORE rendering, so the renderer reads it.
     // Detail changes invalidate the cached render so the new state actually shows.
@@ -16090,6 +16150,26 @@ function activateTeamsSubview(sub) {
     if (hubHeader) hubHeader.hidden = !needsSelector;
 }
 
+// Scroll to a ?section= target. Charts and late data can still be arriving,
+// so wait (briefly) for the element, and correct once more after the layout
+// above it settles.
+function scrollToSection(id, { tries = 12, settle = true } = {}) {
+    requestAnimationFrame(() => {
+        const target = document.getElementById(id);
+        if (!target) {
+            if (tries > 0) setTimeout(() => scrollToSection(id, { tries: tries - 1, settle }), 250);
+            return;
+        }
+        target.scrollIntoView({ block: 'start' });
+        if (settle) {
+            setTimeout(() => {
+                const top = document.getElementById(id)?.getBoundingClientRect().top;
+                if (top !== undefined && Math.abs(top) > 40) scrollToSection(id, { tries: 0, settle: false });
+            }, 700);
+        }
+    });
+}
+
 async function applyHash({ focus = false } = {}) {
     let hash = location.hash.slice(1) || 'home';
     let route = parseHashRoute(hash);
@@ -16179,7 +16259,16 @@ async function applyHash({ focus = false } = {}) {
     applyRouteState(route);
     await navigateToView(route.view, route.subview, route.detail);
     const section = route.params.get('section');
-    if (section) requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ block: 'start' }));
+    // A link to a luck chart opens Alternate standings on the tab holding it.
+    const whatIfView = route.view === 'standings' && section ? whatIfViewForSection(section) : null;
+    if (whatIfView) {
+        currentWhatIfView = whatIfView;
+        const whatIf = document.getElementById('standings-whatif');
+        if (whatIf) whatIf.open = true;
+        const context = getPostseasonStatusContext();
+        renderWhatIfStandings(context.completedThrough, context.standings);
+    }
+    if (section) scrollToSection(section);
     const matchupTeam = route.view === 'matchups' ? route.params.get('matchup') : null;
     if (matchupTeam) {
         focusMatchupCard(matchupTeam);
@@ -16194,11 +16283,12 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         event.preventDefault();
         closeNavMore();
         if (!confirmManageNavigation(btn.dataset.view)) return;
-        // My Team only works for the current season — switch to it if needed.
-        if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
+        // My Team and QPFLTok only work for the current season — switch to it if needed.
+        const liveOnly = LIVE_SEASON_VIEWS.has(btn.dataset.view);
+        if (liveOnly && currentSeason !== LIVE_SEASON) {
             await loadData(LIVE_SEASON);
         }
-        const route = seasonAwareRoute(`#${btn.dataset.view}`, btn.dataset.view === 'manage' ? LIVE_SEASON : currentSeason);
+        const route = seasonAwareRoute(`#${btn.dataset.view}`, liveOnly ? LIVE_SEASON : currentSeason);
         history.pushState(null, '', route);
         await applyHash();
         focusMainContentOnMobile();

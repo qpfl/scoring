@@ -54,6 +54,7 @@ def test_mobile_navigation_has_four_primary_destinations_and_more():
         'transactions',
         'history',
         'drafts',
+        'tok',
     ]
     assert navigation.hidden_views == []
     assert navigation.more_toggle['aria-expanded'] == 'false'

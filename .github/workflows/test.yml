@@ -84,8 +84,16 @@ jobs:
         run: |
           uv run --frozen pytest -q tests/test_api.py tests/test_request_util.py tests/test_github_store.py tests/test_nfl_draft_config.py tests/test_commissioner_exports.py --cov=api --cov-branch --cov-report=term --cov-fail-under=55
 
-      - name: Syntax-check web/app.js
-        run: node --check web/app.js
+      - name: Syntax-check web scripts
+        run: |
+          node --check web/app.js
+          node --check web/charts.js
+          node --check web/tok.js
+          node --check web/charts-standings.js
+          node --check web/charts-luck.js
+          node --check web/charts-managers.js
+          node --check web/charts-players.js
+          node --check web/charts-seasons.js
 
       - name: Validate JSON schemas
         run: uv run --frozen python -m qpfl.data_validation
