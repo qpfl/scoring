@@ -114,6 +114,8 @@ def elo_history(team_games: Sequence[TeamGame]) -> dict[str, Any]:
             ra = statistics.fmean(rating.get(f, ELO_START) for f in g.franchises)
             rb = statistics.fmean(rating.get(f, ELO_START) for f in g.opp_franchises)
             result = _result(g)
+            if result is None:
+                continue
             expected = 1 / (1 + 10 ** ((rb - ra) / 400))
             if result == 0.5:
                 multiplier = 1.0
@@ -407,21 +409,23 @@ def weekly_awards(
             opp=close.opp_abbrev,
             score=[close.score, close.opp_score],
         )
-        upsets = [
-            g
-            for g in winners
-            if g.projected is not None
-            and g.opp_projected is not None
-            and g.projected < g.opp_projected
-        ]
+        # (projected margin, game) for winners that were projected to lose.
+        upsets: list[tuple[float, TeamGame]] = []
+        for g in winners:
+            if (
+                g.projected is not None
+                and g.opp_projected is not None
+                and g.projected < g.opp_projected
+            ):
+                upsets.append((g.projected - g.opp_projected, g))
         if upsets:
-            upset = min(upsets, key=lambda g: (g.projected - g.opp_projected, g.abbrev))
+            gap, upset = min(upsets, key=lambda pair: (pair[0], pair[1].abbrev))
             add(
                 'upset',
                 'Upset of the week',
                 '⚡',
                 upset.abbrev,
-                round(upset.projected - upset.opp_projected, 1),
+                round(gap, 1),
                 opp=upset.opp_abbrev,
                 score=[upset.score, upset.opp_score],
                 projected=[upset.projected, upset.opp_projected],
@@ -438,17 +442,21 @@ def weekly_awards(
                 player=sat.name,
                 position=sat.position,
             )
-    left = [g for g in sides if g.optimal is not None and g.optimal > g.score]
+    # (points left on the bench, game, best possible score).
+    left: list[tuple[float, TeamGame, float]] = []
+    for g in sides:
+        if g.optimal is not None and g.optimal > g.score:
+            left.append((g.optimal - g.score, g, g.optimal))
     if left:
-        worst = max(left, key=lambda g: (g.optimal - g.score, g.abbrev))
+        gap, worst, optimal = max(left, key=lambda item: (item[0], item[1].abbrev))
         add(
             'left_on_bench',
             'Most left on the bench',
             '🤦',
             worst.abbrev,
-            round(worst.optimal - worst.score, 1),
+            round(gap, 1),
             score=worst.score,
-            optimal=worst.optimal,
+            optimal=optimal,
         )
     return awards
 
