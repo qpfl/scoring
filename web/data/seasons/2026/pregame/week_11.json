@@ -160,22 +160,6 @@
           }
         },
         {
-          "id": "pre_projection_closest",
-          "category": "team",
-          "subjects": [
-            "RPA",
-            "S/T"
-          ],
-          "template": "The closest projected game of the week: {team:RPA} by 3.2.",
-          "notability": 0.45,
-          "tags": [],
-          "check": {
-            "type": "win",
-            "team": "RPA",
-            "expect": true
-          }
-        },
-        {
           "id": "pre_player_leader",
           "category": "player",
           "subjects": [
@@ -429,6 +413,23 @@
           "id": "pre_player_hot",
           "category": "player",
           "subjects": [
+            "CWR"
+          ],
+          "template": "Trevor Lawrence has scored 20+ in 3 straight starts.",
+          "notability": 0.55,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "CWR",
+            "player": "Trevor Lawrence",
+            "position": "QB",
+            "min": 20
+          }
+        },
+        {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
             "SLS"
           ],
           "template": "Bucky Irving has scored 20+ in 3 straight starts.",
@@ -465,6 +466,22 @@
           "tags": []
         },
         {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "SLS"
+          ],
+          "template": "The closest projected game of the week: {team:SLS} by 1.8.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "SLS",
+            "expect": true
+          }
+        },
+        {
           "id": "pre_series_widest",
           "category": "team",
           "subjects": [
@@ -496,10 +513,15 @@
             "SLS"
           ],
           "template": "Breece Hall faces former team {team:SLS} (traded away 2026 offseason; 35 starts, 409 points there, 2022-2025).",
-          "notability": 0.7,
+          "notability": 0.8,
           "tags": [
-            "bench"
-          ]
+            "starter"
+          ],
+          "check": {
+            "type": "win",
+            "team": "CWR",
+            "expect": true
+          }
         },
         {
           "id": "pre_revenge",
@@ -664,5 +686,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-19T18:25:40.645420+00:00"
+  "generated_at": "2026-11-19T18:31:54.937984+00:00"
 }
