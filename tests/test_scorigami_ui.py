@@ -3,6 +3,8 @@ import subprocess
 
 from tests.test_playoff_machine import WEB_APP, app_slice
 
+WEB_CHARTS = WEB_APP.parent / 'charts.js'
+
 
 def _game(season, week, winner, loser):
     return {
@@ -39,6 +41,7 @@ def run_scorigami(body: str):
     script = f"""
 function escapeHtml(value) {{ return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }}
 const block = {json.dumps(BLOCK)};
+{WEB_CHARTS.read_text(encoding='utf-8')}
 {section}
 const result = (() => {{ {body} }})();
 process.stdout.write(JSON.stringify(result));

@@ -69,6 +69,11 @@ the compatibility payload while remaining consumers are migrated. Current/live r
 short cache lifetimes; frozen history and rarely changed shared resources receive long lifetimes.
 The exact routes and cache policy live in `vercel.json`.
 
+Charts are drawn by `web/charts.js` (SVG/HTML primitives plus the chart registry), which loads
+before `web/app.js`. Season-local charts compute in the browser; anything that needs every season
+is precomputed by `scripts/export_charts.py` into `data/shared/charts.json` after each scoring run.
+See `docs/PLAN_qpfltok_and_charts.md`.
+
 Maintained export commands are:
 
 ```bash

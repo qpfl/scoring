@@ -15182,3 +15182,198 @@ button.is-busy:disabled {
     opacity: 1 !important;
     cursor: progress !important;
 }
+
+/* ====== Charts (web/charts.js) ======
+   Shared look for every chart primitive. Series colors: the highlighted
+   franchise is the accent, everything else is neutral until one is set. */
+
+.chart-section {
+    margin: var(--space-5) 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+}
+
+.chart-summary {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    list-style: none;
+}
+
+.chart-summary::-webkit-details-marker { display: none; }
+
+.chart-summary::after {
+    content: '▾';
+    float: right;
+    margin-top: -1.4em;
+    color: var(--text-muted);
+    transition: transform var(--transition-fast);
+}
+
+.chart-details:not([open]) .chart-summary::after { transform: rotate(-90deg); }
+
+.chart-title {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.chart-blurb {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+.chart-body { padding: 0 var(--space-4) var(--space-4); }
+.chart-figure { margin: 0; }
+
+.chart-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.chart-gridline { stroke: var(--border); stroke-width: 1; }
+.chart-refline { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 4 4; }
+.chart-tick { fill: var(--text-muted); font-size: 10px; }
+.chart-endlabel { fill: var(--text-secondary); font-size: 11px; font-weight: 600; }
+
+.chart-line {
+    fill: none;
+    stroke: var(--text-secondary);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.chart-dot { fill: var(--text-secondary); }
+.chart-series.is-highlight .chart-line { stroke: var(--accent-primary); stroke-width: 3; }
+.chart-series.is-highlight .chart-dot { fill: var(--accent-primary); }
+.chart-series.is-highlight .chart-endlabel { fill: var(--text-primary); }
+.chart-series.is-muted { opacity: 0.35; }
+.chart-series.is-muted .chart-line { stroke-width: 1.5; }
+.chart-series:hover { opacity: 1; }
+.chart-bump .chart-line { stroke-width: 2.5; }
+
+/* Ranked and diverging bars (HTML). */
+.chart-barlist,
+.chart-diverging {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-2);
+}
+
+.chart-bar-row {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr auto;
+    grid-template-areas: "rank label value" ". track track";
+    align-items: baseline;
+    column-gap: var(--space-2);
+    row-gap: 3px;
+}
+
+.chart-bar-rank { grid-area: rank; color: var(--text-muted); font-size: var(--text-xs); text-align: right; }
+.chart-bar-label { grid-area: label; min-width: 0; display: flex; flex-direction: column; }
+.chart-bar-name { color: var(--text-primary); font-size: var(--text-sm); font-weight: 600; }
+.chart-bar-sub { color: var(--text-muted); font-size: var(--text-xs); }
+.chart-bar-value { grid-area: value; color: var(--text-primary); font-size: var(--text-sm); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+.chart-bar-track {
+    grid-area: track;
+    display: flex;
+    height: 6px;
+    background: var(--bg-raised);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.chart-bar-fill { display: block; height: 100%; background: var(--text-muted); }
+.chart-bar-fill.is-projected { background: var(--accent-primary); opacity: 0.45; }
+.chart-bar-row.is-highlight .chart-bar-fill { background: var(--accent-primary); }
+.chart-bar-row.is-highlight .chart-bar-fill.is-projected { opacity: 0.45; }
+.chart-bar-row.is-highlight .chart-bar-name { color: var(--accent-primary); }
+.chart-bar-row.is-muted,
+.chart-div-row.is-muted { opacity: 0.75; }
+
+.chart-div-row {
+    display: grid;
+    grid-template-columns: minmax(6rem, 1fr) 2fr 3.5rem;
+    align-items: center;
+    column-gap: var(--space-2);
+}
+
+.chart-div-track {
+    position: relative;
+    height: 10px;
+    background: linear-gradient(var(--border), var(--border)) center / 1px 100% no-repeat;
+}
+
+.chart-div-fill { position: absolute; top: 0; bottom: 0; border-radius: 2px; }
+.chart-div-fill.pos { background: var(--win); }
+.chart-div-fill.neg { background: var(--loss); }
+.chart-bar-value.pos { color: var(--win); text-align: right; }
+.chart-bar-value.neg { color: var(--loss); text-align: right; }
+.chart-div-row.is-highlight .chart-bar-name { color: var(--accent-primary); }
+
+/* Heat grids (head-to-head, finish history, schedule swap). */
+.chart-heatgrid { display: block; width: 100%; max-width: 720px; height: auto; }
+.hg-gridline { stroke: var(--border); stroke-width: 1; }
+.hg-tick { fill: var(--text-muted); font-size: 10px; }
+.hg-axis { fill: var(--text-secondary); font-size: 11px; }
+.hg-cell { fill: var(--bg-raised); stroke: var(--bg-card); stroke-width: 1; }
+.hg-cell-text { fill: var(--text-primary); font-size: 9px; pointer-events: none; }
+.hg-cell.lvl-0 { fill: color-mix(in srgb, var(--loss) 70%, var(--bg-card)); }
+.hg-cell.lvl-1 { fill: color-mix(in srgb, var(--loss) 35%, var(--bg-card)); }
+.hg-cell.lvl-2 { fill: var(--bg-raised); }
+.hg-cell.lvl-3 { fill: color-mix(in srgb, var(--win) 35%, var(--bg-card)); }
+.hg-cell.lvl-4 { fill: color-mix(in srgb, var(--win) 70%, var(--bg-card)); }
+
+/* Rings. */
+.chart-ring { display: inline-flex; align-items: center; gap: var(--space-3); }
+.chart-ring-track { fill: none; stroke: var(--bg-raised); stroke-width: 5; }
+.chart-ring-fill { fill: none; stroke: var(--accent-primary); stroke-width: 5; stroke-linecap: round; }
+.chart-ring-center { fill: var(--text-primary); font-size: 11px; font-weight: 700; }
+.chart-ring-text { display: flex; flex-direction: column; }
+.chart-ring-label { color: var(--text-primary); font-weight: 600; }
+.chart-ring-sub { color: var(--text-muted); font-size: var(--text-xs); }
+.chart-ring.is-highlight .chart-ring-fill { stroke: var(--gold); }
+
+/* Strip plots. */
+.chart-strip-label { fill: var(--text-secondary); font-size: 11px; }
+.chart-strip-dot { fill: var(--text-secondary); opacity: 0.35; }
+.chart-strip-median { stroke: var(--text-primary); stroke-width: 2; }
+.chart-strip-row.is-highlight .chart-strip-dot { fill: var(--accent-primary); opacity: 0.6; }
+.chart-strip-row.is-highlight .chart-strip-label { fill: var(--accent-primary); font-weight: 600; }
+.chart-strip-row.is-muted { opacity: 0.6; }
+
+/* "Show as table" fallback. */
+.chart-table { margin-top: var(--space-3); font-size: var(--text-xs); color: var(--text-muted); }
+.chart-table summary { cursor: pointer; }
+.chart-table table { width: 100%; margin-top: var(--space-2); border-collapse: collapse; }
+.chart-table th,
+.chart-table td { padding: 2px var(--space-2); text-align: right; border-bottom: 1px solid var(--border); }
+.chart-table th[scope="row"],
+.chart-table thead th:first-child { text-align: left; }
+.chart-table table { display: block; overflow-x: auto; }
+
+/* The one floating tooltip. */
+.chart-tip {
+    position: fixed;
+    z-index: var(--z-dropdown);
+    max-width: 16rem;
+    padding: var(--space-1) var(--space-2);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    color: var(--text-primary);
+    font-size: var(--text-xs);
+    pointer-events: none;
+}
+
+[data-tip] { cursor: pointer; }

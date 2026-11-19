@@ -861,6 +861,11 @@ const SHARED_RESOURCES = {
         path: 'data/shared/hall_of_fame_records.json',
         read: payload => payload || {},
     },
+    // Cross-season chart data for the charts and QPFLTok (scripts/export_charts.py).
+    charts: {
+        path: 'data/shared/charts.json',
+        read: payload => payload || {},
+    },
     // Stats → Lineups (scripts/hof_lineups.py).
     lineup_superlatives: {
         path: 'data/shared/lineup_superlatives.json',
@@ -8603,50 +8608,45 @@ function scorigamiGridSvg(block) {
     const xMax = Math.ceil(Math.max(...cells.map(c => c.w), xMin + step) / step) * step;
     const yMin = 0;
     const yMax = Math.ceil(Math.max(...cells.map(c => c.l), step) / step) * step;
-    const pad = { left: 40, bottom: 34, top: 8, right: 8 };
-    const plotW = (xMax - xMin + 1) * size;
-    const plotH = (yMax - yMin + 1) * size;
-    const width = pad.left + plotW + pad.right;
-    const height = pad.top + plotH + pad.bottom;
-    const x = score => pad.left + (score - xMin) * size;
-    const y = score => pad.top + plotH - (score - yMin + 1) * size;
     const newest = block.recent?.[0];
-    const xTicks = [];
-    for (let v = xMin; v <= xMax; v += step) xTicks.push(v);
-    const yTicks = [];
-    for (let v = yMin; v <= yMax; v += step) yTicks.push(v);
     // Where a final can land: the losing score never tops the winning one.
     const top = Math.min(xMax, yMax);
-    const possible = [
+    const possible = ({ x, y }) => `<polygon class="sg-possible" points="${[
         [x(xMin), y(yMin) + size],
         [x(xMax) + size, y(yMin) + size],
         [x(xMax) + size, y(top)],
         [x(top), y(top)],
         [x(xMin), y(xMin)],
-    ].map(point => point.join(',')).join(' ');
-    const rects = cells.map(cell => {
-        const level = cell.count >= 3 ? 3 : cell.count;
-        const isNewest = newest && newest.w === cell.w && newest.l === cell.l;
-        return `<rect class="sg-cell sg-count-${level}${isNewest ? ' sg-newest' : ''}" x="${x(cell.w)}" y="${y(cell.l)}" width="${size}" height="${size}" data-sg="${cell.w}-${cell.l}"><title>${escapeHtml(scorigamiCellText(cell))}</title></rect>`;
-    }).join('');
-    const ring = newest
+    ].map(point => point.join(',')).join(' ')}"/>`;
+    const ring = ({ x, y }) => (newest
         ? `<circle class="sg-ring" cx="${x(newest.w) + size / 2}" cy="${y(newest.l) + size / 2}" r="${size * 2.5}"/>`
-        : '';
-    return `
-        <svg class="scorigami-grid" viewBox="0 0 ${width} ${height}" role="img"
-             aria-label="${escapeHtml(`Scorigami grid: ${block.unique} unique final scores from ${block.games} games, winning score across, losing score up.`)}">
-            <polygon class="sg-possible" points="${possible}"/>
-            ${xTicks.map(v => `
-                <line class="sg-gridline" x1="${x(v)}" y1="${pad.top}" x2="${x(v)}" y2="${pad.top + plotH}"/>
-                <text class="sg-tick" x="${x(v)}" y="${pad.top + plotH + 14}" text-anchor="middle">${v}</text>`).join('')}
-            ${yTicks.map(v => `
-                <line class="sg-gridline" x1="${pad.left}" y1="${y(v) + size}" x2="${pad.left + plotW}" y2="${y(v) + size}"/>
-                <text class="sg-tick" x="${pad.left - 6}" y="${y(v) + size + 3}" text-anchor="end">${v}</text>`).join('')}
-            ${rects}
-            ${ring}
-            <text class="sg-axis" x="${pad.left + plotW / 2}" y="${height - 4}" text-anchor="middle">Winning score</text>
-            <text class="sg-axis" x="12" y="${pad.top + plotH / 2}" text-anchor="middle" transform="rotate(-90 12 ${pad.top + plotH / 2})">Losing score</text>
-        </svg>`;
+        : '');
+    return heatGrid({
+        cells: cells.map(cell => {
+            const level = cell.count >= 3 ? 3 : cell.count;
+            const isNewest = newest && newest.w === cell.w && newest.l === cell.l;
+            return {
+                x: cell.w,
+                y: cell.l,
+                cls: `sg-count-${level}${isNewest ? ' sg-newest' : ''}`,
+                attrs: { 'data-sg': `${cell.w}-${cell.l}` },
+                title: scorigamiCellText(cell),
+            };
+        }),
+        xDomain: { min: xMin, max: xMax },
+        yDomain: { min: yMin, max: yMax },
+        cellSize: size,
+        step,
+        pad: { left: 40, bottom: 34, top: 8, right: 8 },
+        yUp: true,
+        prefix: 'sg',
+        className: 'scorigami-grid',
+        label: `Scorigami grid: ${block.unique} unique final scores from ${block.games} games, winning score across, losing score up.`,
+        xLabel: 'Winning score',
+        yLabel: 'Losing score',
+        underlay: possible,
+        overlay: ring,
+    });
 }
 
 function scorigamiSectionHtml(block) {
