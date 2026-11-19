@@ -1243,6 +1243,7 @@ async function prepareViewData(view, subview) {
                 ensureAllSeasonWeeks(),
                 ensureCurrentSeasonFiles({ rosters: true }),
                 ensureSharedResource('charts').catch(() => null),
+                ensureSharedResource('hall_of_fame').catch(() => null),
             ]);
         }
     } else if (view === 'manage') {
@@ -4615,6 +4616,7 @@ function renderStandings() {
     renderPlayoffOdds();
     renderWeeklyRankHistory(postseasonContext.completedThrough, displayedStandings);
     renderWhatIfStandings(postseasonContext.completedThrough, displayedStandings);
+    renderStandingsCharts();
 }
 
 // ====== LINEUPS (Stats → Lineups) ======
@@ -6141,6 +6143,7 @@ function renderPlayoffMachine() {
         playoffMachineState.bound = true;
     }
     updatePlayoffMachine({ syncRoute: false });
+    renderMachineCharts();
 }
 
 function updatePlayoffMachine({ syncRoute = true } = {}) {
@@ -9055,6 +9058,7 @@ const HOF_SECTION_TABS = {
     'hof-team-records': 'records',
     'hof-player-records': 'records',
     'hof-rivalries': 'franchises',
+    'chart-finish-history': 'franchises',
 };
 
 function hofRoute(tab = 'overview', detail = '') {
@@ -9417,7 +9421,8 @@ function hofFranchisesHtml() {
             <h2 class="hof-section-title">Franchises</h2>
             <div class="hof-franchise-grid">${franchises.map(hofFranchiseCard).join('')}</div>
             <p class="hof-record-note">Records include the playoffs. Playoff berths count top-four regular-season finishes.</p>
-        </section>`;
+        </section>
+        ${renderChartSection('finish-history', {}, { highlight: myTeamAbbrev() })}`;
 }
 
 // A team's Hall of Fame (Teams page), built from the same pieces as the

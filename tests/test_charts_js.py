@@ -52,7 +52,7 @@ def test_line_chart_is_labelled_and_highlights_one_series():
     # The highlighted series draws last, on top of the others.
     assert html.index('data-series="CGK"') < html.index('data-series="GSA"')
     # A null splits the line into two runs rather than bridging the gap.
-    gsa = re.search(r'data-series="GSA">\s*<path class="chart-line" d="([^"]+)"', html).group(1)
+    gsa = re.search(r'data-series="GSA">\s*<path class="chart-hit" d="([^"]+)"', html).group(1)
     assert gsa.count('M') == 2
     assert 'class="chart-refline"' in html
     assert '<details class="chart-table">' in html and '<th scope="row">Griff</th>' in html
@@ -69,8 +69,8 @@ def test_bump_chart_puts_first_place_on_top():
             { id: 'A', label: 'A', ranks: [1, 2] },
             { id: 'B', label: 'B', ranks: [2, 1] },
         ] });
-        const a = html.match(/data-series="A">\\s*<path class="chart-line" d="M[\\d.]+,([\\d.]+)/)[1];
-        const b = html.match(/data-series="B">\\s*<path class="chart-line" d="M[\\d.]+,([\\d.]+)/)[1];
+        const a = html.match(/data-series="A">\\s*<path class="chart-hit" d="M[\\d.]+,([\\d.]+)/)[1];
+        const b = html.match(/data-series="B">\\s*<path class="chart-hit" d="M[\\d.]+,([\\d.]+)/)[1];
         return { aY: Number(a), bY: Number(b), table: html.includes('<th scope="col">W2</th>') };
     """)
     assert result['aY'] < result['bY']

@@ -157,6 +157,12 @@ Every chart also produces a QPFLTok card. "Client" means the browser computes it
 
 **Standings & outlook**
 
+**Status:** shipped in Phase 2, in `web/charts-standings.js`. What changed from the table below:
+- **Playoff odds over time** sits on Standings → Table, under the odds card it extends, rather than on the Playoff Machine.
+- **Clinch tracker** shows each team's rank points now against the most it can still reach, labelled Clinched / In by N / Tied at the line / N back / Out. It doesn't compute magic numbers.
+- **Finish history** reads `hall_of_fame.json` in the browser, so Phase 2 adds nothing to `charts.json`.
+- **Season state:** the outlook charts (odds, projected wins, schedule ahead, clinch) only show for the live season. Power rankings and standings replay work for any season.
+
 | Chart | Primitive | Home | Source |
 |---|---|---|---|
 | Power rankings (weekly rank from record, points for and all-play) | bump | Standings → Table, "Charts" section | client |

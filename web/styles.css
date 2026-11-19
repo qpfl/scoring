@@ -15307,6 +15307,9 @@ button.is-busy:disabled {
     column-gap: var(--space-2);
 }
 
+/* The ranked-bar grid areas don't apply here: label, track, value in order. */
+.chart-div-row > * { grid-area: auto; }
+
 .chart-div-track {
     position: relative;
     height: 10px;
@@ -15730,3 +15733,26 @@ body.tok-mode .global-login-dropdown { display: none !important; }
 .home-tok-brand { font-weight: 800; }
 .home-tok-text { flex: 1; min-width: 0; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .home-tok-arrow { color: var(--accent-primary); font-weight: 700; }
+
+/* Standings & outlook charts (web/charts-standings.js). */
+.standings-charts { margin-top: var(--space-5); }
+.chart-bar-fill.is-clinched { background: var(--win); }
+.chart-bar-fill.is-out { background: var(--loss); opacity: 0.6; }
+.hg-cell.is-title { fill: color-mix(in srgb, var(--gold) 55%, var(--bg-card)); }
+.hg-cell.is-highlight { stroke: var(--accent-primary); stroke-width: 2; }
+.chart-heatgrid .hg-cell-text { font-size: 11px; }
+/* A wide invisible stroke so a thin line is easy to hover or tap. */
+.chart-hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; }
+.chart-line { pointer-events: none; }
+@media (hover: hover) {
+    .chart-line-chart:hover .chart-series { opacity: 0.3; }
+    .chart-line-chart .chart-series:hover { opacity: 1; }
+    .chart-series:hover .chart-line { stroke: var(--accent-primary); stroke-width: 3; }
+    .chart-series:hover .chart-endlabel { fill: var(--text-primary); }
+}
+
+/* Charts inside a QPFLTok clip shrink to fit the card instead of scrolling. */
+.tok-body > .chart-figure { height: 100%; display: flex; flex-direction: column; }
+.tok-body > .chart-figure > .chart-svg { flex: 1; min-height: 0; width: 100%; height: 100%; }
+.tok-body .chart-table { display: none; }
+.tok-body .chart-heatgrid { max-width: 100%; }

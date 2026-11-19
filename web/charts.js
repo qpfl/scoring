@@ -105,7 +105,8 @@ function linePlot({
     let [yMin, yMax] = yDomain || [Math.min(...all), Math.max(...all)];
     if (yMin === yMax) { yMin -= 1; yMax += 1; }
     const showEnd = s => endLabels === 'all' || (endLabels === 'highlight' && s.id === highlight);
-    const pad = { left: 40, right: live.some(showEnd) ? 96 : 12, top: 10, bottom: 26 };
+    const longestEnd = Math.max(0, ...live.filter(showEnd).map(s => String(s.short || s.label).length));
+    const pad = { left: 40, right: longestEnd ? Math.min(140, 14 + longestEnd * 7) : 12, top: 10, bottom: 26 };
     const plotW = width - pad.left - pad.right;
     const plotH = height - pad.top - pad.bottom;
     const xs = i => pad.left + (x.length === 1 ? plotW / 2 : (i / (x.length - 1)) * plotW);
@@ -124,6 +125,21 @@ function linePlot({
     const ref = refLine != null && refLine >= Math.min(yMin, yMax) && refLine <= Math.max(yMin, yMax)
         ? `<line class="chart-refline" x1="${pad.left}" y1="${chartRound(ys(refLine))}" x2="${pad.left + plotW}" y2="${chartRound(ys(refLine))}"/>`
         : '';
+    // End labels, nudged apart so lines that finish together stay readable.
+    const labelY = {};
+    const labelled = live.filter(showEnd)
+        .map(s => ({ id: s.id, y: ys(s.values[lastIndex(s.values)]) }))
+        .sort((a, b) => a.y - b.y);
+    const gap = 11;
+    labelled.forEach((l, i) => { l.at = i ? Math.max(l.y, labelled[i - 1].at + gap) : l.y; });
+    const overflow = labelled.length ? labelled[labelled.length - 1].at - (pad.top + plotH) : 0;
+    if (overflow > 0) {
+        for (let i = labelled.length - 1; i >= 0; i -= 1) {
+            const limit = i === labelled.length - 1 ? pad.top + plotH : labelled[i + 1].at - gap;
+            labelled[i].at = Math.min(labelled[i].at, limit);
+        }
+    }
+    labelled.forEach(l => { labelY[l.id] = l.at; });
     // The highlighted series draws last so it sits on top.
     const ordered = [...live].sort((a, b) => (a.id === highlight) - (b.id === highlight));
     const lines = ordered.map(s => {
@@ -131,11 +147,13 @@ function linePlot({
         const endX = xs(end);
         const endY = ys(s.values[end]);
         const tip = `${s.label}: ${yFmt(s.values[end])}`;
+        const d = linePaths(s.values, xs, ys);
         return `
             <g class="chart-series${seriesClass(s.id, highlight)}" data-series="${chartEsc(s.id)}">
-                <path class="chart-line" d="${linePaths(s.values, xs, ys)}" data-tip="${chartEsc(s.label)}"/>
+                <path class="chart-hit" d="${d}" data-tip="${chartEsc(tip)}"/>
+                <path class="chart-line" d="${d}"/>
                 <circle class="chart-dot" cx="${chartRound(endX)}" cy="${chartRound(endY)}" r="3" data-tip="${chartEsc(tip)}"/>
-                ${showEnd(s) ? `<text class="chart-endlabel" x="${chartRound(endX + 6)}" y="${chartRound(endY + 4)}">${chartEsc(s.short || s.label)}</text>` : ''}
+                ${showEnd(s) ? `<text class="chart-endlabel" x="${chartRound(endX + 6)}" y="${chartRound((labelY[s.id] ?? endY) + 4)}">${chartEsc(s.short || s.label)}</text>` : ''}
             </g>`;
     }).join('');
     const svg = chartSvg({
@@ -217,22 +235,25 @@ function barList({ rows, valueFmt = v => chartNum(v), highlight, max = null, tit
 }
 
 // Bars growing left (negative) or right (positive) from a center line.
-function divergingBars({ rows, valueFmt = v => `${v > 0 ? '+' : ''}${chartNum(v)}`, highlight, title = '' }) {
+// Positive is good (green) unless `flip` says a bigger number is worse.
+function divergingBars({ rows, valueFmt = v => `${v > 0 ? '+' : ''}${chartNum(v)}`, highlight, title = '', flip = false }) {
     const live = (rows || []).filter(r => typeof r.value === 'number' && Number.isFinite(r.value));
     if (!live.length) return '';
     const top = Math.max(...live.map(r => Math.abs(r.value))) || 1;
     const items = live.map(r => {
         const width = chartRound((Math.abs(r.value) / top) * 50);
-        const side = r.value < 0 ? 'neg' : 'pos';
+        const side = (r.value < 0) !== flip ? 'neg' : 'pos';
         const style = r.value < 0 ? `right:50%;width:${width}%` : `left:50%;width:${width}%`;
+        // Zero sits on the line, in neither color.
+        const tone = r.value === 0 ? '' : side;
         return `
             <li class="chart-div-row${seriesClass(r.id, highlight)}" data-series="${chartEsc(r.id ?? '')}">
                 <span class="chart-bar-label">
                     <span class="chart-bar-name">${chartEsc(r.label)}</span>
                     ${r.sub ? `<span class="chart-bar-sub">${chartEsc(r.sub)}</span>` : ''}
                 </span>
-                <span class="chart-div-track"><span class="chart-div-fill ${side}" style="${style}"></span></span>
-                <span class="chart-bar-value ${side}">${chartEsc(r.display ?? valueFmt(r.value))}</span>
+                <span class="chart-div-track"><span class="chart-div-fill ${tone}" style="${style}"></span></span>
+                <span class="chart-bar-value ${tone}">${chartEsc(r.display ?? valueFmt(r.value))}</span>
             </li>`;
     }).join('');
     return `<ol class="chart-diverging"${title ? ` aria-label="${chartEsc(title)}"` : ''}>${items}</ol>`;
