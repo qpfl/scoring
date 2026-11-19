@@ -91,7 +91,6 @@ def test_every_manager_chart_renders_and_makes_a_tok_card():
         'head-to-head',
         'score-distribution',
         'fingerprints',
-        'win-rings',
         'streaks',
         'nemeses',
         'season-arcs',
@@ -105,22 +104,25 @@ def test_every_manager_chart_renders_and_makes_a_tok_card():
     assert result['season-arcs']['caption'] == '📈 Griff has 2 wins, like 2025 (5 by the end)'
     assert result['streaks']['caption'] == '🔥 Griff has won 4 straight'
     assert result['fingerprints']['caption'] == '🧬 Griff: best at Scoring and Playoffs'
-    assert result['win-rings']['caption'] == '💍 Kaminska wins 66% of games'
     assert result['score-distribution']['caption'] == ('📦 Griff has the highest median score, 110')
 
 
-def test_one_season_owners_stay_off_the_rings_and_old_files_draw_nothing():
-    result = run_charts(f"""
-        const input = {INPUT};
-        const rings = renderChartSection('win-rings', {{ managerInput: input }});
-        const old = {{ names: {{}}, ownerStats: [], franchises: [], version: '0' }};
-        return {{
-            oneYear: rings.includes('One Year'),
-            old: ['elo', 'head-to-head', 'streaks', 'nemeses'].map(id => renderChartSection(id, {{ managerInput: old, team: 'GSA' }})),
-        }};
+def test_old_files_draw_nothing():
+    result = run_charts("""
+        const old = { names: {}, ownerStats: [], franchises: [], version: '0' };
+        return ['elo', 'head-to-head', 'streaks', 'nemeses'].map(id => renderChartSection(id, { managerInput: old, team: 'GSA' }));
     """)
-    assert result['oneYear'] is False
-    assert result['old'] == ['', '', '', '']
+    assert result == ['', '', '', '']
+
+
+def test_elo_marks_each_season_and_says_it_is_all_time():
+    html = run_charts(f"""
+        const input = {INPUT};
+        return renderChartSection('elo', {{ managerInput: input }});
+    """)
+    assert 'All-time · since 2025' in html
+    assert html.count('chart-gridline is-divider') == 2
+    assert '>2025</text>' in html and '>2026</text>' in html
 
 
 def test_elo_follows_the_leader_when_no_team_is_set():
@@ -137,7 +139,7 @@ def test_manager_charts_are_placed_on_the_page():
     assert index.index('src="charts-managers.js"') < index.index('src="app.js"')
     app = WEB_APP.read_text(encoding='utf-8')
     assert "managerSections(['elo', 'head-to-head', 'score-distribution'])" in app
-    assert "managerSections(['fingerprints', 'win-rings'])" in app
+    assert "managerSections(['fingerprints'])" in app
     assert "managerSections(['streaks'])" in app
     assert "managerSections(['nemeses', 'season-arcs'], { team: currentTeam })" in app
     assert "'chart-fingerprints': 'owners'," in app

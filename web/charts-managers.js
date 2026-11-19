@@ -9,7 +9,7 @@
 //
 // Charts and where they live:
 //   elo, head-to-head, score-distribution → Hall of Fame → Franchises
-//   fingerprints, win-rings               → Hall of Fame → Owners
+//   fingerprints                          → Hall of Fame → Owners
 //   streaks                               → Hall of Fame → Records
 //   nemeses, season-arcs                  → Teams → a team's Hall of Fame
 
@@ -69,7 +69,6 @@ function closestArc(arcs, season, week) {
 
 function managerTok(entry, model, opts, extra) {
     return {
-        meta: 'ALL-TIME',
         sub: entry.blurb,
         version: `${entry.id}-${model.input.version}`,
         involves: model.input.franchises,
@@ -87,8 +86,10 @@ const MANAGER_CHARTS = [
     {
         id: 'elo',
         family: 'managers',
+        scope: 'alltime',
+        scopeText: model => `All-time · since ${String(model.elo.labels[0]).slice(0, 4)}`,
         title: 'Elo ratings',
-        blurb: 'Every franchise\'s strength since 2020: wins over strong teams and big margins move it most, playoff games weigh more, and each season starts a third of the way back to 1500.',
+        blurb: 'Team strength week by week. Beating good teams by a lot moves it most; 1500 is average.',
         home: { view: 'history', subview: 'records', anchor: 'chart-elo' },
         compute(ctx) {
             const input = managerInputFor(ctx);
@@ -102,6 +103,10 @@ const MANAGER_CHARTS = [
             return lineChart({
                 title: 'Elo rating by week',
                 x: elo.labels,
+                // One divider per season instead of a tick every few weeks.
+                xMarks: elo.labels.map((label, i) => ({ i, label: String(label).slice(0, 4) }))
+                    .filter((m, i, all) => i === 0 || m.label !== all[i - 1].label)
+                    .map(m => ({ ...m, label: compact ? `'${m.label.slice(2)}` : m.label })),
                 refLine: 1500,
                 highlight: highlight || leader,
                 endLabels: 'all',
@@ -109,7 +114,7 @@ const MANAGER_CHARTS = [
                 height: compact ? 380 : 300,
                 yFmt: v => `${Math.round(v)}`,
                 series: Object.entries(elo.series).map(([f, values]) => ({
-                    id: f, label: managerName(input, f), short: f, values,
+                    id: f, label: managerName(input, f), values,
                 })),
             });
         },
@@ -128,8 +133,9 @@ const MANAGER_CHARTS = [
     {
         id: 'head-to-head',
         family: 'managers',
+        scope: 'alltime',
         title: 'Head-to-head grid',
-        blurb: 'Every franchise\'s all-time record against every other, regular season and playoffs. Read across a row.',
+        blurb: 'Every franchise\'s record against every other, playoffs included. Read across a row.',
         home: { view: 'history', subview: 'records', anchor: 'chart-head-to-head' },
         compute(ctx) {
             const input = managerInputFor(ctx);
@@ -186,8 +192,9 @@ const MANAGER_CHARTS = [
     {
         id: 'score-distribution',
         family: 'managers',
+        scope: 'alltime',
         title: 'Score distributions',
-        blurb: 'Every regular-season score each franchise has posted, with its median marked.',
+        blurb: 'Every regular-season score, one dot each. The tick is the median.',
         home: { view: 'history', subview: 'records', anchor: 'chart-score-distribution' },
         compute(ctx) {
             const input = managerInputFor(ctx);
@@ -211,8 +218,9 @@ const MANAGER_CHARTS = [
     {
         id: 'fingerprints',
         family: 'managers',
+        scope: 'alltime',
         title: 'Manager fingerprints',
-        blurb: 'Six traits for every owner with a full season, as a percentile among owners: 100 is the best in league history.',
+        blurb: 'Percentile among every owner in league history: 100 is the best.',
         home: { view: 'history', subview: 'records', anchor: 'chart-fingerprints' },
         compute(ctx) {
             const input = managerInputFor(ctx);
@@ -267,48 +275,11 @@ const MANAGER_CHARTS = [
         },
     },
     {
-        id: 'win-rings',
-        family: 'managers',
-        title: 'Win % rings',
-        blurb: 'Every owner\'s career win percentage, with record and rings.',
-        home: { view: 'history', subview: 'records', anchor: 'chart-win-rings' },
-        compute(ctx) {
-            const input = managerInputFor(ctx);
-            const rows = (input?.ownerStats || [])
-                .filter(o => Number(o.Seasons) >= 2)
-                .map(o => ({
-                    code: o.Code,
-                    name: o.Owner,
-                    pct: parseFloat(o['Win%']) / 100,
-                    record: o.Record,
-                    rings: Number(o.Rings) || 0,
-                }))
-                .filter(o => Number.isFinite(o.pct))
-                .sort((a, b) => b.pct - a.pct);
-            return rows.length >= 2 ? { input, rows } : null;
-        },
-        render({ rows }, { highlight }) {
-            return `<div class="chart-ring-grid">${rows.map(r => ringStat({
-                id: r.code,
-                highlight,
-                pct: r.pct,
-                center: `${Math.round(r.pct * 100)}%`,
-                label: r.name,
-                sub: `${r.record}${r.rings ? ` · ${'💍'.repeat(r.rings)}` : ''}`,
-            })).join('')}</div>`;
-        },
-        tok(model, opts) {
-            const { rows } = model;
-            return managerTok(this, model, opts, {
-                caption: `💍 ${rows[0].name} wins ${Math.round(rows[0].pct * 100)}% of games`,
-            });
-        },
-    },
-    {
         id: 'streaks',
         family: 'managers',
+        scope: 'alltime',
         title: 'Streaks',
-        blurb: 'The longest regular-season winning and losing streaks, carried across seasons. Ties end a streak.',
+        blurb: 'Longest regular-season runs, carried across seasons.',
         home: { view: 'history', subview: 'records', anchor: 'chart-streaks' },
         compute(ctx) {
             const input = managerInputFor(ctx);
@@ -347,8 +318,9 @@ const MANAGER_CHARTS = [
     {
         id: 'nemeses',
         family: 'managers',
+        scope: 'alltime',
         title: 'Nemeses',
-        blurb: 'All-time record against every franchise (nemesis and favorite victim need four games), and the opposing players who have scored the most against this team.',
+        blurb: 'Wins minus losses against every franchise, and the players who hurt them most.',
         home: { view: 'teams', subview: 'history', anchor: 'chart-nemeses' },
         compute(ctx) {
             const input = managerInputFor(ctx);
@@ -397,8 +369,10 @@ const MANAGER_CHARTS = [
     {
         id: 'season-arcs',
         family: 'managers',
+        scope: 'alltime',
+        scopeText: model => `Every season · ${Object.keys(model.arcs).sort()[0]}–${model.season}`,
         title: 'Season arcs',
-        blurb: 'Wins piling up week by week in every season, this one in color.',
+        blurb: 'Wins piling up week by week, this season in color.',
         home: { view: 'teams', subview: 'history', anchor: 'chart-season-arcs' },
         compute(ctx) {
             const input = managerInputFor(ctx);

@@ -98,6 +98,7 @@ function lastIndex(values) {
 function linePlot({
     series, x, yDomain, highlight, yFmt = v => chartNum(v), title, invert = false,
     width = 640, height = 280, refLine = null, endLabels = 'highlight', yTicks = null, className = '',
+    xMarks = null,
 }) {
     const live = (series || []).filter(s => (s.values || []).some(v => typeof v === 'number'));
     if (!live.length || !x?.length) return '';
@@ -119,9 +120,15 @@ function linePlot({
     const grid = ticks.map(v => `
         <line class="chart-gridline" x1="${pad.left}" y1="${chartRound(ys(v))}" x2="${pad.left + plotW}" y2="${chartRound(ys(v))}"/>
         <text class="chart-tick" x="${pad.left - 6}" y="${chartRound(ys(v) + 3)}" text-anchor="end">${chartEsc(yFmt(v))}</text>`).join('');
-    const xTicks = x.map((label, i) => (i % xEvery === 0 || i === x.length - 1)
-        ? `<text class="chart-tick" x="${chartRound(xs(i))}" y="${height - 8}" text-anchor="middle">${chartEsc(label)}</text>`
-        : '').join('');
+    // xMarks: [{ i, label }] replaces the even tick spacing with labeled
+    // dividers (one per season on a multi-season chart).
+    const xTicks = xMarks
+        ? xMarks.map(({ i, label }) => `
+            <line class="chart-gridline is-divider" x1="${chartRound(xs(i))}" y1="${pad.top}" x2="${chartRound(xs(i))}" y2="${pad.top + plotH}"/>
+            <text class="chart-tick" x="${chartRound(xs(i) + 4)}" y="${height - 8}" text-anchor="start">${chartEsc(label)}</text>`).join('')
+        : x.map((label, i) => (i % xEvery === 0 || i === x.length - 1)
+            ? `<text class="chart-tick" x="${chartRound(xs(i))}" y="${height - 8}" text-anchor="middle">${chartEsc(label)}</text>`
+            : '').join('');
     const ref = refLine != null && refLine >= Math.min(yMin, yMax) && refLine <= Math.max(yMin, yMax)
         ? `<line class="chart-refline" x1="${pad.left}" y1="${chartRound(ys(refLine))}" x2="${pad.left + plotW}" y2="${chartRound(ys(refLine))}"/>`
         : '';
@@ -210,7 +217,20 @@ function bumpChart({ series, x, highlight, title, width = 640, height = 300, tab
 
 // ---- Ranked bars (HTML, so labels wrap and stay readable on phones) ----
 
-// rows: [{ id, label, sub?, value, display?, segments?: [{ value, cls, label }] }]
+// A row's label cell: the name, plus an optional short muted tag (the team a
+// player played for). Detail (`sub`) never prints: it is the row's tooltip,
+// so every row stays one line and the bars do the talking.
+function barLabelHtml(r) {
+    return `<span class="chart-bar-label">
+                    <span class="chart-bar-name">${chartEsc(r.label)}</span>${r.tag ? ` <span class="chart-bar-tag">${chartEsc(r.tag)}</span>` : ''}
+                </span>`;
+}
+
+function barTip(r) {
+    return r.sub ? ` data-tip="${chartEsc(`${r.label}${r.tag ? ` (${r.tag})` : ''}: ${r.sub}`)}"` : '';
+}
+
+// rows: [{ id, label, tag?, sub?, value, display?, segments?: [{ value, cls, label }] }]
 function barList({ rows, valueFmt = v => chartNum(v), highlight, max = null, title = '', className = '' }) {
     const live = (rows || []).filter(r => typeof r.value === 'number' && Number.isFinite(r.value));
     if (!live.length) return '';
@@ -218,17 +238,14 @@ function barList({ rows, valueFmt = v => chartNum(v), highlight, max = null, tit
     const pct = v => (top > 0 ? Math.max(0, Math.min(100, (Math.abs(v) / top) * 100)) : 0);
     const items = live.map((r, i) => {
         const fill = r.segments?.length
-            ? r.segments.map(s => `<span class="chart-bar-fill ${chartEsc(s.cls || '')}" style="width:${chartRound(pct(s.value))}%" data-tip="${chartEsc(`${s.label || ''} ${valueFmt(s.value)}`.trim())}"></span>`).join('')
+            ? r.segments.map(s => `<span class="chart-bar-fill ${chartEsc(s.cls || '')}" style="width:${chartRound(pct(s.value))}%"></span>`).join('')
             : `<span class="chart-bar-fill" style="width:${chartRound(pct(r.value))}%"></span>`;
         return `
-            <li class="chart-bar-row${seriesClass(r.id, highlight)}" data-series="${chartEsc(r.id ?? '')}">
+            <li class="chart-bar-row${seriesClass(r.id, highlight)}" data-series="${chartEsc(r.id ?? '')}"${barTip(r)}>
                 <span class="chart-bar-rank">${i + 1}</span>
-                <span class="chart-bar-label">
-                    <span class="chart-bar-name">${chartEsc(r.label)}</span>
-                    ${r.sub ? `<span class="chart-bar-sub">${chartEsc(r.sub)}</span>` : ''}
-                </span>
-                <span class="chart-bar-value">${chartEsc(r.display ?? valueFmt(r.value))}</span>
+                ${barLabelHtml(r)}
                 <span class="chart-bar-track">${fill}</span>
+                <span class="chart-bar-value">${chartEsc(r.display ?? valueFmt(r.value))}</span>
             </li>`;
     }).join('');
     return `<ol class="chart-barlist ${chartEsc(className)}"${title ? ` aria-label="${chartEsc(title)}"` : ''}>${items}</ol>`;
@@ -247,16 +264,93 @@ function divergingBars({ rows, valueFmt = v => `${v > 0 ? '+' : ''}${chartNum(v)
         // Zero sits on the line, in neither color.
         const tone = r.value === 0 ? '' : side;
         return `
-            <li class="chart-div-row${seriesClass(r.id, highlight)}" data-series="${chartEsc(r.id ?? '')}">
-                <span class="chart-bar-label">
-                    <span class="chart-bar-name">${chartEsc(r.label)}</span>
-                    ${r.sub ? `<span class="chart-bar-sub">${chartEsc(r.sub)}</span>` : ''}
-                </span>
+            <li class="chart-div-row${seriesClass(r.id, highlight)}" data-series="${chartEsc(r.id ?? '')}"${barTip(r)}>
+                ${barLabelHtml(r)}
                 <span class="chart-div-track"><span class="chart-div-fill ${tone}" style="${style}"></span></span>
                 <span class="chart-bar-value ${tone}">${chartEsc(r.display ?? valueFmt(r.value))}</span>
             </li>`;
     }).join('');
     return `<ol class="chart-diverging"${title ? ` aria-label="${chartEsc(title)}"` : ''}>${items}</ol>`;
+}
+
+// ---- Scatter ----
+//
+// One dot per team on two measures of the same unit, with an optional y = x
+// diagonal: above it got more than it earned, below it less (luck).
+// points: [{ id, label, x, y, tip? }]
+function scatterPlot({
+    points, highlight, title, xLabel = '', yLabel = '', diagonal = false,
+    width = 480, height = 360, fmt = v => chartNum(v), aboveLabel = '', belowLabel = '',
+}) {
+    const live = (points || []).filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+    if (!live.length) return '';
+    const all = live.flatMap(p => [p.x, p.y]);
+    const lo = Math.floor(Math.min(...all) - 0.5);
+    const hi = Math.ceil(Math.max(...all) + 0.5);
+    const [xMin, xMax] = diagonal ? [lo, hi] : [Math.floor(Math.min(...live.map(p => p.x))), Math.ceil(Math.max(...live.map(p => p.x)))];
+    const [yMin, yMax] = diagonal ? [lo, hi] : [Math.floor(Math.min(...live.map(p => p.y))), Math.ceil(Math.max(...live.map(p => p.y)))];
+    const pad = { left: 40, right: 16, top: 12, bottom: 38 };
+    const plotW = width - pad.left - pad.right;
+    const plotH = height - pad.top - pad.bottom;
+    const xs = v => pad.left + ((v - xMin) / (xMax - xMin || 1)) * plotW;
+    const ys = v => pad.top + (1 - (v - yMin) / (yMax - yMin || 1)) * plotH;
+    const grid = chartTicks(yMin, yMax, 4).map(v => `
+        <line class="chart-gridline" x1="${pad.left}" y1="${chartRound(ys(v))}" x2="${pad.left + plotW}" y2="${chartRound(ys(v))}"/>
+        <text class="chart-tick" x="${pad.left - 6}" y="${chartRound(ys(v) + 3)}" text-anchor="end">${chartEsc(fmt(v))}</text>`).join('')
+        + chartTicks(xMin, xMax, 5).map(v => `
+        <text class="chart-tick" x="${chartRound(xs(v))}" y="${pad.top + plotH + 14}" text-anchor="middle">${chartEsc(fmt(v))}</text>`).join('');
+    // Above the diagonal is shaded good, below bad, so the dots read at a glance.
+    const zones = diagonal ? `
+        <path class="chart-zone-pos" d="M${xs(xMin)},${ys(yMin)}L${xs(xMin)},${ys(yMax)}L${xs(xMax)},${ys(yMax)}Z"/>
+        <path class="chart-zone-neg" d="M${xs(xMin)},${ys(yMin)}L${xs(xMax)},${ys(yMin)}L${xs(xMax)},${ys(yMax)}Z"/>
+        <line class="chart-refline" x1="${xs(xMin)}" y1="${ys(yMin)}" x2="${xs(xMax)}" y2="${ys(yMax)}"/>
+        ${aboveLabel ? `<text class="chart-zone-label is-pos" x="${pad.left + 8}" y="${pad.top + 14}">${chartEsc(aboveLabel)}</text>` : ''}
+        ${belowLabel ? `<text class="chart-zone-label is-neg" x="${pad.left + plotW - 8}" y="${pad.top + plotH - 8}" text-anchor="end">${chartEsc(belowLabel)}</text>` : ''}` : '';
+    // Each label takes the first spot (right, left, above, below) that
+    // clears every dot and every label already placed; the highlighted
+    // team picks first.
+    const dotsAt = live.map(p => ({ x: xs(p.x), y: ys(p.y) }));
+    const boxes = [];
+    const hits = (a, b) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+    const spot = p => {
+        const cx = xs(p.x);
+        const cy = ys(p.y);
+        const w = String(p.short || p.label).length * 6.4;
+        const tries = [
+            { x: cx + 9, y: cy + 4, anchor: 'start', box: { x1: cx + 8, x2: cx + 9 + w, y1: cy - 6, y2: cy + 6 } },
+            { x: cx - 9, y: cy + 4, anchor: 'end', box: { x1: cx - 9 - w, x2: cx - 8, y1: cy - 6, y2: cy + 6 } },
+            { x: cx, y: cy - 10, anchor: 'middle', box: { x1: cx - w / 2, x2: cx + w / 2, y1: cy - 20, y2: cy - 8 } },
+            { x: cx, y: cy + 18, anchor: 'middle', box: { x1: cx - w / 2, x2: cx + w / 2, y1: cy + 8, y2: cy + 20 } },
+        ];
+        const clear = t => t.box.x1 >= pad.left && t.box.x2 <= pad.left + plotW + pad.right
+            && !boxes.some(b => hits(b, t.box))
+            && !dotsAt.some(d => (d.x !== cx || d.y !== cy) && hits(t.box, { x1: d.x - 6, x2: d.x + 6, y1: d.y - 6, y2: d.y + 6 }));
+        const pick = tries.find(clear) || tries[0];
+        boxes.push(pick.box);
+        return pick;
+    };
+    const labelOf = new Map();
+    [...live].sort((a, b) => (b.id === highlight) - (a.id === highlight)).forEach(p => labelOf.set(p, spot(p)));
+    const ordered = [...live].sort((a, b) => (a.id === highlight) - (b.id === highlight));
+    const dots = ordered.map(p => {
+        const cx = xs(p.x);
+        const at = labelOf.get(p);
+        return `
+            <g class="chart-scatter-point${seriesClass(p.id, highlight)}" data-series="${chartEsc(p.id)}" data-tip="${chartEsc(p.tip || `${p.label}: ${fmt(p.x)}, ${fmt(p.y)}`)}">
+                <circle class="chart-scatter-hit" cx="${chartRound(cx)}" cy="${chartRound(ys(p.y))}" r="12"/>
+                <circle class="chart-scatter-dot" cx="${chartRound(cx)}" cy="${chartRound(ys(p.y))}" r="5"/>
+                <text class="chart-scatter-label" x="${chartRound(at.x)}" y="${chartRound(at.y)}" text-anchor="${at.anchor}">${chartEsc(p.short || p.label)}</text>
+            </g>`;
+    }).join('');
+    const axes = `
+        ${xLabel ? `<text class="chart-axis-label" x="${pad.left + plotW / 2}" y="${height - 4}" text-anchor="middle">${chartEsc(xLabel)}</text>` : ''}
+        ${yLabel ? `<text class="chart-axis-label" x="12" y="${pad.top + plotH / 2}" text-anchor="middle" transform="rotate(-90 12 ${pad.top + plotH / 2})">${chartEsc(yLabel)}</text>` : ''}`;
+    const svg = chartSvg({ className: 'chart-scatter', width, height, label: title || 'Scatter plot', body: `${zones}${grid}${axes}${dots}` });
+    return `<figure class="chart-figure">${svg}${chartTable({
+        caption: title,
+        head: ['', xLabel || 'x', yLabel || 'y'],
+        rows: live.map(p => [p.label, fmt(p.x), fmt(p.y)]),
+    })}</figure>`;
 }
 
 // ---- Heat grid ----
@@ -429,6 +523,14 @@ const CHART_FAMILIES = {
     players: { label: 'Players, moves & awards', pill: 'PLAYERS' },
 };
 
+// Every chart says what span of games it covers, on its header and on its
+// QPFLTok clip, so "this season" and "all-time" never get mixed up.
+const CHART_SCOPES = {
+    week: 'This week',
+    season: 'This season',
+    alltime: 'All-time',
+};
+
 const CHARTS = [];
 
 function registerChart(entry) {
@@ -436,8 +538,36 @@ function registerChart(entry) {
         throw new Error(`Chart ${entry?.id} is missing or registered twice`);
     }
     if (!CHART_FAMILIES[entry.family]) throw new Error(`Chart ${entry.id} has unknown family ${entry.family}`);
+    if (!CHART_SCOPES[entry.scope]) throw new Error(`Chart ${entry.id} has unknown scope ${entry.scope}`);
     CHARTS.push(entry);
     return entry;
+}
+
+// { kind, text }: the chart's own scopeText(model) when it has one
+// ("2020–2025 drafts"), else the season or week from the model, else the
+// generic label.
+function chartScope(entry, model) {
+    const kind = entry?.scope;
+    if (!CHART_SCOPES[kind]) return null;
+    let text = null;
+    try {
+        text = entry.scopeText?.(model) || null;
+    } catch {
+        text = null;
+    }
+    if (!text) {
+        const season = model?.input?.season ?? model?.season;
+        const week = model?.week ?? model?.input?.week;
+        if (kind === 'season' && season) text = `${season} season`;
+        else if (kind === 'week' && week) text = `Week ${week}`;
+        else text = CHART_SCOPES[kind];
+    }
+    return { kind, text };
+}
+
+function chartScopeBadge(scope) {
+    if (!scope) return '';
+    return `<span class="chart-scope is-${chartEsc(scope.kind)}">${chartEsc(scope.text)}</span>`;
 }
 
 function chartById(id) {
@@ -472,7 +602,7 @@ function chartSectionHtml(entry, model, { highlight = null, open = true } = {}) 
         <section class="chart-section" id="${chartEsc(chartAnchor(entry))}" data-chart="${chartEsc(entry.id)}">
             <details class="chart-details"${open ? ' open' : ''}>
                 <summary class="chart-summary">
-                    <h3 class="chart-title">${chartEsc(entry.title)}</h3>
+                    <h3 class="chart-title">${chartScopeBadge(chartScope(entry, model))}${chartEsc(entry.title)}</h3>
                     ${entry.blurb ? `<p class="chart-blurb">${chartEsc(entry.blurb)}</p>` : ''}
                 </summary>
                 <div class="chart-body">${body}</div>
@@ -536,7 +666,8 @@ if (typeof document !== 'undefined') {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         chartEsc, chartNum, chartTicks, chartTable, lineChart, bumpChart, barList, divergingBars,
-        heatGrid, ringStat, stripPlot, median, CHART_FAMILIES, CHARTS, registerChart, chartById,
+        heatGrid, ringStat, stripPlot, scatterPlot, median, CHART_FAMILIES, CHART_SCOPES, CHARTS,
+        registerChart, chartById, chartScope, chartScopeBadge,
         chartAnchor, chartWho, computeChart, chartSectionHtml, renderChartSection, installChartTooltips,
     };
 }

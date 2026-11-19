@@ -87,7 +87,9 @@ def test_bar_list_scales_to_the_largest_value_and_escapes_labels():
     assert '&lt;A&gt;' in html and '<A>' not in html
     assert 'width:50%' in html and 'width:100%' in html
     assert html.count('is-highlight') == 1
-    assert '<span class="chart-bar-sub">Team B</span>' in html
+    # Detail is a tooltip, never a second line of text.
+    assert 'chart-bar-sub' not in html
+    assert 'data-tip="B: Team B"' in html
 
 
 def test_diverging_bars_grow_from_the_center_by_sign():
@@ -136,30 +138,71 @@ def test_strip_plot_marks_each_median():
 
 def test_registry_rejects_duplicates_and_drops_charts_with_nothing_to_say():
     result = run_charts("""
-        registerChart({ id: 'demo', family: 'standings', title: 'Demo',
+        registerChart({ id: 'demo', family: 'standings', scope: 'alltime', title: 'Demo',
             compute: ctx => (ctx.rows?.length ? ctx.rows : null),
             render: rows => barList({ rows }) });
-        registerChart({ id: 'broken', family: 'luck', title: 'Broken',
+        registerChart({ id: 'broken', family: 'luck', scope: 'season', title: 'Broken',
             compute: () => { throw new Error('bad data'); }, render: () => 'x' });
         let duplicate = false;
-        try { registerChart({ id: 'demo', family: 'standings' }); } catch (e) { duplicate = true; }
+        try { registerChart({ id: 'demo', family: 'standings', scope: 'season' }); } catch (e) { duplicate = true; }
         let badFamily = false;
-        try { registerChart({ id: 'other', family: 'nope' }); } catch (e) { badFamily = true; }
+        try { registerChart({ id: 'other', family: 'nope', scope: 'season' }); } catch (e) { badFamily = true; }
+        let noScope = false;
+        try { registerChart({ id: 'unscoped', family: 'luck' }); } catch (e) { noScope = true; }
         const warn = console.warn;
         console.warn = () => {};
         const broken = renderChartSection('broken', {});
         console.warn = warn;
         return {
-            duplicate, badFamily, broken,
+            duplicate, badFamily, noScope, broken,
             empty: renderChartSection('demo', { rows: [] }),
             missing: renderChartSection('nope', {}),
             full: renderChartSection('demo', { rows: [{ id: 'A', label: 'A', value: 1 }] }),
         };
     """)
-    assert result['duplicate'] and result['badFamily']
+    assert result['duplicate'] and result['badFamily'] and result['noScope']
     assert result['empty'] == result['missing'] == result['broken'] == ''
     assert 'id="chart-demo"' in result['full'] and 'data-chart="demo"' in result['full']
-    assert '<h3 class="chart-title">Demo</h3>' in result['full']
+    assert (
+        '<h3 class="chart-title"><span class="chart-scope is-alltime">All-time</span>Demo</h3>'
+        in result['full']
+    )
+
+
+def test_every_chart_says_whether_it_is_this_week_this_season_or_all_time():
+    result = run_charts("""
+        const entry = kind => ({ scope: kind });
+        return {
+            season: chartScope(entry('season'), { input: { season: 2026 } }).text,
+            seasonBare: chartScope(entry('season'), {}).text,
+            week: chartScope(entry('week'), { week: 11 }).text,
+            alltime: chartScope(entry('alltime'), { season: 2026 }).text,
+            custom: chartScope({ scope: 'alltime', scopeText: m => `${m.from}–${m.to} drafts` }, { from: 2020, to: 2024 }).text,
+        };
+    """)
+    assert result == {
+        'season': '2026 season',
+        'seasonBare': 'This season',
+        'week': 'Week 11',
+        'alltime': 'All-time',
+        'custom': '2020–2024 drafts',
+    }
+
+
+def test_scatter_shades_lucky_and_unlucky_and_keeps_labels_off_dots():
+    result = run_charts("""
+        const html = scatterPlot({ diagonal: true, highlight: 'A', aboveLabel: 'Lucky', belowLabel: 'Robbed',
+            points: [{ id: 'A', label: 'Ay', x: 5, y: 7 }, { id: 'B', label: 'Bee', x: 5.2, y: 7 }, { id: 'C', label: 'Cee', x: 6, y: 3 }] });
+        const labels = [...html.matchAll(/class="chart-scatter-label" x="([\\d.]+)" y="([\\d.]+)"/g)].map(m => [+m[1], +m[2]]);
+        return { html, labels };
+    """)
+    html = result['html']
+    assert 'chart-zone-pos' in html and 'chart-zone-neg' in html
+    assert 'Lucky' in html and 'Robbed' in html
+    assert html.count('is-highlight') == 1 and html.count('is-muted') == 2
+    # A and B sit side by side: their labels must not land in the same place.
+    (ax, ay), (bx, by) = result['labels'][0], result['labels'][1]
+    assert (ax, ay) != (bx, by)
 
 
 def test_charts_js_loads_before_app_js_with_styles():

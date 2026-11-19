@@ -83,7 +83,7 @@ function rankSeries(history, teams, label) {
     return teams.map(team => ({
         id: team,
         label: label(team),
-        short: team,
+        short: label(team),
         ranks: history.map(h => h.ranks[team] ?? null),
     }));
 }
@@ -260,7 +260,7 @@ function finishLevel(place, size) {
 function standingsTok(entry, model, { ctx, spotlight }, extra) {
     const input = model.input;
     return {
-        meta: `${input.season} · THRU WK ${input.completedThrough}`,
+        meta: `THRU WK ${input.completedThrough}`,
         sub: entry.blurb,
         version: `${input.season}-${entry.id}-${input.completedThrough}`,
         involves: input.teams,
@@ -279,7 +279,8 @@ const STANDINGS_CHARTS = [
         id: 'playoff-odds-trend',
         family: 'standings',
         title: 'Playoff odds over time',
-        blurb: 'Each team\'s chance of a top-four finish after every week, from the same simulation as the odds above.',
+        scope: 'season',
+        blurb: 'Chance of a top-four finish after each week.',
         home: { view: 'standings', subview: 'table', anchor: 'chart-playoff-odds-trend' },
         compute(ctx) {
             const input = standingsInputFor(ctx);
@@ -301,7 +302,6 @@ const STANDINGS_CHARTS = [
                 series: input.teams.map(team => ({
                     id: team,
                     label: input.label(team),
-                    short: team,
                     values: series.map(s => s.odds[team] ?? null),
                 })),
             });
@@ -327,7 +327,8 @@ const STANDINGS_CHARTS = [
         id: 'power-rankings',
         family: 'standings',
         title: 'Power rankings',
-        blurb: 'Weekly rank from all-play record (40%), actual record (30%) and the last three weeks of scoring (30%).',
+        scope: 'season',
+        blurb: 'Weekly rank: all-play record 40%, record 30%, last three weeks 30%.',
         home: { view: 'standings', subview: 'table', anchor: 'chart-power-rankings' },
         compute(ctx) {
             const input = standingsInputFor(ctx);
@@ -363,7 +364,8 @@ const STANDINGS_CHARTS = [
         id: 'projected-wins',
         family: 'standings',
         title: 'Projected wins',
-        blurb: 'Wins so far, plus the wins each team should add from its remaining games given how everyone has scored.',
+        scope: 'season',
+        blurb: 'Wins so far (solid) plus expected wins still to come (faded).',
         home: { view: 'standings', subview: 'table', anchor: 'chart-projected-wins' },
         compute(ctx) {
             const input = standingsInputFor(ctx);
@@ -409,7 +411,8 @@ const STANDINGS_CHARTS = [
         id: 'schedule-ahead',
         family: 'standings',
         title: 'Strength of schedule ahead',
-        blurb: 'How much more (or less) the remaining opponents score than the league average, per game.',
+        scope: 'season',
+        blurb: 'Remaining opponents\' points per game vs the league average. Red is harder.',
         home: { view: 'standings', subview: 'table', anchor: 'chart-schedule-ahead' },
         compute(ctx) {
             const input = standingsInputFor(ctx);
@@ -442,47 +445,11 @@ const STANDINGS_CHARTS = [
         },
     },
     {
-        id: 'standings-replay',
-        family: 'standings',
-        title: 'Standings replay',
-        blurb: 'Every team\'s place in the standings after each week, with the standings\' tiebreakers.',
-        home: { view: 'standings', subview: 'table', anchor: 'chart-standings-replay' },
-        compute(ctx) {
-            const input = standingsInputFor(ctx);
-            const history = (input?.history || []).map(h => ({ week: h.week, ranks: h.rankings }));
-            return history.length >= 2 ? { input, history } : null;
-        },
-        render({ input, history }, { highlight, compact }) {
-            return bumpChart({
-                title: 'Standings by week',
-                x: history.map(h => `W${h.week}`),
-                series: rankSeries(history, input.teams, input.label),
-                highlight,
-                table: false,
-                width: compact ? 400 : 640,
-                height: compact ? 380 : 300,
-            });
-        },
-        tok(model, opts) {
-            const { input, history } = model;
-            const who = abbrev => chartWho(opts, input, abbrev);
-            const leaderWeeks = {};
-            history.forEach(h => {
-                const leader = Object.entries(h.ranks).find(([, r]) => r === 1)?.[0];
-                if (leader) leaderWeeks[leader] = (leaderWeeks[leader] || 0) + 1;
-            });
-            const [leader, weeks] = Object.entries(leaderWeeks).sort((a, b) => b[1] - a[1])[0];
-            return standingsTok(this, model, opts, {
-                interest: 0.65,
-                caption: `🎢 ${who(leader)} has led the league ${weeks} week${weeks === 1 ? '' : 's'}`,
-            });
-        },
-    },
-    {
         id: 'clinch-tracker',
         family: 'standings',
         title: 'Clinch tracker',
-        blurb: 'Rank points now (solid) and the most each team can still reach (faded); the top four make the playoffs. A magic number is the rank points a team earns plus those its chaser misses, in any combination, to clinch. An elimination number is the rank points a team misses plus those the team in the last playoff spot earns, until it is out.',
+        scope: 'season',
+        blurb: 'Rank points now (solid) and still reachable (faded). Tap a team for its magic number.',
         home: { view: 'standings', subview: 'machine', anchor: 'chart-clinch-tracker' },
         compute(ctx) {
             const input = standingsInputFor(ctx);
@@ -532,7 +499,9 @@ const STANDINGS_CHARTS = [
         id: 'finish-history',
         family: 'standings',
         title: 'Finish history',
-        blurb: 'Where every franchise finished each season. 🏆 marks a title.',
+        scope: 'alltime',
+        scopeText: model => `All-time · ${model.seasons[0]}–${model.seasons[model.seasons.length - 1]}`,
+        blurb: 'Where every franchise finished each season.',
         home: { view: 'history', subview: 'records', anchor: 'chart-finish-history' },
         compute(ctx) {
             const input = ctx?.finishInput || (typeof finishChartInput === 'function' ? finishChartInput() : null);
@@ -593,6 +562,10 @@ if (typeof module !== 'undefined' && module.exports) {
 const ODDS_TREND_TRIALS = 1500;
 let oddsTrendCache = null;
 
+function chartShortName(abbrev) {
+    return (data?.charts || sharedData?.charts)?.names?.[abbrev] || standingsTeamLabel(abbrev);
+}
+
 function standingsTeamLabel(abbrev) {
     const team = (data?.teams || []).find(t => t.abbrev === abbrev)
         || (data?.standings || []).find(t => t.abbrev === abbrev);
@@ -635,9 +608,10 @@ function standingsChartInput() {
         slots: format.slots,
         standings,
         teams,
-        label: standingsTeamLabel,
-        // Owners' short names (charts.json), for sentences.
-        short: code => (data?.charts || sharedData?.charts)?.names?.[code] || standingsTeamLabel(code),
+        // Owners' short names (charts.json) keep labels to a word or two;
+        // team names are long enough to crowd the bars.
+        label: chartShortName,
+        short: chartShortName,
         weeks,
         remaining,
         weeksLeft,
@@ -684,7 +658,7 @@ function renderStandingsCharts() {
     const highlight = myTeamAbbrev();
     const input = standingsChartInput();
     const ctx = { standingsInput: input };
-    slot.innerHTML = ['playoff-odds-trend', 'power-rankings', 'projected-wins', 'schedule-ahead', 'standings-replay']
+    slot.innerHTML = ['playoff-odds-trend', 'power-rankings', 'projected-wins', 'schedule-ahead']
         .map(id => renderChartSection(id, ctx, { highlight }))
         .join('');
 }

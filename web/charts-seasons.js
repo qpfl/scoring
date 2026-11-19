@@ -49,6 +49,49 @@ function historyAwardText(a, name) {
     return { who: name(a.team), sub: a.opp ? `vs ${name(a.opp)}` : '', value: chartNum(a.value) };
 }
 
+// Each past season's low and high score for this week as a dumbbell: the
+// spread of the week at a glance, with who posted each end.
+function weekRangeChart(entries, name, { highlight = null, franchiseOf = null, compact = false } = {}) {
+    const rows = entries.map(e => ({
+        season: e.season,
+        high: e.awards.find(a => a.id === 'high_score'),
+        low: e.awards.find(a => a.id === 'low_score'),
+    })).filter(r => r.high && r.low);
+    if (!rows.length) return '';
+    const mine = a => highlight && (a.team === highlight || franchiseOf?.(a.team) === highlight);
+    const width = compact ? 400 : 640;
+    const rowH = compact ? 44 : 36;
+    const pad = { left: 44, right: compact ? 70 : 96, top: 6, bottom: 24 };
+    const plotW = width - pad.left - pad.right;
+    const height = pad.top + rows.length * rowH + pad.bottom;
+    const minLow = Math.min(...rows.map(r => r.low.value));
+    const maxHigh = Math.max(...rows.map(r => r.high.value));
+    // Room left of the lowest score for its label.
+    const lo = Math.max(0, Math.floor((minLow - (maxHigh - minLow) * (compact ? 0.2 : 0.45)) / 10) * 10);
+    const hi = Math.ceil(maxHigh / 10) * 10;
+    const xs = v => pad.left + ((v - lo) / (hi - lo || 1)) * plotW;
+    const best = Math.max(...rows.map(r => r.high.value));
+    const grid = chartTicks(lo, hi, 5).map(v => `
+        <line class="chart-gridline" x1="${chartRound(xs(v))}" y1="${pad.top}" x2="${chartRound(xs(v))}" y2="${pad.top + rows.length * rowH}"/>
+        <text class="chart-tick" x="${chartRound(xs(v))}" y="${height - 8}" text-anchor="middle">${v}</text>`).join('');
+    const body = rows.map((r, i) => {
+        const cy = pad.top + i * rowH + rowH / 2;
+        const end = (a, cls, anchor, dx) => `
+            <circle class="chart-range-dot ${cls}${mine(a) ? ' is-highlight' : ''}" cx="${chartRound(xs(a.value))}" cy="${chartRound(cy)}" r="6"
+                data-tip="${chartEsc(`${r.season}: ${name(a.team)} ${chartNum(a.value)}${a.opp ? ` vs ${name(a.opp)}` : ''}`)}"/>
+            <text class="chart-range-label${mine(a) ? ' is-highlight' : ''}" x="${chartRound(xs(a.value) + dx)}" y="${chartRound(cy + 4)}" text-anchor="${anchor}">${chartEsc(compact ? chartNum(a.value) : `${name(a.team)} ${chartNum(a.value)}`)}</text>`;
+        return `
+            <g class="chart-range-row">
+                <text class="chart-tick chart-range-year" x="${pad.left - 10}" y="${chartRound(cy + 4)}" text-anchor="end">${r.season}</text>
+                <line class="chart-range-bar" x1="${chartRound(xs(r.low.value))}" y1="${chartRound(cy)}" x2="${chartRound(xs(r.high.value))}" y2="${chartRound(cy)}"/>
+                ${end(r.low, 'is-low', 'end', -10)}
+                ${end(r.high, `is-high${r.high.value === best ? ' is-record' : ''}`, 'start', 10)}
+            </g>`;
+    }).join('');
+    const svg = chartSvg({ className: 'chart-range', width, height, label: 'Low and high score of this week in every past season', body: grid + body });
+    return `<figure class="chart-figure">${svg}<figcaption class="chart-legend"><span class="chart-key is-low"></span>Low score <span class="chart-key is-high"></span>High score</figcaption></figure>`;
+}
+
 // The place a franchise finished in a season, from the Hall of Fame's
 // season badges (finishPlace, charts-standings.js).
 function wrappedFinish(teamHof, team, season, leagueSize) {
@@ -85,6 +128,8 @@ const SEASON_CHARTS = [
     {
         id: 'week-in-history',
         family: 'week',
+        scope: 'alltime',
+        scopeText: model => `Week ${model.week}, every season`,
         title: 'This week in history',
         blurb: 'What happened in this week of every past season.',
         home: { view: 'matchups', subview: 'preview', anchor: 'chart-week-in-history' },
@@ -97,8 +142,9 @@ const SEASON_CHARTS = [
         },
         render({ input, entries }, { highlight, compact }) {
             const name = code => input.names[code] || code;
-            const shown = compact ? entries.slice(0, 3) : entries;
-            return `<ol class="chart-history">${shown.map(entry => `
+            const range = weekRangeChart(entries, name, { highlight, franchiseOf: input.franchiseOf, compact });
+            if (compact) return range;
+            return `${range}<details class="chart-more"><summary>Every award, every year</summary><ol class="chart-history">${entries.map(entry => `
                 <li class="chart-history-season">
                     <h4 class="chart-history-year">${chartEsc(entry.season)} <span>${chartEsc(entry.label)}</span></h4>
                     <ul class="chart-awards">${HISTORY_ORDER.map(id => entry.awards.find(a => a.id === id)).filter(Boolean)
@@ -117,7 +163,7 @@ const SEASON_CHARTS = [
                                     <span class="chart-award-value">${chartEsc(t.value)}</span>
                                 </li>`;
                         }).join('')}</ul>
-                </li>`).join('')}</ol>`;
+                </li>`).join('')}</ol></details>`;
         },
         tok(model, opts) {
             const { input, week, entries } = model;
@@ -125,7 +171,6 @@ const SEASON_CHARTS = [
             const name = code => input.names[code] || code;
             return {
                 pill: 'THIS WEEK',
-                meta: `WEEK ${week}`,
                 title: `Week ${week} in history`,
                 sub: `What happened in Week ${week} of every past season.`,
                 version: `week-history-${input.season}-${week}`,
@@ -142,6 +187,7 @@ const SEASON_CHARTS = [
     {
         id: 'season-wrapped',
         family: 'managers',
+        scope: 'season',
         title: 'Season Wrapped',
         blurb: 'A season in review: record and finish, best and worst weeks, MVP, luck, lineup IQ and nemesis.',
         home: { view: 'teams', subview: 'history', anchor: 'chart-season-wrapped' },
@@ -208,7 +254,6 @@ const SEASON_CHARTS = [
             return {
                 pill: 'WRAPPED',
                 pillCls: 'is-wrapped',
-                meta: `${season}`,
                 title: `${name(team)}'s ${season}`,
                 sub: complete ? 'The season in review.' : 'The season so far.',
                 version: `wrapped-${team}-${season}-${complete}`,
@@ -231,6 +276,7 @@ SEASON_CHARTS.forEach(chart => registerChart(chart));
 
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
+        weekRangeChart,
         HISTORY_AWARDS, weekInHistory, weekRecord, historyAwardText, wrappedFinish, wrappedSeasons,
         defaultWrappedSeason, placeText, SEASON_CHARTS,
     };

@@ -5,9 +5,10 @@
 // luckChartInput() at the bottom builds that list from app.js at runtime.
 //
 // Charts and where they live:
-//   all-play-luck, pythag-wins, wrong-opponent → Standings → Alternate
-//     standings → All-play
-//   perfect-rate   → Alternate standings → Perfect lineups
+//   all-play-luck  → Standings → Alternate standings → All-play: one
+//     scatter of actual vs all-play wins; Pythagorean wins and wrong-opponent
+//     losses ride along in each dot's tooltip
+//   perfect-rate   → Alternate standings → Perfect lineups (team × week grid)
 //   schedule-swap  → Alternate standings → Schedule swap
 //   projection-luck → Stats → Team Stats
 
@@ -119,6 +120,19 @@ function perfectLineupRates(games) {
         .sort((x, y) => y.rate - x.rate || x.left - y.left);
 }
 
+// Each team's score and best possible score, week by week:
+// { team: { week: { score, best, pct } } }.
+function lineupWeeks(games) {
+    const out = {};
+    for (const g of games) {
+        for (const [team, score, best] of [[g.a, g.sa, g.pa], [g.b, g.sb, g.pb]]) {
+            if (typeof best !== 'number' || best <= 0) continue;
+            (out[team] ??= {})[g.week] = { score, best, pct: Math.min(1, score / best) };
+        }
+    }
+    return out;
+}
+
 // Points scored beyond (or short of) the pregame projection, by week and in
 // total, for weeks that had one. Projections run low or high for everyone
 // some weeks, so each week is measured against the league's average beat:
@@ -180,7 +194,7 @@ function luckInputFor(ctx) {
 function luckTok(entry, model, { spotlight }, extra) {
     const { input } = model;
     return {
-        meta: `${input.season} · THRU WK ${input.completedThrough}`,
+        meta: `THRU WK ${input.completedThrough}`,
         sub: entry.blurb,
         version: `${input.season}-${entry.id}-${input.completedThrough}`,
         involves: input.teams,
@@ -197,24 +211,37 @@ const LUCK_CHARTS = [
     {
         id: 'all-play-luck',
         family: 'luck',
-        title: 'Schedule luck',
-        blurb: 'Actual wins minus all-play wins: what a team\'s scores would have earned against an average opponent each week.',
+        scope: 'season',
+        title: 'Luck',
+        blurb: 'Wins your scores earned against the whole league (across) vs wins you got (up). Above the line is lucky.',
         home: { view: 'standings', subview: 'table', anchor: 'chart-all-play-luck' },
         whatIf: 'allplay',
         compute(ctx) {
             const input = luckInputFor(ctx);
             if (!input?.games.length) return null;
-            return { input, rows: allPlayLuck(input.games) };
+            const pythag = Object.fromEntries(pythagWins(input.games).map(r => [r.id, r.expected]));
+            const wrong = Object.fromEntries(wrongOpponentLosses(input.games).map(r => [r.id, r.losses.length]));
+            return { input, rows: allPlayLuck(input.games), pythag, wrong };
         },
-        render({ input, rows }, { highlight }) {
-            return divergingBars({
-                title: 'Wins above all-play pace',
+        render({ input, rows, pythag, wrong }, { highlight, compact }) {
+            const one = v => chartNum(Math.round(v * 10) / 10);
+            return scatterPlot({
+                title: 'Actual wins vs all-play wins',
+                xLabel: 'Wins earned (all-play)',
+                yLabel: 'Actual wins',
+                diagonal: true,
+                aboveLabel: '🍀 Lucky',
+                belowLabel: 'Robbed 😭',
                 highlight,
-                rows: rows.map(r => ({
+                width: compact ? 400 : 520,
+                height: compact ? 400 : 380,
+                fmt: v => chartNum(v),
+                points: rows.map(r => ({
                     id: r.id,
                     label: input.label(r.id),
-                    sub: `${chartNum(r.wins)} wins, all-play pace ${chartNum(Math.round(r.expected * 10) / 10)}`,
-                    value: Math.round(r.luck * 10) / 10,
+                    x: Math.round(r.expected * 10) / 10,
+                    y: r.wins,
+                    tip: `${input.label(r.id)}: ${chartNum(r.wins)} wins, ${one(r.expected)} earned (${r.luck >= 0 ? '+' : ''}${one(r.luck)}) · points for and against say ${one(pythag[r.id] ?? 0)}${wrong[r.id] ? ` · ${wrong[r.id]} loss${wrong[r.id] === 1 ? '' : 'es'} that would have beaten most teams` : ''}`,
                 })),
             });
         },
@@ -232,93 +259,44 @@ const LUCK_CHARTS = [
         },
     },
     {
-        id: 'pythag-wins',
-        family: 'luck',
-        title: 'Pythagorean wins',
-        blurb: `Wins a team's points for and against usually produce (PF^${PYTHAG_EXPONENT} ÷ (PF^${PYTHAG_EXPONENT} + PA^${PYTHAG_EXPONENT}), fitted to QPFL history), against its real wins.`,
-        home: { view: 'standings', subview: 'table', anchor: 'chart-pythag-wins' },
-        whatIf: 'allplay',
-        compute(ctx) {
-            const input = luckInputFor(ctx);
-            if (!input?.games.length) return null;
-            return { input, rows: pythagWins(input.games) };
-        },
-        render({ input, rows }, { highlight }) {
-            return divergingBars({
-                title: 'Wins above Pythagorean expectation',
-                highlight,
-                rows: rows.map(r => ({
-                    id: r.id,
-                    label: input.label(r.id),
-                    sub: `${chartNum(r.wins)} wins, expected ${chartNum(Math.round(r.expected * 10) / 10)} (${Math.round(r.record.pf)}–${Math.round(r.record.pa)})`,
-                    value: Math.round(r.luck * 10) / 10,
-                })),
-            });
-        },
-        tok(model, opts) {
-            const { input, rows } = model;
-            const who = abbrev => chartWho(opts, input, abbrev);
-            const top = rows[0];
-            return luckTok(this, model, opts, {
-                caption: `🧮 ${who(top.id)} is ${luckWins(Math.round(top.luck * 10) / 10)} ahead of the math`,
-            });
-        },
-    },
-    {
-        id: 'wrong-opponent',
-        family: 'luck',
-        title: 'Wrong opponent',
-        blurb: 'Losses with a score that beat most of the rest of the league that week.',
-        home: { view: 'standings', subview: 'table', anchor: 'chart-wrong-opponent' },
-        whatIf: 'allplay',
-        compute(ctx) {
-            const input = luckInputFor(ctx);
-            const rows = input ? wrongOpponentLosses(input.games) : [];
-            return rows.length ? { input, rows } : null;
-        },
-        render({ input, rows }, { highlight }) {
-            return barList({
-                title: 'Losses that would have beaten most teams',
-                highlight,
-                valueFmt: v => `${v}`,
-                rows: rows.map(r => ({
-                    id: r.id,
-                    label: input.label(r.id),
-                    value: r.losses.length,
-                    sub: r.losses.map(l => `W${l.week}: ${chartNum(l.score)}–${chartNum(l.oppScore)} vs ${input.label(l.opp)}, beat ${l.beaten} of ${l.field}`).join(' · '),
-                })),
-            });
-        },
-        tok(model, opts) {
-            const { input, rows } = model;
-            const who = abbrev => chartWho(opts, input, abbrev);
-            const top = rows[0];
-            return luckTok(this, model, opts, {
-                interest: 0.75,
-                caption: `🤬 ${who(top.id)} lost ${luckPlural(top.losses.length, 'game')} that would have beaten most of the league`,
-            });
-        },
-    },
-    {
         id: 'perfect-rate',
         family: 'luck',
-        title: 'Perfect lineups',
-        blurb: 'How often each team started the best lineup its roster allowed, and the points left on the bench the rest of the time.',
+        scope: 'season',
+        title: 'Lineup efficiency',
+        blurb: 'Each week\'s score as a share of the best possible lineup. Darker is closer; ★ is perfect.',
         home: { view: 'standings', subview: 'table', anchor: 'chart-perfect-rate' },
         whatIf: 'perfect',
         compute(ctx) {
             const input = luckInputFor(ctx);
             const rows = input ? perfectLineupRates(input.games) : [];
-            return rows.length ? { input, rows } : null;
+            return rows.length ? { input, rows, weeks: lineupWeeks(input.games) } : null;
         },
-        render({ input, rows }, { highlight }) {
-            return `<div class="chart-ring-grid">${rows.map(r => ringStat({
-                id: r.id,
-                highlight,
-                pct: r.rate,
-                label: input.label(r.id),
-                sub: `${r.perfect} of ${r.weeks} weeks · ${Math.round(r.left)} pts left on the bench`,
-            })).join('')}</div>`;
+        render({ input, rows, weeks }, { highlight }) {
+            const weekNums = [...new Set(Object.values(weeks).flatMap(w => Object.keys(w).map(Number)))].sort((a, b) => a - b);
+            // Magnitude, so one hue light to dark; a perfect week is gold.
+            const level = pct => (pct >= 0.995 ? 'is-perfect' : pct >= 0.9 ? 'seq-3' : pct >= 0.8 ? 'seq-2' : pct >= 0.7 ? 'seq-1' : 'seq-0');
+            const cells = rows.flatMap(r => weekNums.filter(w => weeks[r.id]?.[w]).map(w => {
+                const g = weeks[r.id][w];
+                return {
+                    x: `W${w}`,
+                    y: input.label(r.id),
+                    cls: `${level(g.pct)}${highlight && r.id === highlight ? ' is-highlight' : ''}`,
+                    text: g.pct >= 0.995 ? '★' : null,
+                    tip: `${input.label(r.id)}, Week ${w}: ${chartNum(g.score)} of ${chartNum(g.best)} possible (${Math.round(g.pct * 100)}%)`,
+                };
+            }));
+            return heatGrid({
+                label: 'Lineup efficiency by week',
+                cells,
+                xDomain: weekNums.map(w => `W${w}`),
+                yDomain: rows.map(r => input.label(r.id)),
+                cellSize: 30,
+                table: {
+                    caption: 'Perfect lineups',
+                    head: ['', 'Perfect weeks', 'Points left on the bench'],
+                    rows: rows.map(r => [input.label(r.id), `${r.perfect} of ${r.weeks}`, Math.round(r.left)]),
+                },
+            });
         },
         tok(model, opts) {
             const { input, rows } = model;
@@ -335,8 +313,9 @@ const LUCK_CHARTS = [
     {
         id: 'schedule-swap',
         family: 'luck',
+        scope: 'season',
         title: 'Schedule swap',
-        blurb: 'Each row is a team\'s record on every other team\'s schedule. Green is better than what happened, red worse; the outlined square is reality.',
+        blurb: 'Each row\'s record on every other team\'s schedule. Green is better than reality (outlined).',
         home: { view: 'standings', subview: 'table', anchor: 'chart-schedule-swap' },
         whatIf: 'schedule',
         compute(ctx) {
@@ -369,8 +348,9 @@ const LUCK_CHARTS = [
     {
         id: 'projection-luck',
         family: 'luck',
+        scope: 'season',
         title: 'Beating the projections',
-        blurb: 'Points scored beyond the pregame projection, compared with how far the whole league beat (or missed) its projections each week.',
+        blurb: 'Running points above pregame projections, net of the league\'s weekly miss.',
         home: { view: 'stats', subview: 'team', anchor: 'chart-projection-luck' },
         compute(ctx) {
             const input = luckInputFor(ctx);
@@ -378,21 +358,16 @@ const LUCK_CHARTS = [
             return result?.weeks.length >= 2 ? { input, ...result } : null;
         },
         render({ input, weeks, rows }, { highlight, compact }) {
-            const bars = divergingBars({
-                title: 'Points above projection',
-                highlight,
-                valueFmt: v => `${v > 0 ? '+' : ''}${Math.round(v)}`,
-                rows: rows.map(r => ({ id: r.id, label: input.label(r.id), value: Math.round(r.total) })),
-            });
-            if (compact) return bars;
-            return bars + lineChart({
+            return lineChart({
                 title: 'Points above projection, season to date',
                 x: weeks.map(w => `W${w}`),
                 highlight,
                 endLabels: 'all',
                 refLine: 0,
+                width: compact ? 400 : 640,
+                height: compact ? 380 : 280,
                 yFmt: v => `${v > 0 ? '+' : ''}${Math.round(v)}`,
-                series: rows.map(r => ({ id: r.id, label: input.label(r.id), short: r.id, values: r.cumulative })),
+                series: rows.map(r => ({ id: r.id, label: input.label(r.id), values: r.cumulative })),
             });
         },
         tok(model, opts) {
@@ -420,7 +395,7 @@ function luckChartsFor(view) {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         weeksOf, teamRecords, allPlayLuck, PYTHAG_EXPONENT, pythagWins, wrongOpponentLosses,
-        perfectLineupRates, projectionLuck, scheduleSwapCells, LUCK_CHARTS, luckChartsFor,
+        perfectLineupRates, lineupWeeks, projectionLuck, scheduleSwapCells, LUCK_CHARTS, luckChartsFor,
     };
 }
 
@@ -453,7 +428,7 @@ function luckChartInput() {
         season: Number(data.season),
         completedThrough,
         teams: context.standings.map(t => t.abbrev),
-        label: standingsTeamLabel,
+        label: chartShortName,
         games,
         scheduleSwap: () => {
             if (swap === undefined) swap = weeks.length ? computeWhatIf('schedule', weeks) : null;

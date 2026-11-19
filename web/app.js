@@ -9086,7 +9086,6 @@ const HOF_SECTION_TABS = {
     'chart-head-to-head': 'franchises',
     'chart-score-distribution': 'franchises',
     'chart-fingerprints': 'owners',
-    'chart-win-rings': 'owners',
     'chart-streaks': 'records',
 };
 
@@ -9398,7 +9397,7 @@ function hofOwnersHtml(hof) {
     }
     return profile
         ? hofOwnerProfileHtml(profile)
-        : hofOwnerStatsHtml(hof) + managerSections(['fingerprints', 'win-rings']);
+        : hofOwnerStatsHtml(hof) + managerSections(['fingerprints']);
 }
 
 // Every franchise seat across its owners (scripts/hof_franchises.py).

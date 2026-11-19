@@ -293,3 +293,31 @@ Each family PR adds `compute`, `render` and `tok` for its charts, the in-view se
   - **Home banner:** "<season> Wrapped is here" appears once the live season's championship is in, until the manager opens it.
   - **Data:** `charts.json` `wrapped`, from `qpfl.charts.season_wrapped`; the finish place comes from the Hall of Fame badges.
 - **`charts.json` v4:** now written compact (`write_facts(..., indent=None)`), about 120 KB, or 20 KB gzipped.
+
+## Design pass: more graph, less text (after review)
+
+Review feedback: too many charts repeated each other or read as lists of
+text, and it was unclear which covered this season and which all of history.
+
+- **Scope on every chart.** `registerChart` requires `scope: 'week' |
+  'season' | 'alltime'` (optional `scopeText(model)` for detail such as
+  "2020–2024 drafts"). The chart header shows it as a colored badge (green
+  week, blue season, gold all-time) and each QPFLTok clip as a matching pill.
+- **One-line bars.** `barList`/`divergingBars` rows are name · bar · value on
+  one line; the old second line (`sub`) is now the row's tooltip, and player
+  rows get a short team `tag`. Standings and luck charts label teams by owner
+  short names instead of long team names. Blurbs cut to one short sentence.
+- **Merged or dropped repeats.**
+  - Standings replay (a second bump chart next to power rankings): dropped.
+  - Schedule luck + Pythagorean wins + wrong opponent: one `all-play-luck`
+    scatter (all-play wins vs actual wins, y = x diagonal, lucky/robbed
+    zones); the other two numbers are in each dot's tooltip.
+  - Win % rings (repeated the owner table above it): dropped.
+  - Beating the projections: the running line only, not bars plus a line.
+- **Text into graphs.**
+  - Perfect lineups: ring grid → team × week heat grid of score / best
+    possible score (one hue, gold ★ for a perfect week).
+  - This week in history: a low-to-high dumbbell per season, with the full
+    award list behind "Every award, every year".
+  - Elo: season dividers labeled by year instead of "2023 W8" ticks.
+- New primitive: `scatterPlot` (charts.js), with collision-aware labels.

@@ -171,7 +171,7 @@ function draftValueOverSlot(picks, gradedThrough) {
 
 function playerTok(entry, model, opts, extra) {
     return {
-        meta: model.meta || 'ALL-TIME',
+        meta: model.meta || null,
         sub: entry.blurb,
         version: `${entry.id}-${model.version || ''}`,
         involves: model.involves || [],
@@ -191,8 +191,9 @@ const PLAYER_CHARTS = [
     {
         id: 'weekly-awards',
         family: 'players',
+        scope: 'week',
         title: 'Weekly awards',
-        blurb: 'The week\'s MVP, high and low scores, blowout, nail-biter, upset and bench heroics.',
+        blurb: 'MVP, high and low scores, blowout, nail-biter, upset and bench heroics.',
         home: { view: 'matchups', subview: 'week', anchor: 'chart-weekly-awards' },
         compute(ctx) {
             const awards = ctx?.awardsInput || (ctx?.facts?.facts ? {
@@ -246,8 +247,9 @@ const PLAYER_CHARTS = [
     {
         id: 'boom-bust',
         family: 'players',
+        scope: 'season',
         title: 'Boom or bust',
-        blurb: `Every week of the season's swingiest starters (at least ${BOOM_MIN_STARTS} starts, ${BOOM_MIN_AVERAGE}+ a game), with the median marked.`,
+        blurb: `The swingiest starters (${BOOM_MIN_STARTS}+ starts, ${BOOM_MIN_AVERAGE}+ a game), one dot per week.`,
         home: { view: 'stats', subview: 'leaders', anchor: 'chart-boom-bust' },
         compute(ctx) {
             const input = ctx?.playerInput || (typeof playerChartInput === 'function' ? playerChartInput() : null);
@@ -255,16 +257,14 @@ const PLAYER_CHARTS = [
             const result = boomBust(input.starts);
             return result.boom.length >= 3 ? { ...input, ...result, involves: [...new Set(result.boom.flatMap(r => r.teams))] } : null;
         },
-        render({ boom, steady }, { highlight, compact }) {
+        render({ boom }, { highlight, compact }) {
             const rows = boom.map(r => ({ id: r.teams.includes(highlight) ? highlight : r.id, label: `${r.name} (${r.position})`, values: r.values }));
             const strip = stripPlot({ title: 'Weekly scores of the swingiest starters', rows, highlight, width: compact ? 420 : 640, valueFmt: v => `${Math.round(v)}` });
-            if (compact) return strip;
-            return `${strip}<p class="chart-note">Steadiest: ${steady.map(r => `${chartEsc(r.name)} (${chartNum(r.mean)} ± ${chartNum(r.sd)})`).join(', ')}.</p>`;
+            return strip;
         },
         tok(model, opts) {
             const top = model.boom[0];
             return playerTok(this, model, opts, {
-                meta: `${model.season}`,
                 version: `${model.season}-boom-${model.week}`,
                 interest: 0.65,
                 caption: `🎢 ${top.name}: anywhere from ${Math.round(Math.min(...top.values))} to ${Math.round(Math.max(...top.values))}`,
@@ -274,8 +274,9 @@ const PLAYER_CHARTS = [
     {
         id: 'one-man-armies',
         family: 'players',
+        scope: 'season',
         title: 'One-man armies',
-        blurb: 'Each team\'s top scorer this season and the share of its starters\' points he has carried.',
+        blurb: 'Each team\'s top scorer and his share of its starters\' points.',
         home: { view: 'stats', subview: 'team', anchor: 'chart-one-man-armies' },
         compute(ctx) {
             const input = ctx?.playerInput || (typeof playerChartInput === 'function' ? playerChartInput() : null);
@@ -292,7 +293,8 @@ const PLAYER_CHARTS = [
                 rows: model.rows.map(r => ({
                     id: r.team,
                     label: r.player,
-                    sub: `${r.position} · ${playerName(model, r.team)} · ${Math.round(r.points)} of ${Math.round(r.total)}`,
+                    tag: playerName(model, r.team),
+                    sub: `${r.position}, ${Math.round(r.points)} of ${Math.round(r.total)} points`,
                     value: r.share,
                 })),
             });
@@ -300,7 +302,6 @@ const PLAYER_CHARTS = [
         tok(model, opts) {
             const top = model.rows[0];
             return playerTok(this, model, opts, {
-                meta: `${model.season}`,
                 version: `${model.season}-armies-${model.week}`,
                 caption: `💪 ${top.player} has scored ${Math.round(top.share * 100)}% of ${chartWho(opts, { label: c => playerName(model, c) }, top.team)}'s points`,
             });
@@ -309,8 +310,9 @@ const PLAYER_CHARTS = [
     {
         id: 'trade-grades',
         family: 'players',
+        scope: 'alltime',
         title: 'Trade report cards',
-        blurb: 'Every scoreable trade graded on a curve by points gained over the other side (A+ is the top tenth of sides, F the bottom 30%), and each franchise\'s trade GPA.',
+        blurb: 'Trade GPA: every trade graded on a curve by points gained over the other side.',
         home: { view: 'transactions', anchor: 'chart-trade-grades' },
         compute(ctx) {
             const input = ctx?.tradeInput || (typeof tradeChartInput === 'function' ? tradeChartInput() : null);
@@ -347,8 +349,9 @@ const PLAYER_CHARTS = [
     {
         id: 'costliest-drops',
         family: 'players',
+        scope: 'alltime',
         title: 'Costliest drops',
-        blurb: 'Players a team let go during the season, and what they then scored starting for someone else over the next 17 weeks.',
+        blurb: 'Points a dropped player went on to score starting for someone else.',
         home: { view: 'transactions', anchor: 'chart-costliest-drops' },
         compute(ctx) {
             const input = ctx?.dropsInput || (typeof dropsChartInput === 'function' ? dropsChartInput() : null);
@@ -362,7 +365,8 @@ const PLAYER_CHARTS = [
                 rows: model.drops.map(d => ({
                     id: d.team,
                     label: d.player,
-                    sub: `Dropped by ${playerName(model, d.team)}, Week ${d.week} ${d.season} · ${d.starts} starts for ${d.to.map(t => playerName(model, t)).join(', ')}`,
+                    tag: playerName(model, d.team),
+                    sub: `dropped Week ${d.week} ${d.season}, then ${d.starts} starts for ${d.to.map(t => playerName(model, t)).join(', ')}`,
                     value: d.points,
                 })),
             });
@@ -379,8 +383,10 @@ const PLAYER_CHARTS = [
     {
         id: 'draft-value',
         family: 'players',
+        scope: 'alltime',
+        scopeText: model => `${model.seasons[0]}–${model.seasons[model.seasons.length - 1]} drafts`,
         title: 'Draft value over slot',
-        blurb: 'Points each franchise\'s offseason picks produced for it, against what picks in the same slots usually produce (each draft measured against its own average, so older drafts aren\'t favored). Drafts are graded once two seasons have passed.',
+        blurb: 'Points each franchise\'s picks produced vs what those slots usually return.',
         home: { view: 'drafts', subview: 'history', anchor: 'chart-draft-value' },
         compute(ctx) {
             const input = ctx?.draftInput || (typeof draftChartInput === 'function' ? draftChartInput() : null);
@@ -396,18 +402,16 @@ const PLAYER_CHARTS = [
                 rows: model.classes.map(c => ({ id: c.team, label: playerName(model, c.team), sub: `${c.picks} graded picks`, value: Math.round(c.over) })),
             });
             if (compact) return bars;
-            const pickRow = p => ({ id: p.team, label: p.player, sub: `${p.season} pick ${p.overall} · ${playerName(model, p.team)} · ${Math.round(p.points)} pts`, value: Math.round(p.over), display: signed(p.over) });
+            const pickRow = p => ({ id: p.team, label: p.player, tag: playerName(model, p.team), sub: `${p.season} pick ${p.overall}, ${Math.round(p.points)} points`, value: Math.round(p.over), display: signed(p.over) });
             return `${bars}
                 <div class="chart-columns">
                     <div><h4 class="chart-subtitle">Steals</h4>${barList({ highlight, rows: model.steals.map(pickRow) })}</div>
                     <div><h4 class="chart-subtitle">Busts</h4>${barList({ highlight, rows: model.busts.map(p => ({ ...pickRow(p), value: Math.abs(Math.round(p.over)) })) })}</div>
-                </div>
-                <p class="chart-note">Graded drafts: ${model.seasons.join(', ')}.</p>`;
+                </div>`;
         },
         tok(model, opts) {
             const steal = model.steals[0];
             return playerTok(this, model, opts, {
-                meta: `${model.seasons[0]}–${model.seasons[model.seasons.length - 1]} DRAFTS`,
                 interest: 0.7,
                 version: `draft-value-${model.seasons.join('-')}`,
                 caption: `💎 Steal of the drafts: ${steal.player} at pick ${steal.overall} (${signed(steal.over)})`,

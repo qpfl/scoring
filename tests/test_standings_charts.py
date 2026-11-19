@@ -175,7 +175,6 @@ def test_every_standings_chart_renders_and_makes_a_tok_card():
         'power-rankings',
         'projected-wins',
         'schedule-ahead',
-        'standings-replay',
         'clinch-tracker',
         'finish-history',
     }
@@ -187,7 +186,6 @@ def test_every_standings_chart_renders_and_makes_a_tok_card():
     assert result['clinch-tracker']['caption'] == (
         "🔢 Team C's magic number is 0.5 · 1 clinched, 1 out"
     )
-    assert result['standings-replay']['caption'] == '🎢 Team A has led the league 3 weeks'
     assert result['playoff-odds-trend']['caption'].startswith('📈 Team A gained 20 points')
     assert result['finish-history']['caption'] == '🏆 GSA has 1 title'
 
@@ -196,7 +194,7 @@ def test_outlook_charts_stay_out_of_finished_and_historical_seasons():
     result = run_charts(f"""
         const input = {input_js('live: false, sos: null, model: null')};
         const ctx = {{ standingsInput: input }};
-        return ['playoff-odds-trend', 'projected-wins', 'schedule-ahead', 'clinch-tracker', 'power-rankings', 'standings-replay']
+        return ['playoff-odds-trend', 'projected-wins', 'schedule-ahead', 'clinch-tracker', 'power-rankings']
             .map(id => [id, renderChartSection(id, ctx) !== '']);
     """)
     assert dict(result) == {
@@ -205,7 +203,6 @@ def test_outlook_charts_stay_out_of_finished_and_historical_seasons():
         'schedule-ahead': False,
         'clinch-tracker': False,
         'power-rankings': True,
-        'standings-replay': True,
     }
 
 

@@ -74,6 +74,30 @@ def test_perfect_lineup_rate_and_bench_points():
     assert by['D']['left'] == 20 and rows[0]['id'] == 'A'
 
 
+def test_lineup_grid_shades_each_week_by_share_of_the_best_lineup():
+    result = run_charts(f"""
+        const weeks = lineupWeeks({GAMES});
+        const html = renderChartSection('perfect-rate', {{ luckInput: {{ season: 2026, completedThrough: 2,
+            teams: ['A', 'B', 'C', 'D'], label: t => t, games: {GAMES} }} }});
+        return {{ b1: weeks.B[1], html }};
+    """)
+    assert result['b1'] == {'score': 120, 'best': 140, 'pct': 120 / 140}
+    html = result['html']
+    # A was perfect both weeks: gold stars; one hue for everything else.
+    assert html.count('is-perfect') >= 2 and '★' in html
+    assert 'lvl-0' not in html and 'seq-' in html
+
+
+def test_luck_scatter_puts_the_extra_luck_numbers_in_tooltips():
+    html = run_charts(f"""
+        return renderChartSection('all-play-luck', {{ luckInput: {{ season: 2026, completedThrough: 2,
+            teams: ['A', 'B', 'C', 'D'], label: t => `Team ${{t}}`, games: {GAMES} }} }});
+    """)
+    assert 'chart-scatter' in html and 'chart-zone-pos' in html
+    assert '2026 season' in html
+    assert 'points for and against say' in html
+
+
 def test_projection_luck_is_measured_against_the_league_average():
     result = run_charts(f'return projectionLuck({GAMES});')
     assert result['weeks'] == [1, 2]
@@ -120,10 +144,10 @@ def test_every_luck_chart_renders_and_makes_a_tok_card_with_short_names():
         return {{ out, views: ['allplay', 'perfect', 'schedule', 'points'].map(luckChartsFor) }};
     """)
     out = result['out']
+    # Pythagorean wins and wrong-opponent losses live in the luck scatter's
+    # tooltips now, not in charts of their own.
     assert set(out) == {
         'all-play-luck',
-        'pythag-wins',
-        'wrong-opponent',
         'perfect-rate',
         'schedule-swap',
         'projection-luck',
@@ -131,12 +155,9 @@ def test_every_luck_chart_renders_and_makes_a_tok_card_with_short_names():
     for chart_id, chart in out.items():
         assert chart['html'] and chart['body'], chart_id
     assert out['all-play-luck']['caption'] == '😭 Bee has been robbed of 1.3 wins'
-    assert out['wrong-opponent']['caption'] == (
-        '🤬 Bee lost 2 games that would have beaten most of the league'
-    )
     assert out['schedule-swap']['caption'] == "🗓️ Bee would have 2 more RP with Team A's schedule"
     assert result['views'] == [
-        ['all-play-luck', 'pythag-wins', 'wrong-opponent'],
+        ['all-play-luck'],
         ['perfect-rate'],
         ['schedule-swap'],
         [],

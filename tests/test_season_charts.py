@@ -72,6 +72,22 @@ def test_week_in_history_shows_past_seasons_only():
     assert result['record']['season'] == 2025 and result['record']['award']['value'] == 137
 
 
+def test_week_in_history_draws_each_seasons_low_to_high_score():
+    html = run_charts("""
+        const entries = [
+            { season: 2025, awards: [{ id: 'high_score', team: 'CGK', value: 137 }, { id: 'low_score', team: 'GSA', value: 54 }] },
+            { season: 2024, awards: [{ id: 'high_score', team: 'WJK', value: 110 }, { id: 'low_score', team: 'CGK', value: 59 }] },
+            { season: 2023, awards: [{ id: 'high_score', team: 'GSA', value: 120 }] },
+        ];
+        return weekRangeChart(entries, c => ({ GSA: 'Griff', CGK: 'Kaminska', WJK: 'Bill' })[c], { highlight: 'GSA' });
+    """)
+    # 2023 has no low score, so it has no bar.
+    assert html.count('class="chart-range-bar"') == 2
+    assert 'Kaminska 137' in html and 'Griff 54' in html
+    assert html.count('is-record') == 1
+    assert 'chart-range-dot is-low is-highlight' in html
+
+
 def test_wrapped_opens_on_the_newest_finished_season():
     result = run_charts(f"""
         const input = {INPUT};
@@ -140,3 +156,18 @@ def test_season_charts_are_placed_on_the_page():
     assert '${wrappedSectionHtml(currentTeam)}' in app
     assert '${weekHistorySectionHtml(week)}' in app
     assert 'renderHomeWrappedBanner()' in app
+
+
+def test_every_chart_and_clip_is_labeled_week_season_or_all_time():
+    result = run_charts("""
+        const card = tokCardHtml({ id: 'elo', family: 'managers', title: 'Elo', scope: { kind: 'alltime', text: 'All-time · since 2020' } }, 1);
+        return {
+            unscoped: CHARTS.filter(c => !CHART_SCOPES[c.scope]).map(c => c.id),
+            alltime: CHARTS.filter(c => c.scope === 'alltime').map(c => c.id).sort(),
+            card,
+        };
+    """)
+    assert result['unscoped'] == []
+    assert 'head-to-head' in result['alltime'] and 'elo' in result['alltime']
+    assert 'projected-wins' not in result['alltime']
+    assert 'tok-pill-scope is-alltime">ALL-TIME · SINCE 2020<' in result['card']

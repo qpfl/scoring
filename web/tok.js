@@ -137,6 +137,7 @@ const TOK_WEEK_CARDS = [
     {
         id: 'week-recap',
         family: 'week',
+        scope: 'week',
         title: 'Last week recap',
         home: { view: 'matchups', subview: 'week' },
         compute(ctx) {
@@ -191,6 +192,7 @@ const TOK_WEEK_CARDS = [
     {
         id: 'week-numbers',
         family: 'week',
+        scope: 'week',
         title: 'By the numbers',
         home: { view: 'history', subview: 'records' },
         compute(ctx) {
@@ -221,6 +223,7 @@ const TOK_WEEK_CARDS = [
     {
         id: 'week-storylines',
         family: 'week',
+        scope: 'week',
         title: 'Matchup storylines',
         home: { view: 'matchups', subview: 'preview' },
         compute(ctx) {
@@ -259,6 +262,7 @@ const TOK_WEEK_CARDS = [
     {
         id: 'week-records',
         family: 'week',
+        scope: 'week',
         title: 'Record watch',
         home: { view: 'matchups', subview: 'preview' },
         compute(ctx) {
@@ -293,6 +297,7 @@ const TOK_WEEK_CARDS = [
     {
         id: 'week-milestones',
         family: 'week',
+        scope: 'week',
         title: 'Milestones',
         home: { view: 'matchups', subview: 'preview' },
         compute(ctx) {
@@ -330,6 +335,7 @@ const TOK_WEEK_CARDS = [
     {
         id: 'week-rooting',
         family: 'week',
+        scope: 'week',
         title: 'Rooting guide',
         home: { view: 'standings', subview: 'machine' },
         compute(ctx) {
@@ -354,6 +360,7 @@ const TOK_WEEK_CARDS = [
     {
         id: 'week-holiday',
         family: 'week',
+        scope: 'week',
         title: 'Holiday slate',
         home: { view: 'matchups', subview: 'week' },
         compute(ctx) {
@@ -419,6 +426,7 @@ function collectTokCards(ctx, spotlight) {
             title: out.title || entry.title,
             home: entry.home || null,
             version: out.version || `${ctx.season}-${ctx.completedWeek}`,
+            scope: chartScope(entry, model),
             ...out,
         });
     }
@@ -438,7 +446,8 @@ function tokCardHtml(card, index, { spotlight = null, teams = {}, names = {} } =
         <article class="tok-card" data-tok-id="${chartEsc(card.id)}" data-index="${index}" aria-roledescription="clip" aria-label="${chartEsc(card.title)}">
             <div class="tok-pills">
                 <span class="tok-pill tok-pill-family ${chartEsc(card.pillCls || `is-${card.family}`)}">${chartEsc(card.pill || family?.pill || '')}</span>
-                ${card.meta ? `<span class="tok-pill tok-pill-meta">${chartEsc(card.meta)}</span>` : ''}
+                ${card.scope ? `<span class="tok-pill tok-pill-scope is-${chartEsc(card.scope.kind)}">${chartEsc(card.scope.text.toUpperCase())}</span>` : ''}
+                ${card.meta && card.scope?.kind !== 'week' && card.meta.toUpperCase() !== card.scope?.text.toUpperCase() ? `<span class="tok-pill tok-pill-meta">${chartEsc(card.meta)}</span>` : ''}
                 ${spotlight && (card.involves || []).includes(spotlight) ? `<span class="tok-pill tok-pill-spotlight">📍 ${chartEsc(spotlightName)}</span>` : ''}
                 ${card.isNew ? '<span class="tok-pill tok-pill-new">NEW</span>' : ''}
             </div>
