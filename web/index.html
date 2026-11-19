@@ -91,6 +91,7 @@
                     <a href="#transactions" class="nav-btn" data-view="transactions">Transactions</a>
                     <a href="#history" class="nav-btn" data-view="history">League</a>
                     <a href="#drafts" class="nav-btn" data-view="drafts">Drafts</a>
+                    <a href="#tok" class="nav-btn" data-view="tok">QPFLTok</a>
                 </div>
             </div>
         </nav>
@@ -127,6 +128,7 @@
                 <!-- Season Content - During weeks 1-17 -->
                 <div id="home-season-content" class="home-section">
                     <aside id="home-deadlines" class="home-deadlines" aria-label="Upcoming deadlines" hidden></aside>
+                    <a href="#tok" id="home-tok-teaser" class="home-tok-teaser" data-route="#tok" hidden></a>
                     <div class="home-dashboard">
                         <section class="home-card home-panel home-panel-matchups" aria-labelledby="home-matchups-title">
                             <h2 class="home-card-title" id="home-matchups-title">
@@ -199,6 +201,8 @@
                 </div>
             </div>
         </div>
+
+        <div id="tok-view" class="view-container" aria-label="QPFLTok"></div>
 
         <div id="matchups-view" class="view-container">
             <div class="subnav" role="tablist" aria-label="Matchup views">
@@ -1069,6 +1073,7 @@
 
     <script src="api-config.js" defer></script>
     <script src="charts.js" defer></script>
+    <script src="tok.js" defer></script>
     <script src="app.js" defer></script>
     <script src="ads.js" defer></script>
     

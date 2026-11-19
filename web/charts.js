@@ -328,7 +328,8 @@ function ringStat({ pct, label = '', sub = '', center = null, size = 56, id = nu
     const p = Math.max(0, Math.min(1, pct));
     const r = size / 2 - 5;
     const c = 2 * Math.PI * r;
-    const middle = center ?? `${Math.round(p * 100)}%`;
+    // Short of the goal never reads 100%.
+    const middle = center ?? `${p < 1 ? Math.min(99, Math.round(p * 100)) : 100}%`;
     const ring = `
         <svg class="chart-ring-svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">
             <circle class="chart-ring-track" cx="${size / 2}" cy="${size / 2}" r="${chartRound(r)}"/>

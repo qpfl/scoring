@@ -88,6 +88,7 @@ jobs:
         run: |
           node --check web/app.js
           node --check web/charts.js
+          node --check web/tok.js
 
       - name: Validate JSON schemas
         run: uv run --frozen python -m qpfl.data_validation

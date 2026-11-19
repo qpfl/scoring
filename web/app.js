@@ -1235,6 +1235,16 @@ async function prepareViewData(view, subview) {
             // Backs the trade history behind each traded pick chip.
             ensureSharedResource('transactions'),
         ]);
+    } else if (view === 'tok') {
+        // Last week's scores for the recap, every week for the playoff sim
+        // behind the rooting guide, and rosters for the holiday slate.
+        if (data.season === LIVE_SEASON) {
+            await Promise.all([
+                ensureAllSeasonWeeks(),
+                ensureCurrentSeasonFiles({ rosters: true }),
+                ensureSharedResource('charts').catch(() => null),
+            ]);
+        }
     } else if (view === 'manage') {
         await Promise.all([
             ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
@@ -1253,6 +1263,7 @@ async function prepareViewData(view, subview) {
 // per-subview lazy-rendering happens inside the per-view renderer.
 const VIEW_RENDERERS = {
     home: () => renderHome(),
+    tok: subview => renderTok(subview),
     matchups: subview => {
         renderWeekSelector();
         renderMatchups();
@@ -1320,7 +1331,11 @@ const DEFAULT_SUBVIEW = {
     drafts: 'history',
 };
 
+// Views that only make sense for the live season.
+const LIVE_SEASON_VIEWS = new Set(['manage', 'tok']);
+
 const PAGE_DESCRIPTIONS = {
+    tok: 'QPFLTok: swipe through this week in the QPFL, one chart at a time.',
     home: 'The latest QPFL matchups, standings, performances, and league activity.',
     matchups: 'View weekly QPFL matchups, scores, rosters, and the season schedule.',
     standings: 'Track the QPFL standings, rank points, records, and playoff outlook.',
@@ -1334,6 +1349,7 @@ const PAGE_DESCRIPTIONS = {
 
 function pageTitleFor(view, subview, detail) {
     const season = currentSeason || data?.season;
+    if (view === 'tok') return 'QPFLTok · QPFL';
     if (view === 'matchups') {
         if (subview === 'schedule') return `${season} Schedule · QPFL`;
         if (subview === 'preview') return `Week ${previewWeek() || currentWeek} Preview · QPFL`;
@@ -1873,6 +1889,7 @@ function renderNewsletterReminder() {
 
 function renderHomeSeason() {
     renderHomeDeadlines();
+    renderHomeTokTeaser();
     const matchupsContainer = document.getElementById('home-matchups');
     const scoredWeek = data.weeks.find(w => w.week === currentWeek);
     const scheduledWeek = data.schedule.find(w => w.week === currentWeek);
@@ -15776,7 +15793,7 @@ function setRouteSeason(season) {
 
 function updateNavigationLinks() {
     document.querySelectorAll('.nav-btn[data-view]').forEach(link => {
-        const targetSeason = link.dataset.view === 'manage' ? LIVE_SEASON : currentSeason;
+        const targetSeason = LIVE_SEASON_VIEWS.has(link.dataset.view) ? LIVE_SEASON : currentSeason;
         link.href = seasonAwareRoute(`#${link.dataset.view}`, targetSeason);
     });
     document.querySelectorAll('[data-home-link]').forEach(link => {
@@ -15876,6 +15893,10 @@ async function navigateToView(view, subview, detail) {
 
     document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
     document.getElementById(`${view}-view`).classList.add('active');
+    // QPFLTok takes over the whole screen; it re-reads the feed (NEW badges,
+    // spotlight, a deep-linked clip) every time it opens.
+    document.body.classList.toggle('tok-mode', view === 'tok');
+    if (view === 'tok') viewFresh.delete('tok');
 
     // Apply detail to view-level state BEFORE rendering, so the renderer reads it.
     // Detail changes invalidate the cached render so the new state actually shows.
@@ -16194,11 +16215,12 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         event.preventDefault();
         closeNavMore();
         if (!confirmManageNavigation(btn.dataset.view)) return;
-        // My Team only works for the current season — switch to it if needed.
-        if (btn.dataset.view === 'manage' && currentSeason !== LIVE_SEASON) {
+        // My Team and QPFLTok only work for the current season — switch to it if needed.
+        const liveOnly = LIVE_SEASON_VIEWS.has(btn.dataset.view);
+        if (liveOnly && currentSeason !== LIVE_SEASON) {
             await loadData(LIVE_SEASON);
         }
-        const route = seasonAwareRoute(`#${btn.dataset.view}`, btn.dataset.view === 'manage' ? LIVE_SEASON : currentSeason);
+        const route = seasonAwareRoute(`#${btn.dataset.view}`, liveOnly ? LIVE_SEASON : currentSeason);
         history.pushState(null, '', route);
         await applyHash();
         focusMainContentOnMobile();

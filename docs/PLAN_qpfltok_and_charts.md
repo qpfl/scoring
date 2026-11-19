@@ -103,6 +103,8 @@ Season-local charts are computed in the browser from data and functions that alr
 
 ## QPFLTok view (`#tok`)
 
+**Status:** shipped in Phase 1. The feed lives in its own file, `web/tok.js`, loaded between `charts.js` and `app.js`. The top half is pure (feed order, NEW state, holiday and milestone parsing, the week cards) so `tests/test_tok_ui.py` runs it in node. The bottom half is the browser controller.
+
 **Shell.**
 - **Markup:** a new `#tok-view` `.view-container` in `index.html`, plus a nav link in the More menu (`index.html:88`).
 - **Routing:** add `tok` to `PAGE_DESCRIPTIONS`, `pageTitleFor` and `prepareViewData`.
