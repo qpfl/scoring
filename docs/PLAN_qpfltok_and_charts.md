@@ -191,6 +191,13 @@ Every chart also produces a QPFLTok card. "Client" means the browser computes it
 
 **Managers & rivalries** (replaces old Phase 7; methods as specified there)
 
+**Status:** shipped in Phase 4. `qpfl/charts.py` builds the `elo`, `fingerprints`, `head_to_head`, `player_nemeses`, `streaks`, `scores` and `season_arcs` blocks (charts.json v2, about 72 KB), and `web/charts-managers.js` draws them. Differences from the table below:
+- **Head-to-head and nemeses** are computed by franchise from the game history rather than `rivalry_records`, so the ten current seats line up. A nemesis or favorite victim needs four games.
+- **Fingerprints** cover owners with at least 14 regular-season games. In the view they're an owners × traits percentile grid; a clip shows the spotlight owner's six bars instead of a "Compare to…" picker.
+- **Elo** follows the top-rated franchise when no team is logged in. The team-page "Elo: 1,612 (3rd)" line is not built yet.
+- **Hot and cold stretches** were dropped. Streaks cover the longest win and loss runs plus each franchise's current streak.
+- **Section links** now use `scrollToSection`, which waits for late-arriving charts before scrolling.
+
 | Chart | Primitive | Home | Source |
 |---|---|---|---|
 | Elo ratings (K=24, margin-of-victory multiplier, ⅓ regression, playoff ×1.25) | line | History → HOF → Franchises; one line on the team page | export |

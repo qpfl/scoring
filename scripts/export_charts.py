@@ -14,7 +14,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from qpfl.charts import build_charts
 from qpfl.constants import SHARED_DIR
 from scripts import export_hall_of_fame as hof
-from scripts.export_weekly_facts import default_week, load_history, write_facts
+from scripts.export_weekly_facts import (
+    OWNER_NAMES,
+    default_week,
+    load_history,
+    owner_names,
+    write_facts,
+)
 
 CHARTS_PATH = SHARED_DIR / 'charts.json'
 
@@ -35,8 +41,15 @@ def main() -> None:
         args.completed_through if args.completed_through is not None else default_week(current)
     )
     team_games, player_games, _timeline, _names = load_history(current, completed)
+    # Earlier owners by their Hall of Fame names; today's seats by the short
+    # names the newsletter and QPFLTok use (Griff, Spencer/Tim).
+    names = {**OWNER_NAMES, **owner_names(current)}
     charts = build_charts(
-        team_games, player_games, current_season=current, completed_through=completed
+        team_games,
+        player_games,
+        current_season=current,
+        completed_through=completed,
+        names=names,
     )
     # Same rule as the facts files: no commit when only the timestamp moves.
     changed = write_facts(charts, args.output)

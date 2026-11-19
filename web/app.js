@@ -1188,6 +1188,7 @@ async function prepareViewData(view, subview) {
         }
         if (subview === 'history') {
             requests.push(
+                ensureSharedResource('charts').catch(() => null),
                 ensureSharedResource('banners'),
                 ensureSharedResource('hall_of_fame_records'),
                 ensureSharedResource('drafts'),
@@ -1217,6 +1218,7 @@ async function prepareViewData(view, subview) {
                 ensureSharedResource('hall_of_fame_records'),
                 ensureSharedResource('drafts'),
                 ensureManualHonors(),
+                ensureSharedResource('charts').catch(() => null),
             ]);
         }
     } else if (view === 'transactions') {
@@ -7816,6 +7818,7 @@ function renderTeamHistory() {
         `;
     }
 
+    html += managerSections(['nemeses', 'season-arcs'], { team: currentTeam });
     container.innerHTML = html;
 }
 
@@ -8595,7 +8598,8 @@ function hofRecordsHtml(hof) {
                     <h2 class="hof-section-title">${escapeHtml(c.title)}</h2>
                     <div class="hof-record-grid">${cards.join('')}</div>
                 </section>`;
-        }).join('')}`;
+        }).join('')}
+        ${category === 'all' ? managerSections(['streaks']) : ''}`;
 }
 
 // ====== SCORIGAMI ======
@@ -9061,6 +9065,12 @@ const HOF_SECTION_TABS = {
     'hof-player-records': 'records',
     'hof-rivalries': 'franchises',
     'chart-finish-history': 'franchises',
+    'chart-elo': 'franchises',
+    'chart-head-to-head': 'franchises',
+    'chart-score-distribution': 'franchises',
+    'chart-fingerprints': 'owners',
+    'chart-win-rings': 'owners',
+    'chart-streaks': 'records',
 };
 
 function hofRoute(tab = 'overview', detail = '') {
@@ -9369,7 +9379,9 @@ function hofOwnersHtml(hof) {
     if (currentHofOwner && !profile) {
         return `<p class="hof-empty">No owner profile for ${escapeHtml(currentHofOwner)}. ${hofLink('owners', 'See all owners')}</p>`;
     }
-    return profile ? hofOwnerProfileHtml(profile) : hofOwnerStatsHtml(hof);
+    return profile
+        ? hofOwnerProfileHtml(profile)
+        : hofOwnerStatsHtml(hof) + managerSections(['fingerprints', 'win-rings']);
 }
 
 // Every franchise seat across its owners (scripts/hof_franchises.py).
@@ -9424,7 +9436,8 @@ function hofFranchisesHtml() {
             <div class="hof-franchise-grid">${franchises.map(hofFranchiseCard).join('')}</div>
             <p class="hof-record-note">Records include the playoffs. Playoff berths count top-four regular-season finishes.</p>
         </section>
-        ${renderChartSection('finish-history', {}, { highlight: myTeamAbbrev() })}`;
+        ${renderChartSection('finish-history', {}, { highlight: myTeamAbbrev() })}
+        ${managerSections(['elo', 'head-to-head', 'score-distribution'])}`;
 }
 
 // A team's Hall of Fame (Teams page), built from the same pieces as the
@@ -16118,6 +16131,26 @@ function activateTeamsSubview(sub) {
     if (hubHeader) hubHeader.hidden = !needsSelector;
 }
 
+// Scroll to a ?section= target. Charts and late data can still be arriving,
+// so wait (briefly) for the element, and correct once more after the layout
+// above it settles.
+function scrollToSection(id, { tries = 12, settle = true } = {}) {
+    requestAnimationFrame(() => {
+        const target = document.getElementById(id);
+        if (!target) {
+            if (tries > 0) setTimeout(() => scrollToSection(id, { tries: tries - 1, settle }), 250);
+            return;
+        }
+        target.scrollIntoView({ block: 'start' });
+        if (settle) {
+            setTimeout(() => {
+                const top = document.getElementById(id)?.getBoundingClientRect().top;
+                if (top !== undefined && Math.abs(top) > 40) scrollToSection(id, { tries: 0, settle: false });
+            }, 700);
+        }
+    });
+}
+
 async function applyHash({ focus = false } = {}) {
     let hash = location.hash.slice(1) || 'home';
     let route = parseHashRoute(hash);
@@ -16216,7 +16249,7 @@ async function applyHash({ focus = false } = {}) {
         const context = getPostseasonStatusContext();
         renderWhatIfStandings(context.completedThrough, context.standings);
     }
-    if (section) requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ block: 'start' }));
+    if (section) scrollToSection(section);
     const matchupTeam = route.view === 'matchups' ? route.params.get('matchup') : null;
     if (matchupTeam) {
         focusMatchupCard(matchupTeam);
