@@ -1164,13 +1164,15 @@ async function prepareViewData(view, subview) {
         const requests = [
             ensureAllSeasonWeeks(),
             ensureSharedResource('hall_of_fame'),
+            // Weekly awards' names and the Preview's week in history.
+            ensureSharedResource('charts').catch(() => null),
         ];
         if (data.season === LIVE_SEASON) {
             requests.push(ensureCurrentSeasonFiles({ rosters: true }));
         }
         await Promise.all(requests);
     } else if (view === 'standings') {
-        await ensureAllSeasonWeeks();
+        await Promise.all([ensureAllSeasonWeeks(), ensureSharedResource('charts').catch(() => null)]);
     } else if (view === 'teams') {
         const requests = [ensureAllSeasonWeeks()];
         if (data.season === LIVE_SEASON) {
@@ -1602,6 +1604,7 @@ function renderWeekSelector() {
 
 function renderHome() {
     const isOffseason = data.is_offseason || data.is_historical;
+    renderHomeWrappedBanner().catch(() => {});
 
     const seasonContent = document.getElementById('home-season-content');
     const offseasonContent = document.getElementById('home-offseason-content');
@@ -6785,7 +6788,8 @@ async function renderMatchupsPreviewTab() {
     ].join('');
     container.innerHTML = `
         <p class="preview-intro">${escapeHtml(`Week ${week}`)} at a glance. Notes use games through Week ${completedThroughWeek()}.</p>
-        ${html || '<p class="pm-empty">Nothing notable yet for this week.</p>'}`;
+        ${html || '<p class="pm-empty">Nothing notable yet for this week.</p>'}
+        ${weekHistorySectionHtml(week)}`;
     const picker = container.querySelector('#preview-rooting-team');
     picker?.addEventListener('change', () => {
         previewRootingTeam = picker.value;
@@ -7683,6 +7687,7 @@ function renderTeamHistory() {
         </div>
         <nav class="hof-index" aria-label="Hall of Fame sections">${sections.map(sectionLink).join('')}</nav>
         ${teamHofOverviewHtml(franchise, allTime, teamBanners)}
+        ${wrappedSectionHtml(currentTeam)}
     `;
 
     if (teamBanners.length > 0) {

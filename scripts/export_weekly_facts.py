@@ -370,8 +370,9 @@ def facts_path(season: int, week: int) -> Path:
     return SEASONS_DIR / str(season) / 'facts' / f'week_{week}.json'
 
 
-def write_facts(facts: dict, path: Path) -> bool:
-    """Write unless only the timestamp would change."""
+def write_facts(facts: dict, path: Path, *, indent: int | None = 2) -> bool:
+    """Write unless only the timestamp would change. `indent=None` writes
+    compact JSON (charts.json, which is read only by the site)."""
     if path.exists():
         with open(path) as f:
             existing = json.load(f)
@@ -380,7 +381,10 @@ def write_facts(facts: dict, path: Path) -> bool:
     output = {**facts, 'generated_at': datetime.now(timezone.utc).isoformat()}
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, 'w') as f:
-        json.dump(output, f, indent=2)
+        if indent is None:
+            json.dump(output, f, separators=(',', ':'))
+        else:
+            json.dump(output, f, indent=indent)
         f.write('\n')
     return True
 

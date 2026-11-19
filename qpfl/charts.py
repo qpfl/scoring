@@ -21,7 +21,7 @@ from typing import Any
 from qpfl.weekly_facts import PLAYOFFS, REGULAR, PlayerGame, TeamGame, regular_season_weeks
 
 # Bump when the file's shape changes in a way old clients can't read.
-CHARTS_VERSION = 3
+CHARTS_VERSION = 4
 
 ELO_START = 1500.0
 ELO_K = 24.0
@@ -461,6 +461,178 @@ def weekly_awards(
     return awards
 
 
+# ---- This week in history ----
+
+WEEK_HISTORY_AWARDS = ('high_score', 'low_score', 'blowout', 'nail_biter', 'mvp')
+
+
+def week_history(
+    team_games: Sequence[TeamGame], player_games: Sequence[PlayerGame]
+) -> dict[str, list[dict[str, Any]]]:
+    """For every week number, what happened that week in each season:
+    {week: [{season, label, awards: [...]}]}, newest season first. The
+    awards are weekly_awards' top score, low score, blowout, nail-biter and
+    MVP."""
+    sides_by_week: dict[tuple[int, int], list[TeamGame]] = defaultdict(list)
+    for g in team_games:
+        sides_by_week[g.order].append(g)
+    players_by_week: dict[tuple[int, int], list[PlayerGame]] = defaultdict(list)
+    for p in player_games:
+        players_by_week[p.order].append(p)
+
+    out: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for (season, week), sides in sorted(sides_by_week.items(), reverse=True):
+        # The page knows each award's label and emoji; keep the file lean.
+        awards = [
+            {k: v for k, v in a.items() if k not in ('label', 'emoji')}
+            for a in weekly_awards(sides, players_by_week.get((season, week), []), season, week)
+            if a['id'] in WEEK_HISTORY_AWARDS
+        ]
+        if awards:
+            out[str(week)].append(
+                {'season': season, 'label': sides[0].week_label, 'awards': awards}
+            )
+    return dict(sorted(out.items(), key=lambda item: int(item[0])))
+
+
+# ---- Season Wrapped ----
+
+WORKHORSE_POSITIONS = ('QB', 'RB', 'WR', 'TE')
+
+
+def _all_play_expected(games: Sequence[TeamGame]) -> dict[str, float]:
+    """Each franchise's all-play expected wins over the given regular-season rows."""
+    by_week: dict[tuple[int, int], list[TeamGame]] = defaultdict(list)
+    for g in games:
+        by_week[g.order].append(g)
+    expected: dict[str, float] = defaultdict(float)
+    for sides in by_week.values():
+        for g in sides:
+            beaten = sum(
+                1 if g.score > o.score else 0.5 if g.score == o.score else 0
+                for o in sides
+                if o.abbrev != g.abbrev
+            )
+            for f in g.franchises:
+                expected[f] += beaten / max(1, len(sides) - 1)
+    return expected
+
+
+def season_wrapped(
+    team_games: Sequence[TeamGame], player_games: Sequence[PlayerGame]
+) -> dict[str, dict[str, Any]]:
+    """A year-in-review per franchise per season.
+
+    {season: {'complete': bool, 'teams': {franchise: {...}}}}. A season is
+    complete once its championship game is in. Records, luck and the
+    nemesis use the regular season; best and worst weeks, the MVP and the
+    lineup numbers count every game the team played.
+    """
+    seasons = sorted({g.season for g in team_games})
+    out: dict[str, dict[str, Any]] = {}
+    for season in seasons:
+        rows = [g for g in team_games if g.season == season]
+        regular = [g for g in rows if g.bracket == REGULAR]
+        expected = _all_play_expected(regular)
+        ppg: dict[str, float] = {}
+        teams: dict[str, dict[str, Any]] = {}
+        franchises = sorted({f for g in rows for f in g.franchises})
+        for f in franchises:
+            mine = [g for g in rows if f in g.franchises]
+            reg = [g for g in mine if g.bracket == REGULAR]
+            results = [r for r in (_result(g) for g in reg) if r is not None]
+            wins = sum(1 for r in results if r == 1)
+            losses = sum(1 for r in results if r == 0)
+            ties = sum(1 for r in results if r == 0.5)
+            if not mine:
+                continue
+            ppg[f] = statistics.fmean(g.score for g in reg) if reg else 0.0
+            best = max(mine, key=lambda g: (g.score, -g.week))
+            worst = min(mine, key=lambda g: (g.score, g.week))
+            decided = [g for g in mine if g.decided and g.single_game]
+            wins_by = [g for g in decided if g.won]
+            losses_by = [g for g in decided if g.lost]
+            big_win = max(wins_by, key=lambda g: (g.margin, -g.week), default=None)
+            bad_loss = max(losses_by, key=lambda g: (g.margin, -g.week), default=None)
+            optimal = [g for g in mine if g.optimal]
+            started = sum(g.score for g in optimal)
+            possible = sum(g.optimal or 0 for g in optimal)
+
+            record_vs: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+            for g in reg:
+                result = _result(g)
+                for opp in g.opp_franchises:
+                    if result == 1:
+                        record_vs[opp][0] += 1
+                    elif result == 0:
+                        record_vs[opp][1] += 1
+            nemesis = max(
+                ((opp, wl) for opp, wl in record_vs.items() if wl[1] >= 2),
+                key=lambda item: (item[1][1] - item[1][0], item[1][1], item[0]),
+                default=None,
+            )
+
+            starters: dict[str, dict[str, Any]] = {}
+            for p in player_games:
+                if p.season != season or not p.starter or f not in p.franchises:
+                    continue
+                row = starters.setdefault(
+                    p.player_key,
+                    {'name': p.name, 'position': p.position, 'points': 0.0, 'starts': 0},
+                )
+                row['points'] = round(row['points'] + p.score, 1)
+                row['starts'] += 1
+            mvp = max(starters.values(), key=lambda r: (r['points'], r['name']), default=None)
+            # The most-started skill player other than the MVP (kickers and
+            # defenses start every week).
+            workhorse = max(
+                (
+                    r
+                    for r in starters.values()
+                    if r['position'] in WORKHORSE_POSITIONS and r is not mvp
+                ),
+                key=lambda r: (r['starts'], r['points'], r['name']),
+                default=None,
+            )
+
+            def game_ref(g: TeamGame | None) -> dict[str, Any] | None:
+                if g is None:
+                    return None
+                return {
+                    'week': g.week,
+                    'label': g.week_label,
+                    'score': g.score,
+                    'opp': g.opp_abbrev,
+                    'opp_score': g.opp_score,
+                }
+
+            teams[f] = {
+                'record': [wins, losses, ties],
+                'points_for': round(sum(g.score for g in reg), 1),
+                'ppg': round(ppg[f], 1),
+                'playoffs': any(g.bracket == PLAYOFFS for g in mine),
+                'champion': any(g.title_game and g.won for g in mine),
+                'best_week': game_ref(best),
+                'worst_week': game_ref(worst),
+                'biggest_win': game_ref(big_win),
+                'worst_loss': game_ref(bad_loss),
+                'lineup_iq': round(started / possible, 3) if possible else None,
+                'left_on_bench': round(possible - started, 1) if possible else None,
+                'luck': round(wins + ties / 2 - expected.get(f, 0.0), 1),
+                'nemesis': {'opp': nemesis[0], 'record': nemesis[1]} if nemesis else None,
+                'mvp': mvp,
+                'workhorse': workhorse,
+            }
+        ranked = sorted(ppg, key=lambda f: -ppg[f])
+        for f, team in teams.items():
+            team['ppg_rank'] = ranked.index(f) + 1
+        out[str(season)] = {
+            'complete': any(g.title_game for g in rows),
+            'teams': teams,
+        }
+    return out
+
+
 # ---- Costliest drops ----
 
 DROP_WINDOW_WEEKS = 17
@@ -557,6 +729,8 @@ def build_charts(
         'streaks': streaks(team_games),
         'scores': score_distributions(team_games),
         'season_arcs': season_arcs(team_games),
+        'week_history': week_history(team_games, player_games),
+        'wrapped': season_wrapped(team_games, player_games),
         'costliest_drops': costliest_drops(
             timeline or {}, player_games, franchise_of or (lambda code: (code,)), player_names or {}
         ),

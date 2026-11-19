@@ -136,20 +136,77 @@ function expectedRemainingWins(remaining, model) {
 // status comes from computePlayoffStatus.
 const MAX_RP_PER_WEEK = 1.5;
 
+// Magic and elimination numbers, in rank points (which come in halves).
+//
+// Magic number: the rank points a team still has to earn, plus the rank
+// points its chaser fails to earn, in any combination, before no team
+// outside the playoff spots can catch it. The chaser is the other team with
+// the `slots`-th highest ceiling (rank points now plus 1.5 a week). A tie on
+// rank points isn't a clinch (wins and points for decide it), hence the
+// extra half point.
+//
+// Elimination number: the rank points a team fails to earn, plus the rank
+// points the team holding the last playoff spot (among the others) earns,
+// before that team is out of reach.
+//
+// Like computePlayoffStatus, this treats every game as independent, so it
+// can overstate a number when chasers still play each other.
+const RP_STEP = 0.5;
+
+function magicNumbers(standings, weeksLeft, slots) {
+    const ceiling = t => (t.rank_points || 0) + MAX_RP_PER_WEEK * weeksLeft;
+    const out = {};
+    for (const team of standings) {
+        const rp = team.rank_points || 0;
+        const others = standings.filter(t => t.abbrev !== team.abbrev);
+        const byCeiling = [...others].sort((a, b) => ceiling(b) - ceiling(a));
+        const byNow = [...others].sort((a, b) => (b.rank_points || 0) - (a.rank_points || 0));
+        const chaser = byCeiling[slots - 1];
+        const holder = byNow[slots - 1];
+        out[team.abbrev] = {
+            magic: chaser ? Math.max(0, ceiling(chaser) - rp + RP_STEP) : 0,
+            chaser: chaser?.abbrev || null,
+            elimination: holder ? Math.max(0, ceiling(team) - (holder.rank_points || 0) + RP_STEP) : null,
+            holder: holder?.abbrev || null,
+        };
+    }
+    return out;
+}
+
 function clinchRows(standings, status, weeksLeft, slots) {
-    const cutline = standings[slots - 1]?.rank_points ?? 0;
+    const numbers = magicNumbers(standings, weeksLeft, slots);
     return standings.map((team, i) => {
         const rp = team.rank_points || 0;
         const max = rp + MAX_RP_PER_WEEK * weeksLeft;
         const s = status[team.abbrev] || {};
+        const n = numbers[team.abbrev];
+        const inSpot = i < slots;
         let label;
-        if (s.clinched) label = 'Clinched';
-        else if (s.eliminated) label = 'Out';
-        else if (i < slots && rp > (standings[slots]?.rank_points ?? 0)) label = `In by ${chartNum(rp - standings[slots].rank_points)}`;
-        else if (rp === cutline) label = 'Tied at the line';
-        else label = `${chartNum(cutline - rp)} back`;
-        return { id: team.abbrev, rp, max, label, clinched: Boolean(s.clinched), eliminated: Boolean(s.eliminated) };
+        if (s.clinched || n.magic === 0) label = 'Clinched';
+        else if (s.eliminated || n.elimination === 0) label = 'Out';
+        else if (inSpot) label = `Magic # ${chartNum(n.magic)}`;
+        else label = `Elim # ${chartNum(n.elimination)}`;
+        return {
+            id: team.abbrev,
+            rp,
+            max,
+            label,
+            inSpot,
+            magic: n.magic,
+            chaser: n.chaser,
+            elimination: n.elimination,
+            holder: n.holder,
+            clinched: label === 'Clinched',
+            eliminated: label === 'Out',
+        };
     });
+}
+
+// The magic or elimination number spelled out under a team's bar.
+function clinchDetail(row, label) {
+    if (row.clinched || row.eliminated) return '';
+    if (row.inSpot) return ` · clinches with any ${chartNum(row.magic)} RP: its own, or ones ${label(row.chaser)} misses`;
+    return ` · out after any ${chartNum(row.elimination)} RP: its own misses, or ones ${label(row.holder)} earns`;
 }
 
 // ---- Finish history ----
@@ -425,7 +482,7 @@ const STANDINGS_CHARTS = [
         id: 'clinch-tracker',
         family: 'standings',
         title: 'Clinch tracker',
-        blurb: 'Rank points now (solid) and the most each team can still reach (faded). The top four make the playoffs.',
+        blurb: 'Rank points now (solid) and the most each team can still reach (faded); the top four make the playoffs. A magic number is the rank points a team earns plus those its chaser misses, in any combination, to clinch. An elimination number is the rank points a team misses plus those the team in the last playoff spot earns, until it is out.',
         home: { view: 'standings', subview: 'machine', anchor: 'chart-clinch-tracker' },
         compute(ctx) {
             const input = standingsInputFor(ctx);
@@ -441,7 +498,7 @@ const STANDINGS_CHARTS = [
                 rows: rows.map(r => ({
                     id: r.id,
                     label: input.label(r.id),
-                    sub: `${chartNum(r.rp)} RP now · can reach ${chartNum(r.max)}`,
+                    sub: `${chartNum(r.rp)} RP now · can reach ${chartNum(r.max)}${clinchDetail(r, input.short || input.label)}`,
                     value: r.max,
                     display: r.label,
                     segments: [
@@ -456,12 +513,19 @@ const STANDINGS_CHARTS = [
             const who = abbrev => chartWho(opts, input, abbrev);
             const clinched = rows.filter(r => r.clinched).length;
             const out = rows.filter(r => r.eliminated).length;
-            return standingsTok(this, model, opts, {
-                interest: 0.75,
-                caption: clinched || out
-                    ? `🔒 ${clinched} clinched, ${out} out, ${input.weeksLeft} week${input.weeksLeft === 1 ? '' : 's'} left`
-                    : `⏳ Nobody's in or out yet, ${input.weeksLeft} weeks left`,
-            });
+            const mine = opts.spotlight && rows.find(r => r.id === opts.spotlight && !r.clinched && !r.eliminated);
+            const closest = rows.filter(r => r.inSpot && !r.clinched).sort((a, b) => a.magic - b.magic)[0];
+            let caption;
+            if (mine) {
+                caption = mine.inSpot
+                    ? `🔢 ${who(mine.id)}'s magic number is ${chartNum(mine.magic)}`
+                    : `🧮 ${who(mine.id)}'s elimination number is ${chartNum(mine.elimination)}`;
+            } else if (closest) {
+                caption = `🔢 ${who(closest.id)}'s magic number is ${chartNum(closest.magic)}${clinched || out ? ` · ${clinched} clinched, ${out} out` : ''}`;
+            } else {
+                caption = `🔒 ${clinched} clinched, ${out} out, ${input.weeksLeft} week${input.weeksLeft === 1 ? '' : 's'} left`;
+            }
+            return standingsTok(this, model, opts, { interest: 0.8, caption });
         },
     },
     {
@@ -520,7 +584,7 @@ STANDINGS_CHARTS.forEach(chart => registerChart(chart));
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         chartNormalCdf, computePowerRankings, rankSeries, biggestMove, gameWinProbability,
-        expectedRemainingWins, clinchRows, finishPlace, finishHistory, finishLevel, STANDINGS_CHARTS,
+        expectedRemainingWins, magicNumbers, clinchRows, finishPlace, finishHistory, finishLevel, STANDINGS_CHARTS,
     };
 }
 
@@ -572,6 +636,8 @@ function standingsChartInput() {
         standings,
         teams,
         label: standingsTeamLabel,
+        // Owners' short names (charts.json), for sentences.
+        short: code => (data?.charts || sharedData?.charts)?.names?.[code] || standingsTeamLabel(code),
         weeks,
         remaining,
         weeksLeft,

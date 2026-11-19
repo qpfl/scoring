@@ -103,8 +103,33 @@ def test_clinch_rows_label_each_team_against_the_line():
         ];
         return clinchRows(standings, { A: { clinched: true }, D: { eliminated: true } }, 2, 2);
     """)
-    assert [r['label'] for r in rows] == ['Clinched', 'Tied at the line', 'Tied at the line', 'Out']
+    # B holds the last spot: its chaser C can reach 11, so B needs 3.5 (a tie
+    # isn't a clinch). C is out once B's 8 is out of reach: 11 - 8 + 0.5.
+    assert [r['label'] for r in rows] == ['Clinched', 'Magic # 3.5', 'Elim # 3.5', 'Out']
+    assert rows[1]['chaser'] == 'C' and rows[2]['holder'] == 'B'
     assert rows[0]['max'] == 13
+
+
+def test_magic_numbers_on_real_standings():
+    numbers = run_charts("""
+        const st = [['CGK', 12.5], ['S/T', 10.5], ['CWR', 9.5], ['SLS', 7.5], ['RPA', 7.5],
+                    ['AST', 7], ['GSA', 7], ['J/J', 5], ['WJK', 4.5], ['AYP', 4]]
+            .map(([abbrev, rank_points]) => ({ abbrev, rank_points }));
+        return magicNumbers(st, 5, 4);
+    """)
+    # Five weeks left: anyone can reach rank points + 7.5. The fourth-highest
+    # other ceiling for CGK is 15 (SLS or RPA), so 15 - 12.5 + 0.5.
+    assert numbers['CGK']['magic'] == 3
+    assert numbers['SLS']['magic'] == 8 and numbers['RPA']['elimination'] == 8
+    assert numbers['AYP']['elimination'] == 4.5
+
+
+def test_a_zero_magic_number_reads_as_clinched():
+    rows = run_charts("""
+        return clinchRows([{ abbrev: 'A', rank_points: 20 }, { abbrev: 'B', rank_points: 2 },
+                           { abbrev: 'C', rank_points: 1 }], {}, 1, 1);
+    """)
+    assert [r['label'] for r in rows] == ['Clinched', 'Out', 'Out']
 
 
 def test_finish_history_reads_places_titles_and_toilet_bowls():
@@ -159,7 +184,9 @@ def test_every_standings_chart_renders_and_makes_a_tok_card():
     # B and C swapped places in week 3; C's climb is the story.
     assert result['power-rankings']['caption'] == '🚀 Team C jumped 1 spot to No. 2'
     assert result['schedule-ahead']['caption'] == '😰 Team D has the toughest road left'
-    assert result['clinch-tracker']['caption'] == '🔒 1 clinched, 1 out, 1 week left'
+    assert result['clinch-tracker']['caption'] == (
+        "🔢 Team C's magic number is 0.5 · 1 clinched, 1 out"
+    )
     assert result['standings-replay']['caption'] == '🎢 Team A has led the league 3 weeks'
     assert result['playoff-odds-trend']['caption'].startswith('📈 Team A gained 20 points')
     assert result['finish-history']['caption'] == '🏆 GSA has 1 title'

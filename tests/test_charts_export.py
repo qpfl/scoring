@@ -45,7 +45,7 @@ def test_build_charts_stamps_the_season_and_week_and_every_block():
     block = charts.build_charts(
         [], [], current_season=2026, completed_through=10, names={'GSA': 'Griff'}
     )
-    assert block['version'] == charts.CHARTS_VERSION == 3
+    assert block['version'] == charts.CHARTS_VERSION == 4
     assert block['season'] == 2026 and block['completed_through'] == 10
     assert block['names'] == {'GSA': 'Griff'}
     assert set(block) >= {
@@ -57,6 +57,8 @@ def test_build_charts_stamps_the_season_and_week_and_every_block():
         'scores',
         'season_arcs',
         'costliest_drops',
+        'week_history',
+        'wrapped',
     }
 
 
@@ -192,3 +194,60 @@ def test_real_charts_json_stays_small():
     path = export_charts.CHARTS_PATH
     if path.exists():
         assert path.stat().st_size < 300_000
+
+
+def test_week_history_lists_each_week_newest_season_first():
+    history = [
+        *game(2024, 11, 'A', 140, 'B', 60),
+        *game(2025, 11, 'A', 100, 'B', 99),
+        *game(2025, 12, 'A', 90, 'B', 80),
+    ]
+    weeks = charts.week_history(history, [])
+    assert list(weeks) == ['11', '12']
+    assert [e['season'] for e in weeks['11']] == [2025, 2024]
+    top = next(a for a in weeks['11'][1]['awards'] if a['id'] == 'high_score')
+    assert top == {'id': 'high_score', 'team': 'A', 'value': 140, 'opp': 'B'}
+    # Labels and emoji live on the page, not in the file.
+    assert all('label' not in a and 'emoji' not in a for e in weeks['11'] for a in e['awards'])
+
+
+def test_season_wrapped_reviews_each_franchise():
+    history = [
+        *game(2025, 1, 'A', 120, 'B', 100, optimal=130),
+        *game(2025, 2, 'A', 90, 'B', 110),
+        *game(2025, 3, 'A', 80, 'B', 95),
+        *game(2025, 16, 'A', 130, 'B', 100, bracket=PLAYOFFS),
+    ]
+    # The title game.
+    history[-2] = history[-2].__class__(**{**history[-2].__dict__, 'title_game': True})
+    history[-1] = history[-1].__class__(**{**history[-1].__dict__, 'title_game': True})
+    from tests.test_player_charts import player
+
+    players = [
+        player('Josh Allen', 'A', 40, week=1, season=2025),
+        player('Josh Allen', 'A', 30, week=2, season=2025),
+        player('Kicker', 'A', 10, week=1, season=2025, position='K'),
+        player('Kicker', 'A', 10, week=2, season=2025, position='K'),
+        player('Kicker', 'A', 10, week=3, season=2025, position='K'),
+        player('Back', 'A', 5, week=3, season=2025, position='RB'),
+    ]
+    wrapped = charts.season_wrapped(history, players)
+    year = wrapped['2025']
+    assert year['complete'] is True
+    a = year['teams']['A']
+    assert a['record'] == [1, 2, 0] and a['champion'] is True and a['playoffs'] is True
+    assert a['best_week']['score'] == 130 and a['worst_week']['score'] == 80
+    assert a['mvp']['name'] == 'Josh Allen'
+    # Kickers don't count, and the MVP isn't also the workhorse.
+    assert a['workhorse']['name'] == 'Back'
+    assert a['nemesis'] == {'opp': 'B', 'record': [1, 2]}
+    assert a['lineup_iq'] == round(120 / 130, 3) and a['left_on_bench'] == 10
+    assert year['teams']['B']['ppg_rank'] == 1
+
+
+def test_charts_json_is_written_compact(tmp_path):
+    from scripts.export_weekly_facts import write_facts
+
+    path = tmp_path / 'charts.json'
+    write_facts({'a': [1, 2]}, path, indent=None)
+    assert path.read_text().startswith('{"a":[1,2],"generated_at":')

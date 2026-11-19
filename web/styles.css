@@ -15797,3 +15797,44 @@ body.tok-mode .global-login-dropdown { display: none !important; }
 .chart-note { margin: var(--space-3) 0 0; color: var(--text-muted); font-size: var(--text-xs); }
 .tok-pill-family.is-awards { background: var(--accent-warning); color: #1a1300; }
 .tok-body .chart-awards { grid-template-columns: 1fr; }
+
+/* This week in history and Season Wrapped (web/charts-seasons.js). */
+.chart-history { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-4); }
+.chart-history-year { margin: 0 0 var(--space-2); color: var(--text-primary); font-size: var(--text-base); }
+.chart-history-year span { color: var(--text-muted); font-size: var(--text-xs); font-weight: 500; margin-left: var(--space-1); }
+
+.wrapped-seasons { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
+.wrapped {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(90, 147, 232, 0.16), var(--bg-card) 55%);
+}
+.wrapped.is-champion { background: linear-gradient(160deg, rgba(201, 162, 39, 0.28), var(--bg-card) 55%); }
+.wrapped-hero { display: grid; gap: 2px; padding: var(--space-4); }
+.wrapped-year { color: var(--accent-primary); font-size: var(--text-xs); font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+.wrapped.is-champion .wrapped-year { color: var(--gold); }
+.wrapped-team { color: var(--text-primary); font-size: var(--text-xl); font-weight: 800; }
+.wrapped-record { color: var(--text-primary); font-size: var(--text-3xl); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.wrapped-finish { color: var(--text-secondary); font-weight: 600; }
+.wrapped-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    border-top: 1px solid var(--border);
+}
+.wrapped-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-3);
+    background: var(--bg-card);
+    box-shadow: 1px 0 0 var(--border), 0 1px 0 var(--border);
+}
+.wrapped-tile.is-mvp { background: color-mix(in srgb, var(--accent-primary) 10%, var(--bg-card)); }
+.wrapped-label { color: var(--text-muted); font-size: var(--text-2xs); font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+.wrapped-value { color: var(--text-primary); font-size: var(--text-lg); font-weight: 800; }
+.wrapped-sub { color: var(--text-muted); font-size: var(--text-xs); }
+.tok-body .wrapped-grid { grid-template-columns: 1fr 1fr; }
+.tok-body .wrapped-tile { padding: var(--space-2); }
+.tok-pill-family.is-wrapped { background: #f472b6; color: #2a0717; }
+.home-wrapped-banner { background: linear-gradient(90deg, rgba(244, 114, 182, 0.22), var(--bg-card) 60%); }

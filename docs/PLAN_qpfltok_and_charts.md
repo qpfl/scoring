@@ -270,3 +270,26 @@ Each family PR adds `compute`, `render` and `tok` for its charts, the in-view se
    - **Desktop:** QPFLTok shows the phone frame.
    - **In-view sections:** each new section renders in its home view, highlights the logged-in team, and renders nothing for a historical season with no data.
 3. Check that the Home teaser count matches the unseen cards.
+
+
+---
+
+## Follow-ups (added after Phase 5)
+
+- **Magic numbers** (`magicNumbers`, `web/charts-standings.js`):
+  - **Labels:** the clinch tracker labels each team in a playoff spot "Magic # N" and each team chasing one "Elim # N".
+  - **Magic number:** a team's own rank points plus those its chaser misses, in any combination. The chaser is the other team with the 4th-highest ceiling.
+  - **Elimination number:** a team's own misses plus the rank points earned by the team holding the last spot.
+  - **Ties:** the extra half point is there because tied rank points aren't a clinch.
+  - **Limits:** like `computePlayoffStatus`, it treats games as independent.
+- **This week in history** (`week-in-history`, `web/charts-seasons.js`):
+  - **What it shows:** every past season's top score, low score, biggest blowout, closest game and MVP for the week ahead.
+  - **Where:** Matchups → Preview and a timely QPFLTok clip.
+  - **Data:** `charts.json` `week_history`, from `qpfl.charts.week_history`, which reuses `weekly_awards`.
+- **Season Wrapped** (`season-wrapped`, `web/charts-seasons.js`):
+  - **What it shows:** a year in review per franchise: record, finish, MVP, points-per-game rank, best and worst weeks, biggest win and worst loss, lineup IQ, luck, nemesis and workhorse.
+  - **Where:** the top of each team's Hall of Fame, with chips for every season. The current season is shown "so far" until its title game is in.
+  - **Clip:** a QPFLTok clip for the spotlight team.
+  - **Home banner:** "<season> Wrapped is here" appears once the live season's championship is in, until the manager opens it.
+  - **Data:** `charts.json` `wrapped`, from `qpfl.charts.season_wrapped`; the finish place comes from the Hall of Fame badges.
+- **`charts.json` v4:** now written compact (`write_facts(..., indent=None)`), about 120 KB, or 20 KB gzipped.

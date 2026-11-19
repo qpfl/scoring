@@ -56,7 +56,7 @@ def main() -> None:
         player_names=player_names,
     )
     # Same rule as the facts files: no commit when only the timestamp moves.
-    changed = write_facts(charts, args.output)
+    changed = write_facts(charts, args.output, indent=None)
     print(f'{"Wrote" if changed else "Unchanged:"} {args.output}')
 
 
