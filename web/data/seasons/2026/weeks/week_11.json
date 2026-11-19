@@ -1,6 +1,6 @@
 {
   "week": 11,
-  "scored_at": "2026-11-19T18:31:40.431513+00:00",
+  "scored_at": "2026-11-19T18:39:26.895088+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -491,7 +491,7 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 8.7,
           "nfl_opponent": "ARI",
           "nfl_is_home": true,
@@ -771,10 +771,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 77.6,
-      "win_probability": 0.4378,
-      "starters_remaining": 9,
-      "pregame_total": 77.6,
+      "projected_total": 86.4,
+      "win_probability": 0.6061,
+      "starters_remaining": 10,
+      "pregame_total": 86.4,
       "score_rank": 2
     },
     {
@@ -2341,7 +2341,7 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 80.8,
-      "win_probability": 0.5622,
+      "win_probability": 0.3939,
       "starters_remaining": 9,
       "pregame_total": 80.8,
       "score_rank": 6
@@ -5101,7 +5101,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 80.8,
-        "win_probability": 0.5622,
+        "win_probability": 0.3939,
         "starters_remaining": 9,
         "pregame_total": 80.8,
         "score_rank": 6
@@ -5202,7 +5202,7 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 8.7,
             "nfl_opponent": "ARI",
             "nfl_is_home": true,
@@ -5482,10 +5482,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 77.6,
-        "win_probability": 0.4378,
-        "starters_remaining": 9,
-        "pregame_total": 77.6,
+        "projected_total": 86.4,
+        "win_probability": 0.6061,
+        "starters_remaining": 10,
+        "pregame_total": 86.4,
         "score_rank": 2
       }
     },
