@@ -211,6 +211,15 @@ Every chart also produces a QPFLTok card. "Client" means the browser computes it
 
 **Players, moves & awards** (replaces old Phases 6 and 8; methods as specified there)
 
+**Status:** shipped in Phase 5, in `web/charts-players.js`. What changed from the table below:
+- **Weekly awards:** an `awards` block in each week's facts file, from `qpfl.charts.weekly_awards`, called by `export_weekly_facts.py`. Awards are MVP, high score, low score, biggest blowout, nail-biter, upset of the week (projected to lose, won), bench MVP and most left on the bench. They show on Matchups → This Week and as QPFLTok's "Awards night" clip. Best pickup was dropped.
+- **Draft value** is computed in the browser from the Drafts page's own pick performance (`draftPickFranchisePerformance`, `draftTeamCode`), because draft boards name teams by owner and only the front end maps those names to codes. Each pick is measured against its own draft's average before comparing slots, and drafts are graded once two seasons have passed.
+- **Trade grades** are a curve over every scoreable side's margin (A+ is the top 10%, F the bottom 30%), shown as each franchise's trade GPA.
+- **Costliest drops** use `charts.json` v3, from the weekly roster timeline: a player off every roster the next regular-season week, then starting elsewhere within 17 weeks.
+- **Boom or bust and one-man armies** come from the season on screen.
+- **Benching hall of shame** stays the existing Stats → Lineups card; a bar version would only repeat it.
+- **Season Wrapped** is still to come, after the championship.
+
 | Chart | Primitive | Home | Source |
 |---|---|---|---|
 | Boom or bust (weekly spread of starters) | stripPlot | Stats → Player Leaders | export |

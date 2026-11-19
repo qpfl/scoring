@@ -1197,7 +1197,8 @@ async function prepareViewData(view, subview) {
         }
         await Promise.all(requests);
     } else if (view === 'stats') {
-        const requests = [ensureAllSeasonWeeks()];
+        // charts.json carries the owner names the player charts label teams with.
+        const requests = [ensureAllSeasonWeeks(), ensureSharedResource('charts').catch(() => null)];
         if (subview === 'lineups') requests.push(ensureSharedResource('lineup_superlatives'));
         // Leaders rank current players on their full season, which needs the
         // current rosters to know whose off-roster weeks count.
@@ -1223,6 +1224,7 @@ async function prepareViewData(view, subview) {
         }
     } else if (view === 'transactions') {
         await Promise.all([
+            ensureSharedResource('charts').catch(() => null),
             ensureSharedResource('transactions'),
             ensureSharedResource('hall_of_fame'),
             ensureSharedResource('drafts'),
@@ -1231,6 +1233,7 @@ async function prepareViewData(view, subview) {
         ]);
     } else if (view === 'drafts' && subview !== 'challenge') {
         await Promise.all([
+            ensureSharedResource('charts').catch(() => null),
             ensureSharedResource('drafts'),
             ensureSharedResource('hall_of_fame'),
             ensureCurrentSeasonFiles({ rosters: true, draftPicks: true }),
@@ -1246,6 +1249,8 @@ async function prepareViewData(view, subview) {
                 ensureCurrentSeasonFiles({ rosters: true }),
                 ensureSharedResource('charts').catch(() => null),
                 ensureSharedResource('hall_of_fame').catch(() => null),
+                ensureSharedResource('transactions').catch(() => null),
+                ensureSharedResource('drafts').catch(() => null),
             ]);
         }
     } else if (view === 'manage') {
@@ -1286,6 +1291,7 @@ const VIEW_RENDERERS = {
         renderStatsLeaders();
         renderTeamStats();
         renderTeamStatsCharts();
+        renderPlayerStatsCharts();
         if (subview === 'lineups') renderLineupsTab();
     },
     history: subview => {
@@ -1293,10 +1299,16 @@ const VIEW_RENDERERS = {
         else if (subview === 'rules') { renderConstitution(); renderRuleChanges(); }
         else renderHallOfFame();
     },
-    transactions: () => renderTransactions(),
+    transactions: () => {
+        renderTransactions();
+        renderTransactionCharts();
+    },
     drafts: subview => {
         if (subview === 'picks') renderPickTracker();
-        else if (subview !== 'challenge') renderDrafts();
+        else if (subview !== 'challenge') {
+            renderDrafts();
+            renderDraftCharts();
+        }
     },
 };
 
@@ -10988,6 +11000,9 @@ async function renderMatchupWeeklyFacts(season, week) {
 
     const { facts, list } = notes;
     let { headline, rest } = notes;
+    const awards = renderChartSection('weekly-awards', {
+        awardsInput: { awards: facts.awards, season, week, names: facts.names || {} },
+    }, { highlight: myTeamAbbrev() });
     // Notes about a single matchup live in that matchup's Recap; this keeps
     // the rest of the league's.
     if (matchupDrawerMode(true) === 'recap') {
@@ -11000,11 +11015,11 @@ async function renderMatchupWeeklyFacts(season, week) {
         rest = rest.filter(fact => !inRecap.has(fact.template));
         if (!headline.length && rest.length) headline = rest.splice(0, PREGAME_NOTES_SHOWN);
         if (!headline.length) {
-            slot.innerHTML = '';
+            slot.innerHTML = awards;
             return;
         }
     }
-    slot.innerHTML = `
+    slot.innerHTML = `${awards}
         <section class="matchup-weekly-facts" aria-label="This Week in QPFL History">
             <div class="hof-section-title">This Week in QPFL History</div>
             <div class="weekly-facts-week">${escapeHtml(`${season} · ${facts.week_label || `Week ${week}`}`)}</div>

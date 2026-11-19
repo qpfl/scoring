@@ -368,10 +368,12 @@
             <div class="subview active" id="stats-leaders-subview" role="tabpanel" aria-labelledby="stats-leaders-tab">
                 <div class="stats-position-selector" id="stats-position-selector" role="tablist" aria-label="Player position"></div>
                 <div class="stats-leaders-container" id="stats-leaders-container" role="tabpanel"></div>
+                <div id="stats-leaders-charts" class="standings-charts"></div>
             </div>
             <div class="subview" id="stats-team-subview" role="tabpanel" aria-labelledby="stats-team-tab" hidden>
                 <div class="team-stats-content" id="team-stats-container"></div>
                 <div id="team-stats-charts" class="standings-charts"></div>
+                <div id="team-stats-player-charts" class="standings-charts"></div>
             </div>
             <div class="subview" id="stats-lineups-subview" role="tabpanel" aria-labelledby="stats-lineups-tab" hidden>
                 <div class="lineups-content" id="lineups-container"></div>
@@ -417,6 +419,7 @@
                 <div class="transactions-filters" id="transactions-type-filters" role="group" aria-label="Transaction type filters"></div>
                 <div class="transactions-filters" id="transactions-team-filters" role="group" aria-label="Team filters"></div>
                 <div id="transactions-blowouts"></div>
+                <div id="transactions-charts" class="standings-charts"></div>
                 <div id="transactions-container" aria-live="polite"></div>
             </div>
         </div>
@@ -431,6 +434,7 @@
             <div class="subview active" id="drafts-history-subview" role="tabpanel" aria-labelledby="drafts-history-tab">
                 <div class="drafts-tabs" id="drafts-tabs" role="tablist" aria-label="Draft seasons"></div>
                 <div class="drafts-content" id="drafts-container" role="tabpanel"></div>
+                <div id="drafts-charts" class="standings-charts"></div>
             </div>
             <div class="subview" id="drafts-picks-subview" role="tabpanel" aria-labelledby="drafts-picks-tab" hidden>
                 <div class="picks-filters" id="pick-tracker-type-filters" role="group" aria-label="Draft type"></div>
@@ -1080,6 +1084,7 @@
     <script src="charts-standings.js" defer></script>
     <script src="charts-luck.js" defer></script>
     <script src="charts-managers.js" defer></script>
+    <script src="charts-players.js" defer></script>
     <script src="app.js" defer></script>
     <script src="ads.js" defer></script>
     

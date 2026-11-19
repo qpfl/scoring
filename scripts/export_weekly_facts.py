@@ -16,6 +16,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from api.newsletter_export import short_names
+from qpfl.charts import weekly_awards
 from qpfl.constants import SEASONS_DIR, SHARED_DIR
 from qpfl.recap import generate_recaps, merge_with_weekly
 from qpfl.weekly_facts import (
@@ -442,6 +443,7 @@ def main() -> None:
             generate_recaps(team_games, player_games, season, week), facts['all']
         )
         facts['names'] = names
+        facts['awards'] = weekly_awards(team_games, player_games, season, week)
         path = facts_path(season, week)
         changed = write_facts(facts, path)
         status = 'wrote' if changed else 'unchanged'

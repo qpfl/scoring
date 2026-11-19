@@ -18,10 +18,10 @@ from collections import defaultdict
 from collections.abc import Iterable, Sequence
 from typing import Any
 
-from qpfl.weekly_facts import PLAYOFFS, REGULAR, PlayerGame, TeamGame
+from qpfl.weekly_facts import PLAYOFFS, REGULAR, PlayerGame, TeamGame, regular_season_weeks
 
 # Bump when the file's shape changes in a way old clients can't read.
-CHARTS_VERSION = 2
+CHARTS_VERSION = 3
 
 ELO_START = 1500.0
 ELO_K = 24.0
@@ -353,6 +353,172 @@ def season_arcs(team_games: Sequence[TeamGame]) -> dict[str, dict[str, list[floa
     return {f: dict(sorted(seasons.items())) for f, seasons in sorted(out.items())}
 
 
+# ---- Weekly awards ----
+
+
+def weekly_awards(
+    team_games: Sequence[TeamGame], player_games: Sequence[PlayerGame], season: int, week: int
+) -> list[dict[str, Any]]:
+    """The week's fixed awards, for the facts file, the Matchups page and QPFLTok.
+
+    Each award names the team (that week's code) and, for player awards, the
+    player. An award with no candidate (no projections, no bench) is left out.
+    """
+    sides = [g for g in team_games if g.season == season and g.week == week]
+    if not sides:
+        return []
+    players = [p for p in player_games if p.season == season and p.week == week]
+    starters = [p for p in players if p.starter]
+    bench = [p for p in players if not p.starter]
+    decided = [g for g in sides if g.decided and g.single_game]
+    awards: list[dict[str, Any]] = []
+
+    def add(award_id, label, emoji, team, value, **extra):
+        awards.append(
+            {'id': award_id, 'label': label, 'emoji': emoji, 'team': team, 'value': value, **extra}
+        )
+
+    if starters:
+        mvp = max(starters, key=lambda p: (p.score, p.name))
+        add('mvp', 'MVP', '⭐', mvp.abbrev, mvp.score, player=mvp.name, position=mvp.position)
+    high = max(sides, key=lambda g: (g.score, g.abbrev))
+    add('high_score', 'High score', '🔥', high.abbrev, high.score, opp=high.opp_abbrev)
+    low = min(sides, key=lambda g: (g.score, g.abbrev))
+    add('low_score', 'Low score', '🧊', low.abbrev, low.score, opp=low.opp_abbrev)
+    winners = [g for g in decided if g.won]
+    if winners:
+        blowout = max(winners, key=lambda g: (g.margin, g.abbrev))
+        add(
+            'blowout',
+            'Biggest blowout',
+            '⚔️',
+            blowout.abbrev,
+            round(blowout.margin, 1),
+            opp=blowout.opp_abbrev,
+            score=[blowout.score, blowout.opp_score],
+        )
+        close = min(winners, key=lambda g: (g.margin, g.abbrev))
+        add(
+            'nail_biter',
+            'Nail-biter',
+            '😬',
+            close.abbrev,
+            round(close.margin, 1),
+            opp=close.opp_abbrev,
+            score=[close.score, close.opp_score],
+        )
+        upsets = [
+            g
+            for g in winners
+            if g.projected is not None
+            and g.opp_projected is not None
+            and g.projected < g.opp_projected
+        ]
+        if upsets:
+            upset = min(upsets, key=lambda g: (g.projected - g.opp_projected, g.abbrev))
+            add(
+                'upset',
+                'Upset of the week',
+                '⚡',
+                upset.abbrev,
+                round(upset.projected - upset.opp_projected, 1),
+                opp=upset.opp_abbrev,
+                score=[upset.score, upset.opp_score],
+                projected=[upset.projected, upset.opp_projected],
+            )
+    if bench:
+        sat = max(bench, key=lambda p: (p.score, p.name))
+        if sat.score > 0:
+            add(
+                'bench_mvp',
+                'Bench MVP',
+                '🪑',
+                sat.abbrev,
+                sat.score,
+                player=sat.name,
+                position=sat.position,
+            )
+    left = [g for g in sides if g.optimal is not None and g.optimal > g.score]
+    if left:
+        worst = max(left, key=lambda g: (g.optimal - g.score, g.abbrev))
+        add(
+            'left_on_bench',
+            'Most left on the bench',
+            '🤦',
+            worst.abbrev,
+            round(worst.optimal - worst.score, 1),
+            score=worst.score,
+            optimal=worst.optimal,
+        )
+    return awards
+
+
+# ---- Costliest drops ----
+
+DROP_WINDOW_WEEKS = 17
+DROPS_SHOWN = 10
+
+
+def costliest_drops(
+    timeline: dict[tuple[int, int], dict[str, str]],
+    player_games: Sequence[PlayerGame],
+    franchise_of,
+    names: dict[str, str],
+) -> list[dict[str, Any]]:
+    """Players a team let go during the regular season (off every roster the
+    next week, so not traded) and the points they then scored starting for
+    other teams over the next 17 weeks. `franchise_of(code)` maps a season's
+    team code to franchises."""
+    weeks = sorted(timeline)
+    index = {w: i for i, w in enumerate(weeks)}
+
+    def comparable(i: int) -> bool:
+        # Every team plays every regular-season week, so a player missing
+        # from all rosters the next week was let go. Playoff weeks leave out
+        # eliminated teams, and the offseason reshuffles rosters, so those
+        # transitions say nothing.
+        (season, _), (next_season, next_week) = weeks[i], weeks[i + 1]
+        return season == next_season and next_week <= regular_season_weeks(season)
+
+    starts: dict[str, list[PlayerGame]] = defaultdict(list)
+    for p in player_games:
+        if p.starter:
+            starts[p.player_key].append(p)
+
+    drops = []
+    for i in range(len(weeks) - 1):
+        if not comparable(i):
+            continue
+        now, nxt = timeline[weeks[i]], timeline[weeks[i + 1]]
+        for key, code in now.items():
+            if key in nxt:
+                continue
+            dropped_by = set(franchise_of(code))
+            later = [
+                p
+                for p in starts.get(key, [])
+                if (p.season, p.week) in index
+                and i < index[(p.season, p.week)] <= i + DROP_WINDOW_WEEKS
+                and not (set(p.franchises) & dropped_by)
+            ]
+            points = sum(p.score for p in later)
+            if points <= 0:
+                continue
+            drops.append(
+                {
+                    'player': names.get(key, later[0].name),
+                    'team': sorted(dropped_by)[0],
+                    'season': weeks[i][0],
+                    'week': weeks[i][1],
+                    'points': round(points, 1),
+                    'starts': len(later),
+                    'to': sorted({f for p in later for f in p.franchises}),
+                }
+            )
+    drops.sort(key=lambda d: (-d['points'], d['season'], d['week']))
+    return drops[:DROPS_SHOWN]
+
+
 def build_charts(
     team_games: Sequence[TeamGame],
     player_games: Sequence[PlayerGame],
@@ -360,6 +526,9 @@ def build_charts(
     current_season: int,
     completed_through: int,
     names: dict[str, str] | None = None,
+    timeline: dict[tuple[int, int], dict[str, str]] | None = None,
+    franchise_of=None,
+    player_names: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     """Every precomputed chart block, keyed by chart id.
 
@@ -380,4 +549,7 @@ def build_charts(
         'streaks': streaks(team_games),
         'scores': score_distributions(team_games),
         'season_arcs': season_arcs(team_games),
+        'costliest_drops': costliest_drops(
+            timeline or {}, player_games, franchise_of or (lambda code: (code,)), player_names or {}
+        ),
     }

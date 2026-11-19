@@ -1151,5 +1151,74 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:16.903968+00:00"
+  "awards": [
+    {
+      "id": "mvp",
+      "label": "MVP",
+      "emoji": "\u2b50",
+      "team": "CGK",
+      "value": 45.0,
+      "player": "Josh Allen",
+      "position": "QB"
+    },
+    {
+      "id": "high_score",
+      "label": "High score",
+      "emoji": "\ud83d\udd25",
+      "team": "RPA",
+      "value": 130.0,
+      "opp": "J/J"
+    },
+    {
+      "id": "low_score",
+      "label": "Low score",
+      "emoji": "\ud83e\uddca",
+      "team": "SLS",
+      "value": 58.0,
+      "opp": "CGK"
+    },
+    {
+      "id": "blowout",
+      "label": "Biggest blowout",
+      "emoji": "\u2694\ufe0f",
+      "team": "RPA",
+      "value": 60.0,
+      "opp": "J/J",
+      "score": [
+        130.0,
+        70.0
+      ]
+    },
+    {
+      "id": "nail_biter",
+      "label": "Nail-biter",
+      "emoji": "\ud83d\ude2c",
+      "team": "CWR",
+      "value": 5.0,
+      "opp": "WJK",
+      "score": [
+        68.0,
+        63.0
+      ]
+    },
+    {
+      "id": "bench_mvp",
+      "label": "Bench MVP",
+      "emoji": "\ud83e\ude91",
+      "team": "AST",
+      "value": 37.0,
+      "player": "Jared Goff",
+      "position": "QB"
+    },
+    {
+      "id": "left_on_bench",
+      "label": "Most left on the bench",
+      "emoji": "\ud83e\udd26",
+      "team": "J/J",
+      "value": 47.0,
+      "score": 70.0,
+      "optimal": 117.0
+    }
+  ],
+  "generated_at": "2026-11-19T02:04:45.443497+00:00"
 }

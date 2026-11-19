@@ -45,7 +45,7 @@ def test_build_charts_stamps_the_season_and_week_and_every_block():
     block = charts.build_charts(
         [], [], current_season=2026, completed_through=10, names={'GSA': 'Griff'}
     )
-    assert block['version'] == charts.CHARTS_VERSION == 2
+    assert block['version'] == charts.CHARTS_VERSION == 3
     assert block['season'] == 2026 and block['completed_through'] == 10
     assert block['names'] == {'GSA': 'Griff'}
     assert set(block) >= {
@@ -56,6 +56,7 @@ def test_build_charts_stamps_the_season_and_week_and_every_block():
         'streaks',
         'scores',
         'season_arcs',
+        'costliest_drops',
     }
 
 

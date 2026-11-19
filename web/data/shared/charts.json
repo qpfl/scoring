@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "season": 2026,
   "completed_through": 10,
   "names": {
@@ -5035,5 +5035,119 @@
       ]
     }
   },
-  "generated_at": "2026-11-19T01:53:14.247538+00:00"
+  "costliest_drops": [
+    {
+      "player": "David Montgomery",
+      "team": "WJK",
+      "season": 2020,
+      "week": 6,
+      "points": 114.0,
+      "starts": 8,
+      "to": [
+        "CWR",
+        "RPA",
+        "SLS"
+      ]
+    },
+    {
+      "player": "Kyle Monangai",
+      "team": "SLS",
+      "season": 2025,
+      "week": 6,
+      "points": 94.0,
+      "starts": 10,
+      "to": [
+        "AYP"
+      ]
+    },
+    {
+      "player": "Diontae Johnson",
+      "team": "CGK",
+      "season": 2021,
+      "week": 6,
+      "points": 93.0,
+      "starts": 12,
+      "to": [
+        "AST"
+      ]
+    },
+    {
+      "player": "Matthew Stafford",
+      "team": "AYP",
+      "season": 2024,
+      "week": 3,
+      "points": 88.0,
+      "starts": 6,
+      "to": [
+        "RPA"
+      ]
+    },
+    {
+      "player": "Tony Pollard",
+      "team": "CGK",
+      "season": 2021,
+      "week": 10,
+      "points": 86.0,
+      "starts": 4,
+      "to": [
+        "AST"
+      ]
+    },
+    {
+      "player": "Bhayshul Tuten",
+      "team": "CWR",
+      "season": 2025,
+      "week": 6,
+      "points": 61.0,
+      "starts": 5,
+      "to": [
+        "AYP"
+      ]
+    },
+    {
+      "player": "Michael Pittman Jr.",
+      "team": "WJK",
+      "season": 2021,
+      "week": 6,
+      "points": 56.0,
+      "starts": 6,
+      "to": [
+        "J/J"
+      ]
+    },
+    {
+      "player": "Ryan Tannehill",
+      "team": "J/J",
+      "season": 2020,
+      "week": 5,
+      "points": 46.0,
+      "starts": 2,
+      "to": [
+        "CGK"
+      ]
+    },
+    {
+      "player": "George Pickens",
+      "team": "RPA",
+      "season": 2022,
+      "week": 6,
+      "points": 43.0,
+      "starts": 5,
+      "to": [
+        "S/T"
+      ]
+    },
+    {
+      "player": "J.K. Dobbins",
+      "team": "CGK",
+      "season": 2024,
+      "week": 13,
+      "points": 37.0,
+      "starts": 5,
+      "to": [
+        "RPA"
+      ]
+    }
+  ],
+  "generated_at": "2026-11-19T02:04:38.449950+00:00"
 }

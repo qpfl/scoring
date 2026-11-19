@@ -92,6 +92,7 @@ jobs:
           node --check web/charts-standings.js
           node --check web/charts-luck.js
           node --check web/charts-managers.js
+          node --check web/charts-players.js
 
       - name: Validate JSON schemas
         run: uv run --frozen python -m qpfl.data_validation

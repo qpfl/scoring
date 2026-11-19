@@ -1559,5 +1559,90 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.270819+00:00"
+  "awards": [
+    {
+      "id": "mvp",
+      "label": "MVP",
+      "emoji": "\u2b50",
+      "team": "AYP",
+      "value": 46.0,
+      "player": "Drake Maye",
+      "position": "QB"
+    },
+    {
+      "id": "high_score",
+      "label": "High score",
+      "emoji": "\ud83d\udd25",
+      "team": "SLS",
+      "value": 116.0,
+      "opp": "S/T"
+    },
+    {
+      "id": "low_score",
+      "label": "Low score",
+      "emoji": "\ud83e\uddca",
+      "team": "GSA",
+      "value": 59.0,
+      "opp": "RPA"
+    },
+    {
+      "id": "blowout",
+      "label": "Biggest blowout",
+      "emoji": "\u2694\ufe0f",
+      "team": "AYP",
+      "value": 37.0,
+      "opp": "AST",
+      "score": [
+        97.0,
+        60.0
+      ]
+    },
+    {
+      "id": "nail_biter",
+      "label": "Nail-biter",
+      "emoji": "\ud83d\ude2c",
+      "team": "SLS",
+      "value": 13.0,
+      "opp": "S/T",
+      "score": [
+        116.0,
+        103.0
+      ]
+    },
+    {
+      "id": "upset",
+      "label": "Upset of the week",
+      "emoji": "\u26a1",
+      "team": "SLS",
+      "value": -18.8,
+      "opp": "S/T",
+      "score": [
+        116.0,
+        103.0
+      ],
+      "projected": [
+        81.4,
+        100.2
+      ]
+    },
+    {
+      "id": "bench_mvp",
+      "label": "Bench MVP",
+      "emoji": "\ud83e\ude91",
+      "team": "RPA",
+      "value": 33.0,
+      "player": "Matthew Stafford",
+      "position": "QB"
+    },
+    {
+      "id": "left_on_bench",
+      "label": "Most left on the bench",
+      "emoji": "\ud83e\udd26",
+      "team": "WJK",
+      "value": 42.0,
+      "score": 93.0,
+      "optimal": 135.0
+    }
+  ],
+  "generated_at": "2026-11-19T02:04:45.827774+00:00"
 }

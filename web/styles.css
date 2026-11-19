@@ -15774,3 +15774,26 @@ body.tok-mode .global-login-dropdown { display: none !important; }
 .chart-subtitle { margin: var(--space-4) 0 var(--space-2); color: var(--text-secondary); font-size: var(--text-sm); font-weight: 600; }
 .chart-columns .chart-subtitle { margin-top: 0; }
 .tok-fingerprint-owner { margin: 0 0 var(--space-3); color: var(--text-primary); font-weight: 700; font-size: var(--text-lg); }
+
+/* Players, moves & awards charts (web/charts-players.js). */
+.chart-awards { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+.chart-award {
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--bg-raised);
+}
+.chart-award.is-highlight { border-color: var(--accent-primary); }
+.chart-award-emoji { font-size: 1.4rem; text-align: center; }
+.chart-award-text { display: flex; flex-direction: column; min-width: 0; }
+.chart-award-label { color: var(--text-muted); font-size: var(--text-2xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.chart-award-who { color: var(--text-primary); font-weight: 700; }
+.chart-award-sub { color: var(--text-muted); font-size: var(--text-xs); }
+.chart-award-value { color: var(--text-primary); font-size: var(--text-lg); font-weight: 800; font-variant-numeric: tabular-nums; }
+.chart-note { margin: var(--space-3) 0 0; color: var(--text-muted); font-size: var(--text-xs); }
+.tok-pill-family.is-awards { background: var(--accent-warning); color: #1a1300; }
+.tok-body .chart-awards { grid-template-columns: 1fr; }

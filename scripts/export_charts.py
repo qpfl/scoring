@@ -17,6 +17,7 @@ from scripts import export_hall_of_fame as hof
 from scripts.export_weekly_facts import (
     OWNER_NAMES,
     default_week,
+    franchises_for,
     load_history,
     owner_names,
     write_facts,
@@ -40,7 +41,7 @@ def main() -> None:
     completed = (
         args.completed_through if args.completed_through is not None else default_week(current)
     )
-    team_games, player_games, _timeline, _names = load_history(current, completed)
+    team_games, player_games, timeline, player_names = load_history(current, completed)
     # Earlier owners by their Hall of Fame names; today's seats by the short
     # names the newsletter and QPFLTok use (Griff, Spencer/Tim).
     names = {**OWNER_NAMES, **owner_names(current)}
@@ -50,6 +51,9 @@ def main() -> None:
         current_season=current,
         completed_through=completed,
         names=names,
+        timeline=timeline,
+        franchise_of=franchises_for,
+        player_names=player_names,
     )
     # Same rule as the facts files: no commit when only the timestamp moves.
     changed = write_facts(charts, args.output)

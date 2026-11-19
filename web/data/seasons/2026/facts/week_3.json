@@ -1381,5 +1381,74 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-13T15:34:17.025094+00:00"
+  "awards": [
+    {
+      "id": "mvp",
+      "label": "MVP",
+      "emoji": "\u2b50",
+      "team": "WJK",
+      "value": 38.0,
+      "player": "Brock Purdy",
+      "position": "QB"
+    },
+    {
+      "id": "high_score",
+      "label": "High score",
+      "emoji": "\ud83d\udd25",
+      "team": "S/T",
+      "value": 122.0,
+      "opp": "GSA"
+    },
+    {
+      "id": "low_score",
+      "label": "Low score",
+      "emoji": "\ud83e\uddca",
+      "team": "AYP",
+      "value": 46.0,
+      "opp": "RPA"
+    },
+    {
+      "id": "blowout",
+      "label": "Biggest blowout",
+      "emoji": "\u2694\ufe0f",
+      "team": "RPA",
+      "value": 48.0,
+      "opp": "AYP",
+      "score": [
+        94.0,
+        46.0
+      ]
+    },
+    {
+      "id": "nail_biter",
+      "label": "Nail-biter",
+      "emoji": "\ud83d\ude2c",
+      "team": "CGK",
+      "value": 6.0,
+      "opp": "WJK",
+      "score": [
+        106.0,
+        100.0
+      ]
+    },
+    {
+      "id": "bench_mvp",
+      "label": "Bench MVP",
+      "emoji": "\ud83e\ude91",
+      "team": "WJK",
+      "value": 31.0,
+      "player": "Tyler Shough",
+      "position": "QB"
+    },
+    {
+      "id": "left_on_bench",
+      "label": "Most left on the bench",
+      "emoji": "\ud83e\udd26",
+      "team": "AYP",
+      "value": 37.0,
+      "score": 46.0,
+      "optimal": 83.0
+    }
+  ],
+  "generated_at": "2026-11-19T02:04:45.577069+00:00"
 }
