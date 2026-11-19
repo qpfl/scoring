@@ -15756,3 +15756,15 @@ body.tok-mode .global-login-dropdown { display: none !important; }
 .tok-body > .chart-figure > .chart-svg { flex: 1; min-height: 0; width: 100%; height: 100%; }
 .tok-body .chart-table { display: none; }
 .tok-body .chart-heatgrid { max-width: 100%; }
+
+/* Luck & what-if charts (web/charts-luck.js). */
+.whatif-charts { margin-top: var(--space-4); }
+.chart-ring-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--space-3) var(--space-5);
+}
+.chart-ring-grid .chart-ring-label { font-size: var(--text-sm); }
+.hg-cell.is-actual { fill: var(--bg-raised); stroke: var(--text-primary); stroke-width: 2; }
+.tok-body .chart-ring-grid { grid-template-columns: 1fr; gap: var(--space-2); }
+.tok-body .chart-div-row { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) 3rem; }

@@ -175,6 +175,11 @@ Every chart also produces a QPFLTok card. "Client" means the browser computes it
 
 **Luck & what-if** (charts attached to the existing What-if tabs, `WHATIF_VIEWS`)
 
+**Status:** shipped in Phase 3, in `web/charts-luck.js`. Each chart sits under its Alternate standings tab and appears when that tab is open; a `?section=chart-…` link opens the right tab. Notes on how they're computed:
+- **Pythagorean wins** use exponent 4.1, fitted to QPFL's 2020–2025 final standings (about one win of error; the NFL's 2.37 misses by about 1.3).
+- **Projection luck** measures each team against the league's average beat each week, because the pregame projections run low for everyone.
+- **Clip captions** across the chart families use owners' short names (`chartWho`).
+
 | Chart | Primitive | Home | Source |
 |---|---|---|---|
 | Luck: wins minus all-play expected wins | divergingBars | What-if → All-play | client |

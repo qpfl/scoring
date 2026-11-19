@@ -1283,6 +1283,7 @@ const VIEW_RENDERERS = {
     stats: subview => {
         renderStatsLeaders();
         renderTeamStats();
+        renderTeamStatsCharts();
         if (subview === 'lineups') renderLineupsTab();
     },
     history: subview => {
@@ -5031,7 +5032,8 @@ function renderWhatIfStandings(completedThrough, standings) {
                 <button type="button" class="stats-pos-btn ${id === view ? 'active' : ''}" aria-pressed="${id === view}" data-whatif-view="${id}">${escapeHtml(label)}</button>`).join('')}
         </div>
         <p class="whatif-note">${escapeHtml(WHATIF_NOTES[view])} Through Week ${weeks.at(-1).week}.</p>
-        ${whatIfTableHtml(view, computeWhatIf(view, weeks), actualRank)}`;
+        ${whatIfTableHtml(view, computeWhatIf(view, weeks), actualRank)}
+        ${whatIfChartsHtml(view)}`;
     if (!slot.dataset.bound) {
         slot.dataset.bound = '1';
         slot.addEventListener('click', event => {
@@ -16205,6 +16207,15 @@ async function applyHash({ focus = false } = {}) {
     applyRouteState(route);
     await navigateToView(route.view, route.subview, route.detail);
     const section = route.params.get('section');
+    // A link to a luck chart opens Alternate standings on the tab holding it.
+    const whatIfView = route.view === 'standings' && section ? whatIfViewForSection(section) : null;
+    if (whatIfView) {
+        currentWhatIfView = whatIfView;
+        const whatIf = document.getElementById('standings-whatif');
+        if (whatIf) whatIf.open = true;
+        const context = getPostseasonStatusContext();
+        renderWhatIfStandings(context.completedThrough, context.standings);
+    }
     if (section) requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ block: 'start' }));
     const matchupTeam = route.view === 'matchups' ? route.params.get('matchup') : null;
     if (matchupTeam) {

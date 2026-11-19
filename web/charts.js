@@ -444,6 +444,12 @@ function chartById(id) {
     return CHARTS.find(c => c.id === id) || null;
 }
 
+// A team's name in a QPFLTok caption: the owner's short name (Griff,
+// Kaminska) when the feed has one, else the chart's own label.
+function chartWho(opts, input, abbrev) {
+    return opts?.ctx?.names?.[abbrev] || input.label(abbrev);
+}
+
 function chartAnchor(entry) {
     return entry.home?.anchor || `chart-${entry.id}`;
 }
@@ -531,6 +537,6 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         chartEsc, chartNum, chartTicks, chartTable, lineChart, bumpChart, barList, divergingBars,
         heatGrid, ringStat, stripPlot, median, CHART_FAMILIES, CHARTS, registerChart, chartById,
-        chartAnchor, computeChart, chartSectionHtml, renderChartSection, installChartTooltips,
+        chartAnchor, chartWho, computeChart, chartSectionHtml, renderChartSection, installChartTooltips,
     };
 }

@@ -251,6 +251,7 @@ const STANDINGS_CHARTS = [
         },
         tok(model, opts) {
             const { input, series } = model;
+            const who = abbrev => chartWho(opts, input, abbrev);
             const first = series[series.length - 2].odds;
             const last = series[series.length - 1].odds;
             const swing = input.teams
@@ -260,7 +261,7 @@ const STANDINGS_CHARTS = [
             return standingsTok(this, model, opts, {
                 interest: 0.85,
                 caption: pp >= 1
-                    ? `${swing.delta > 0 ? '📈' : '📉'} ${input.label(swing.team)} ${swing.delta > 0 ? 'gained' : 'lost'} ${pp} points of playoff odds last week`
+                    ? `${swing.delta > 0 ? '📈' : '📉'} ${who(swing.team)} ${swing.delta > 0 ? 'gained' : 'lost'} ${pp} points of playoff odds last week`
                     : '📊 Nobody\'s odds moved last week',
             });
         },
@@ -289,14 +290,15 @@ const STANDINGS_CHARTS = [
         },
         tok(model, opts) {
             const { input, history } = model;
+            const who = abbrev => chartWho(opts, input, abbrev);
             const last = history[history.length - 1];
             const top = Object.entries(last.ranks).find(([, r]) => r === 1)[0];
             const move = biggestMove(history);
             return standingsTok(this, model, opts, {
                 interest: 0.8,
                 caption: move
-                    ? `${move.move > 0 ? '🚀' : '🪂'} ${input.label(move.team)} ${move.move > 0 ? 'jumped' : 'fell'} ${Math.abs(move.move)} spot${Math.abs(move.move) === 1 ? '' : 's'} to No. ${move.rank}`
-                    : `👑 ${input.label(top)} is No. 1`,
+                    ? `${move.move > 0 ? '🚀' : '🪂'} ${who(move.team)} ${move.move > 0 ? 'jumped' : 'fell'} ${Math.abs(move.move)} spot${Math.abs(move.move) === 1 ? '' : 's'} to No. ${move.rank}`
+                    : `👑 ${who(top)} is No. 1`,
             });
         },
     },
@@ -339,9 +341,10 @@ const STANDINGS_CHARTS = [
         },
         tok(model, opts) {
             const { input, rows } = model;
+            const who = abbrev => chartWho(opts, input, abbrev);
             return standingsTok(this, model, opts, {
                 interest: 0.7,
-                caption: `🔮 ${input.label(rows[0].id)} projects to ${chartNum(rows[0].wins + rows[0].extra)} wins`,
+                caption: `🔮 ${who(rows[0].id)} projects to ${chartNum(rows[0].wins + rows[0].extra)} wins`,
             });
         },
     },
@@ -375,8 +378,9 @@ const STANDINGS_CHARTS = [
         },
         tok(model, opts) {
             const { input, rows } = model;
+            const who = abbrev => chartWho(opts, input, abbrev);
             return standingsTok(this, model, opts, {
-                caption: `😰 ${input.label(rows[0].id)} has the toughest road left`,
+                caption: `😰 ${who(rows[0].id)} has the toughest road left`,
             });
         },
     },
@@ -404,6 +408,7 @@ const STANDINGS_CHARTS = [
         },
         tok(model, opts) {
             const { input, history } = model;
+            const who = abbrev => chartWho(opts, input, abbrev);
             const leaderWeeks = {};
             history.forEach(h => {
                 const leader = Object.entries(h.ranks).find(([, r]) => r === 1)?.[0];
@@ -412,7 +417,7 @@ const STANDINGS_CHARTS = [
             const [leader, weeks] = Object.entries(leaderWeeks).sort((a, b) => b[1] - a[1])[0];
             return standingsTok(this, model, opts, {
                 interest: 0.65,
-                caption: `🎢 ${input.label(leader)} has led the league ${weeks} week${weeks === 1 ? '' : 's'}`,
+                caption: `🎢 ${who(leader)} has led the league ${weeks} week${weeks === 1 ? '' : 's'}`,
             });
         },
     },
@@ -448,6 +453,7 @@ const STANDINGS_CHARTS = [
         },
         tok(model, opts) {
             const { input, rows } = model;
+            const who = abbrev => chartWho(opts, input, abbrev);
             const clinched = rows.filter(r => r.clinched).length;
             const out = rows.filter(r => r.eliminated).length;
             return standingsTok(this, model, opts, {
