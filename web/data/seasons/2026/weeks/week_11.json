@@ -1,6 +1,6 @@
 {
   "week": 11,
-  "scored_at": "2026-11-20T02:49:00.853303+00:00",
+  "scored_at": "2026-11-20T14:18:41.502604+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -390,10 +390,10 @@
       "avatar": "images/avatars/CGK/2026-w1.png",
       "projection_ready": true,
       "projected_total": 88.0,
-      "win_probability": 0.7872,
+      "win_probability": 0.6858,
       "starters_remaining": 9,
       "pregame_total": 92.1,
-      "score_rank": 1
+      "score_rank": 5
     },
     {
       "name": "Drunk Darts Don't Count",
@@ -751,7 +751,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -775,7 +775,7 @@
       "win_probability": 0.6061,
       "starters_remaining": 10,
       "pregame_total": 86.4,
-      "score_rank": 2
+      "score_rank": 6
     },
     {
       "name": "Ladds with Little Johnsons",
@@ -843,15 +843,18 @@
           "name": "Jonathan Taylor",
           "nfl_team": "IND",
           "position": "RB",
-          "score": 0.0,
-          "found": false,
+          "score": 2.0,
+          "found": true,
           "starter": true,
           "projected_points": 13.0,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "rushing_yards": 2
+          }
         },
         {
           "name": "Breece Hall",
@@ -955,15 +958,18 @@
           "name": "Tyler Warren",
           "nfl_team": "IND",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 2.0,
+          "found": true,
           "starter": false,
           "projected_points": 5.2,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 2
+          }
         },
         {
           "name": "Isaiah Likely",
@@ -997,15 +1003,19 @@
           "name": "Ka'imi Fairbairn",
           "nfl_team": "HOU",
           "position": "K",
-          "score": 0.0,
-          "found": false,
+          "score": 4.0,
+          "found": true,
           "starter": true,
           "projected_points": 8.8,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "pat_made": 3,
+            "fg_1_29": 1
+          }
         },
         {
           "name": "Cam Little",
@@ -1025,15 +1035,22 @@
           "name": "Houston Texans",
           "nfl_team": "HOU",
           "position": "D/ST",
-          "score": 0.0,
-          "found": false,
+          "score": 14.0,
+          "found": true,
           "starter": true,
           "projected_points": 6.6,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "points_allowed": 6,
+            "interceptions": 2,
+            "sacks": 2,
+            "safeties": 2,
+            "blocked_kicks": 2
+          }
         },
         {
           "name": "Philadelphia Eagles",
@@ -1161,14 +1178,14 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 20.0,
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
-      "projected_total": 84.1,
-      "win_probability": 0.4689,
-      "starters_remaining": 10,
+      "projected_total": 75.3,
+      "win_probability": 0.2637,
+      "starters_remaining": 7,
       "pregame_total": 84.1,
-      "score_rank": 3
+      "score_rank": 2
     },
     {
       "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -1193,15 +1210,19 @@
           "name": "Daniel Jones",
           "nfl_team": "IND",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 3.0,
+          "found": true,
           "starter": false,
           "projected_points": 11.8,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 5,
+            "turnovers": -2
+          }
         },
         {
           "name": "Jalen Hurts",
@@ -1292,15 +1313,19 @@
           "name": "Nico Collins",
           "nfl_team": "HOU",
           "position": "WR",
-          "score": 0.0,
-          "found": false,
+          "score": 11.0,
+          "found": true,
           "starter": true,
           "projected_points": 8.4,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 5,
+            "touchdowns": 6
+          }
         },
         {
           "name": "Malik Nabers",
@@ -1531,14 +1556,17 @@
           "name": "Dalton Schultz",
           "nfl_team": "HOU",
           "position": "TE",
-          "score": 0.0,
-          "found": false,
+          "score": 1.0,
+          "found": true,
           "projected_points": 6.3,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "receiving_yards": 1
+          }
         },
         {
           "name": "Andre Szmyt",
@@ -1554,14 +1582,14 @@
           "on_bye": true
         }
       ],
-      "total_score": 0.0,
+      "total_score": 11.0,
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
-      "projected_total": 85.9,
-      "win_probability": 0.5311,
-      "starters_remaining": 9,
+      "projected_total": 88.5,
+      "win_probability": 0.7363,
+      "starters_remaining": 8,
       "pregame_total": 85.9,
-      "score_rank": 4
+      "score_rank": 3
     },
     {
       "name": "If You Ain't First You're Last",
@@ -1658,13 +1686,13 @@
           "nfl_team": "IND",
           "position": "RB",
           "score": 0.0,
-          "found": false,
+          "found": true,
           "starter": false,
           "projected_points": 9.4,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1954,7 +1982,7 @@
       "win_probability": null,
       "starters_remaining": 10,
       "pregame_total": null,
-      "score_rank": 5
+      "score_rank": 7
     },
     {
       "name": "OmaRyan it's So Big",
@@ -2344,7 +2372,7 @@
       "win_probability": 0.3939,
       "starters_remaining": 9,
       "pregame_total": 80.8,
-      "score_rank": 6
+      "score_rank": 8
     },
     {
       "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -2383,15 +2411,21 @@
           "name": "C.J. Stroud",
           "nfl_team": "HOU",
           "position": "QB",
-          "score": 0.0,
-          "found": false,
+          "score": 25.0,
+          "found": true,
           "starter": true,
           "projected_points": 19.7,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 7,
+            "rushing_yards": 2,
+            "touchdowns": 18,
+            "turnovers": -2
+          }
         },
         {
           "name": "Ashton Jeanty",
@@ -2624,15 +2658,18 @@
           "name": "DeMeco Ryans",
           "nfl_team": "HOU",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 4,
+          "found": true,
           "starter": true,
           "projected_points": 2.9,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_20+": 4
+          }
         },
         {
           "name": "Mike McCarthy",
@@ -2641,7 +2678,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 2.0,
+          "projected_points": 1.9,
           "nfl_opponent": "PHI",
           "nfl_is_home": false,
           "kickoff": "2026-11-22T21:25:00+00:00",
@@ -2702,7 +2739,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -2716,7 +2753,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -2734,13 +2771,13 @@
           "on_bye": true
         }
       ],
-      "total_score": 0.0,
+      "total_score": 29.0,
       "projection_ready": true,
-      "projected_total": 73.7,
-      "win_probability": 0.2128,
-      "starters_remaining": 8,
+      "projected_total": 80.0,
+      "win_probability": 0.3142,
+      "starters_remaining": 6,
       "pregame_total": 78.4,
-      "score_rank": 7
+      "score_rank": 1
     },
     {
       "name": "Austin Bowers",
@@ -3061,15 +3098,20 @@
           "name": "Houston Texans",
           "nfl_team": "HOU",
           "position": "OL",
-          "score": 0.0,
-          "found": false,
+          "score": 3.0,
+          "found": true,
           "starter": true,
           "projected_points": 1.6,
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "passing_yards": 1,
+            "rushing_yards": 3,
+            "sacks_allowed": -1
+          }
         }
       ],
       "taxi_squad": [
@@ -3126,13 +3168,13 @@
           "on_bye": false
         }
       ],
-      "total_score": 0.0,
+      "total_score": 3.0,
       "projection_ready": true,
-      "projected_total": 84.7,
-      "win_probability": 0.8648,
-      "starters_remaining": 10,
+      "projected_total": 86.1,
+      "win_probability": 0.8807,
+      "starters_remaining": 9,
       "pregame_total": 84.7,
-      "score_rank": 8
+      "score_rank": 4
     },
     {
       "name": "There is no Warren Ba Sing Se",
@@ -3305,7 +3347,7 @@
           "nfl_opponent": "IND",
           "nfl_is_home": true,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -3370,14 +3412,19 @@
           "nfl_team": "IND",
           "position": "K",
           "score": 0.0,
-          "found": false,
+          "found": true,
           "starter": false,
           "projected_points": 7.2,
           "nfl_opponent": "HOU",
           "nfl_is_home": false,
           "kickoff": "2026-11-20T01:15:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "fg_30_39": 2,
+            "fg_missed": -1,
+            "fg_blocked": -1
+          }
         },
         {
           "name": "San Francisco 49ers",
@@ -3809,7 +3856,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -1.0,
+          "projected_points": -0.9,
           "nfl_opponent": "PIT",
           "nfl_is_home": true,
           "kickoff": "2026-11-22T21:25:00+00:00",
@@ -3917,13 +3964,13 @@
       "total_score": 0.0,
       "projection_ready": true,
       "projected_total": 62.8,
-      "win_probability": 0.1352,
+      "win_probability": 0.1193,
       "starters_remaining": 9,
       "pregame_total": 62.8,
       "score_rank": 10
     }
   ],
-  "has_scores": false,
+  "has_scores": true,
   "games_final": false,
   "matchups": [
     {
@@ -4098,7 +4145,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -4163,14 +4210,19 @@
             "nfl_team": "IND",
             "position": "K",
             "score": 0.0,
-            "found": false,
+            "found": true,
             "starter": false,
             "projected_points": 7.2,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "fg_30_39": 2,
+              "fg_missed": -1,
+              "fg_blocked": -1
+            }
           },
           {
             "name": "San Francisco 49ers",
@@ -4416,13 +4468,13 @@
             "nfl_team": "IND",
             "position": "RB",
             "score": 0.0,
-            "found": false,
+            "found": true,
             "starter": false,
             "projected_points": 9.4,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4712,7 +4764,7 @@
         "win_probability": null,
         "starters_remaining": 10,
         "pregame_total": null,
-        "score_rank": 5
+        "score_rank": 7
       }
     },
     {
@@ -5104,7 +5156,7 @@
         "win_probability": 0.3939,
         "starters_remaining": 9,
         "pregame_total": 80.8,
-        "score_rank": 6
+        "score_rank": 8
       },
       "team2": {
         "name": "Drunk Darts Don't Count",
@@ -5462,7 +5514,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -5486,7 +5538,7 @@
         "win_probability": 0.6061,
         "starters_remaining": 10,
         "pregame_total": 86.4,
-        "score_rank": 2
+        "score_rank": 6
       }
     },
     {
@@ -5878,10 +5930,10 @@
         "avatar": "images/avatars/CGK/2026-w1.png",
         "projection_ready": true,
         "projected_total": 88.0,
-        "win_probability": 0.7872,
+        "win_probability": 0.6858,
         "starters_remaining": 9,
         "pregame_total": 92.1,
-        "score_rank": 1
+        "score_rank": 5
       },
       "team2": {
         "name": "Sydney Sweeney has Great Jean(ty)s",
@@ -5920,15 +5972,21 @@
             "name": "C.J. Stroud",
             "nfl_team": "HOU",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 25.0,
+            "found": true,
             "starter": true,
             "projected_points": 19.7,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 7,
+              "rushing_yards": 2,
+              "touchdowns": 18,
+              "turnovers": -2
+            }
           },
           {
             "name": "Ashton Jeanty",
@@ -6161,15 +6219,18 @@
             "name": "DeMeco Ryans",
             "nfl_team": "HOU",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 4,
+            "found": true,
             "starter": true,
             "projected_points": 2.9,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_20+": 4
+            }
           },
           {
             "name": "Mike McCarthy",
@@ -6178,7 +6239,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 2.0,
+            "projected_points": 1.9,
             "nfl_opponent": "PHI",
             "nfl_is_home": false,
             "kickoff": "2026-11-22T21:25:00+00:00",
@@ -6239,7 +6300,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
@@ -6253,7 +6314,7 @@
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -6271,13 +6332,13 @@
             "on_bye": true
           }
         ],
-        "total_score": 0.0,
+        "total_score": 29.0,
         "projection_ready": true,
-        "projected_total": 73.7,
-        "win_probability": 0.2128,
-        "starters_remaining": 8,
+        "projected_total": 80.0,
+        "win_probability": 0.3142,
+        "starters_remaining": 6,
         "pregame_total": 78.4,
-        "score_rank": 7
+        "score_rank": 1
       }
     },
     {
@@ -6347,15 +6408,18 @@
             "name": "Jonathan Taylor",
             "nfl_team": "IND",
             "position": "RB",
-            "score": 0.0,
-            "found": false,
+            "score": 2.0,
+            "found": true,
             "starter": true,
             "projected_points": 13.0,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "rushing_yards": 2
+            }
           },
           {
             "name": "Breece Hall",
@@ -6459,15 +6523,18 @@
             "name": "Tyler Warren",
             "nfl_team": "IND",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 2.0,
+            "found": true,
             "starter": false,
             "projected_points": 5.2,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 2
+            }
           },
           {
             "name": "Isaiah Likely",
@@ -6501,15 +6568,19 @@
             "name": "Ka'imi Fairbairn",
             "nfl_team": "HOU",
             "position": "K",
-            "score": 0.0,
-            "found": false,
+            "score": 4.0,
+            "found": true,
             "starter": true,
             "projected_points": 8.8,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "pat_made": 3,
+              "fg_1_29": 1
+            }
           },
           {
             "name": "Cam Little",
@@ -6529,15 +6600,22 @@
             "name": "Houston Texans",
             "nfl_team": "HOU",
             "position": "D/ST",
-            "score": 0.0,
-            "found": false,
+            "score": 14.0,
+            "found": true,
             "starter": true,
             "projected_points": 6.6,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "points_allowed": 6,
+              "interceptions": 2,
+              "sacks": 2,
+              "safeties": 2,
+              "blocked_kicks": 2
+            }
           },
           {
             "name": "Philadelphia Eagles",
@@ -6665,14 +6743,14 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 20.0,
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
-        "projected_total": 84.1,
-        "win_probability": 0.4689,
-        "starters_remaining": 10,
+        "projected_total": 75.3,
+        "win_probability": 0.2637,
+        "starters_remaining": 7,
         "pregame_total": 84.1,
-        "score_rank": 3
+        "score_rank": 2
       },
       "team2": {
         "name": "Burrow my Dicker in my Strange Nabers til it Hurts",
@@ -6697,15 +6775,19 @@
             "name": "Daniel Jones",
             "nfl_team": "IND",
             "position": "QB",
-            "score": 0.0,
-            "found": false,
+            "score": 3.0,
+            "found": true,
             "starter": false,
             "projected_points": 11.8,
             "nfl_opponent": "HOU",
             "nfl_is_home": false,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 5,
+              "turnovers": -2
+            }
           },
           {
             "name": "Jalen Hurts",
@@ -6796,15 +6878,19 @@
             "name": "Nico Collins",
             "nfl_team": "HOU",
             "position": "WR",
-            "score": 0.0,
-            "found": false,
+            "score": 11.0,
+            "found": true,
             "starter": true,
             "projected_points": 8.4,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 5,
+              "touchdowns": 6
+            }
           },
           {
             "name": "Malik Nabers",
@@ -7035,14 +7121,17 @@
             "name": "Dalton Schultz",
             "nfl_team": "HOU",
             "position": "TE",
-            "score": 0.0,
-            "found": false,
+            "score": 1.0,
+            "found": true,
             "projected_points": 6.3,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "receiving_yards": 1
+            }
           },
           {
             "name": "Andre Szmyt",
@@ -7058,14 +7147,14 @@
             "on_bye": true
           }
         ],
-        "total_score": 0.0,
+        "total_score": 11.0,
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
-        "projected_total": 85.9,
-        "win_probability": 0.5311,
-        "starters_remaining": 9,
+        "projected_total": 88.5,
+        "win_probability": 0.7363,
+        "starters_remaining": 8,
         "pregame_total": 85.9,
-        "score_rank": 4
+        "score_rank": 3
       }
     },
     {
@@ -7388,15 +7477,20 @@
             "name": "Houston Texans",
             "nfl_team": "HOU",
             "position": "OL",
-            "score": 0.0,
-            "found": false,
+            "score": 3.0,
+            "found": true,
             "starter": true,
             "projected_points": 1.6,
             "nfl_opponent": "IND",
             "nfl_is_home": true,
             "kickoff": "2026-11-20T01:15:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "passing_yards": 1,
+              "rushing_yards": 3,
+              "sacks_allowed": -1
+            }
           }
         ],
         "taxi_squad": [
@@ -7453,13 +7547,13 @@
             "on_bye": false
           }
         ],
-        "total_score": 0.0,
+        "total_score": 3.0,
         "projection_ready": true,
-        "projected_total": 84.7,
-        "win_probability": 0.8648,
-        "starters_remaining": 10,
+        "projected_total": 86.1,
+        "win_probability": 0.8807,
+        "starters_remaining": 9,
         "pregame_total": 84.7,
-        "score_rank": 8
+        "score_rank": 4
       },
       "team2": {
         "name": "Tuten my a**hole",
@@ -7742,7 +7836,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -1.0,
+            "projected_points": -0.9,
             "nfl_opponent": "PIT",
             "nfl_is_home": true,
             "kickoff": "2026-11-22T21:25:00+00:00",
@@ -7850,7 +7944,7 @@
         "total_score": 0.0,
         "projection_ready": true,
         "projected_total": 62.8,
-        "win_probability": 0.1352,
+        "win_probability": 0.1193,
         "starters_remaining": 9,
         "pregame_total": 62.8,
         "score_rank": 10
