@@ -19491,7 +19491,7 @@ function renderPendingTrades() {
                     </span>
                     <div class="pending-trade-header-right">
                         ${expiresStr ? `<span class="pending-trade-expires ${expiresClass}" title="${expiresTitle}">⏱ ${expiresStr}</span>` : ''}
-                        <span class="pending-status-badge ${trade.status}">${trade.status.toUpperCase()}</span>
+                        <span class="pending-status-badge ${trade.status}">${trade.status === 'cancelled' ? 'CANCELED' : trade.status.toUpperCase()}</span>
                     </div>
                 </div>
                 <div class="pending-trade-details">
@@ -19681,7 +19681,7 @@ async function executeTradeResponse(tradeId, accept, rosterMoves = null) {
 async function cancelTrade(tradeId) {
     const statusEl = document.getElementById('pending-status');
     statusEl.className = 'submit-status loading';
-    statusEl.textContent = 'Cancelling trade...';
+    statusEl.textContent = 'Canceling trade...';
 
     try {
         const response = await fetch(MANAGE_CONFIG.apiUrl, {

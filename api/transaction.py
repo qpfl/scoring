@@ -1598,7 +1598,7 @@ def _cancel_stale_pending_trades(
             other['cancelled_at'] = cancelled_at
             cause = reason or f'trade {executed_trade_id} moved players'
             other['cancelled_reason'] = (
-                f'Automatically cancelled: {cause}; {", ".join(missing)} '
+                f'Automatically canceled: {cause}; {", ".join(missing)} '
                 f'no longer on {offering_team}'
             )
             cancelled.append(other.get('id'))
@@ -1983,10 +1983,10 @@ def handle_cancel_trade(data: dict) -> tuple[int, dict]:
     ok, res = update_json_file(
         'data/pending_trades.json',
         mutate,
-        f'Trade {trade_id} cancelled by {team}',
+        f'Trade {trade_id} canceled by {team}',
         default={'trades': []},
     )
-    return _write_result(ok, res, {'success': True, 'message': 'Trade cancelled'})
+    return _write_result(ok, res, {'success': True, 'message': 'Trade canceled'})
 
 
 def handle_save_tradeblock(data: dict) -> tuple[int, dict]:
