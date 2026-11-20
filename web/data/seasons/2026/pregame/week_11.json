@@ -268,22 +268,6 @@
       "team2": "J/J",
       "storylines": [
         {
-          "id": "pre_projection_widest",
-          "category": "team",
-          "subjects": [
-            "CGK",
-            "J/J"
-          ],
-          "template": "The week's biggest projected favorite: {team:CGK} by 13.7.",
-          "notability": 0.45,
-          "tags": [],
-          "check": {
-            "type": "win",
-            "team": "CGK",
-            "expect": true
-          }
-        },
-        {
           "id": "pre_player_leader",
           "category": "player",
           "subjects": [
@@ -589,6 +573,22 @@
           }
         },
         {
+          "id": "pre_projection_widest",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "The week's biggest projected favorite: {team:WJK} by 21.8.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "WJK",
+            "expect": true
+          }
+        },
+        {
           "id": "pre_team_streak",
           "category": "team",
           "subjects": [
@@ -650,10 +650,15 @@
             "WJK"
           ],
           "template": "Tyler Bass faces former team {team:WJK} (19 starts, 98 points there, 2021-2022). Averages 6.8 in 5 starts against them.",
-          "notability": 0.545,
+          "notability": 0.645,
           "tags": [
-            "bench"
-          ]
+            "starter"
+          ],
+          "check": {
+            "type": "win",
+            "team": "AYP",
+            "expect": true
+          }
         }
       ],
       "records": [],
@@ -686,5 +691,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-19T22:54:13.627587+00:00"
+  "generated_at": "2026-11-20T00:23:55.217387+00:00"
 }
