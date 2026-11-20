@@ -97,7 +97,7 @@
             "AST",
             "GSA"
           ],
-          "template": "Dallas Goedert faces former team {team:GSA} (traded away Week 12, 2025; 21 starts, 138 points there, 2020-2025).",
+          "template": "Dallas Goedert faces former team {team:GSA} (traded away Week 12, 2025; 21 starts, 138 points there, 2020-2025). On the bench for now.",
           "notability": 0.655,
           "tags": [
             "bench"
@@ -579,7 +579,7 @@
             "WJK",
             "AYP"
           ],
-          "template": "The week's biggest projected favorite: {team:WJK} by 21.9.",
+          "template": "The week's biggest projected favorite: {team:WJK} by 21.8.",
           "notability": 0.45,
           "tags": [],
           "check": {
@@ -691,5 +691,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-20T20:34:03.515425+00:00"
+  "generated_at": "2026-11-20T21:05:45.753116+00:00"
 }
