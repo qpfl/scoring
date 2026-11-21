@@ -1,6 +1,6 @@
 {
   "week": 11,
-  "scored_at": "2026-11-21T16:52:10.807087+00:00",
+  "scored_at": "2026-11-21T21:26:27.857212+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -677,7 +677,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.9,
+          "projected_points": -0.8,
           "nfl_opponent": "SF",
           "nfl_is_home": false,
           "kickoff": "2026-11-23T01:20:00+00:00",
@@ -734,12 +734,13 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 17.6,
+          "projected_points": 0.0,
           "nfl_opponent": "KC",
           "nfl_is_home": false,
           "kickoff": "2026-11-22T18:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Jayden Higgins",
@@ -1073,7 +1074,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.9,
+          "projected_points": 1.8,
           "nfl_opponent": "MIN",
           "nfl_is_home": true,
           "kickoff": "2026-11-23T01:20:00+00:00",
@@ -5447,7 +5448,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.9,
+            "projected_points": -0.8,
             "nfl_opponent": "SF",
             "nfl_is_home": false,
             "kickoff": "2026-11-23T01:20:00+00:00",
@@ -5504,12 +5505,13 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 17.6,
+            "projected_points": 0.0,
             "nfl_opponent": "KC",
             "nfl_is_home": false,
             "kickoff": "2026-11-22T18:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Jayden Higgins",
@@ -6645,7 +6647,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.9,
+            "projected_points": 1.8,
             "nfl_opponent": "MIN",
             "nfl_is_home": true,
             "kickoff": "2026-11-23T01:20:00+00:00",
