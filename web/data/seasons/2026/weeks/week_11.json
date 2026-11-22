@@ -1,6 +1,6 @@
 {
   "week": 11,
-  "scored_at": "2026-11-21T21:26:27.857212+00:00",
+  "scored_at": "2026-11-22T07:48:08.498840+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -905,7 +905,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 5.7,
           "nfl_opponent": "LV",
           "nfl_is_home": true,
@@ -919,7 +919,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 5.5,
           "nfl_opponent": "NYJ",
           "nfl_is_home": true,
@@ -1183,9 +1183,9 @@
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
       "projected_total": 75.3,
-      "win_probability": 0.2637,
+      "win_probability": 0.2643,
       "starters_remaining": 7,
-      "pregame_total": 84.1,
+      "pregame_total": 84.2,
       "score_rank": 2
     },
     {
@@ -1587,7 +1587,7 @@
       "avatar": "images/avatars/SLS/2026-w0.png",
       "projection_ready": true,
       "projected_total": 88.5,
-      "win_probability": 0.7363,
+      "win_probability": 0.7357,
       "starters_remaining": 8,
       "pregame_total": 85.9,
       "score_rank": 3
@@ -3480,7 +3480,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 2.0,
+          "projected_points": 1.9,
           "nfl_opponent": "TB",
           "nfl_is_home": true,
           "kickoff": "2026-11-22T18:00:00+00:00",
@@ -4280,7 +4280,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 2.0,
+            "projected_points": 1.9,
             "nfl_opponent": "TB",
             "nfl_is_home": true,
             "kickoff": "2026-11-22T18:00:00+00:00",
@@ -6478,7 +6478,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 5.7,
             "nfl_opponent": "LV",
             "nfl_is_home": true,
@@ -6492,7 +6492,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 5.5,
             "nfl_opponent": "NYJ",
             "nfl_is_home": true,
@@ -6756,9 +6756,9 @@
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
         "projected_total": 75.3,
-        "win_probability": 0.2637,
+        "win_probability": 0.2643,
         "starters_remaining": 7,
-        "pregame_total": 84.1,
+        "pregame_total": 84.2,
         "score_rank": 2
       },
       "team2": {
@@ -7160,7 +7160,7 @@
         "avatar": "images/avatars/SLS/2026-w0.png",
         "projection_ready": true,
         "projected_total": 88.5,
-        "win_probability": 0.7363,
+        "win_probability": 0.7357,
         "starters_remaining": 8,
         "pregame_total": 85.9,
         "score_rank": 3
