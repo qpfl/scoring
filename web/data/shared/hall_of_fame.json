@@ -30567,7 +30567,20 @@
               7,
               7.0
             ]
+          ]
+        },
+        {
+          "teams": [
+            "J/J"
           ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": [],
           "ongoing": true
         }
       ]
@@ -62313,7 +62326,20 @@
               7,
               2.0
             ]
+          ]
+        },
+        {
+          "teams": [
+            "WJK"
           ],
+          "start_season": 2026,
+          "start_week": 0,
+          "end_season": 2026,
+          "end_week": 0,
+          "points": 0.0,
+          "games": 0,
+          "starts": 0,
+          "weekly_points": [],
           "ongoing": true
         }
       ]
@@ -115304,5 +115330,5 @@
   "completed_through": {
     "2026": 10
   },
-  "updated_at": "2026-11-18T17:55:38.430026+00:00"
+  "updated_at": "2026-11-22T15:15:16.620169+00:00"
 }
