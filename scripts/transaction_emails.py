@@ -12,6 +12,29 @@ TRADE_TITLES = {
 TRANSACTIONS_URL = 'https://qpfl.org/#transactions'
 
 
+def resolve_trade_player(
+    player: object,
+    giver: str,
+    receiver: str,
+    rosters_before: Mapping | None,
+    rosters_after: Mapping | None,
+) -> object:
+    """Turn a bare player name from ``pending_trades.json`` into its roster entry.
+
+    Trades store names only, and names like "Detroit Lions" are ambiguous
+    (D/ST vs OL). The giver's roster before the commit holds the player; once
+    an accepted trade has moved it, the receiver's roster after the commit
+    does. Returns the original value when it can't be resolved.
+    """
+    if not isinstance(player, str):
+        return player
+    for rosters, team in ((rosters_before, giver), (rosters_after, receiver), (rosters_after, giver)):
+        for entry in (rosters or {}).get(team, []) or []:
+            if isinstance(entry, Mapping) and entry.get('name') == player:
+                return dict(entry)
+    return player
+
+
 def _item_list(items: Sequence[str]) -> str:
     if not items:
         return f'<div style="padding:12px 16px;">{html.muted("Nothing")}</div>'

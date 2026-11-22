@@ -74,7 +74,7 @@ jobs:
               lineup_changed,
               lineup_notification_html,
           )
-          from scripts.transaction_emails import roster_moves_html, trade_html
+          from scripts.transaction_emails import resolve_trade_player, roster_moves_html, trade_html
 
           delivery_failures = []
 
@@ -175,6 +175,18 @@ jobs:
               except:
                   pass
 
+              # Trades store bare player names; resolve them against rosters so
+              # emails show position (e.g. D/ST vs OL for "Detroit Lions").
+              def load_json_at(rev, path):
+                  try:
+                      raw = os.popen(f"git show {rev}:{path} 2>/dev/null").read()
+                      return json.loads(raw) if raw else {}
+                  except Exception:
+                      return {}
+
+              rosters_before = load_json_at('HEAD~1', 'data/rosters.json')
+              rosters_after = load_json_at('HEAD', 'data/rosters.json')
+
               # Build lookup of previous trade states
               prev_trade_status = {t.get('id'): t.get('status') for t in prev_trades}
               prev_ids = set(prev_trade_status.keys())
@@ -204,7 +216,11 @@ jobs:
 
                   # Helper to format item with condition
                   def format_with_condition(item, item_type, direction):
-                      item_str = format_player(item) if isinstance(item, dict) else item
+                      display = item
+                      if item_type == 'player':
+                          giver, receiver = (proposer, partner) if direction == 'give' else (partner, proposer)
+                          display = resolve_trade_player(item, giver, receiver, rosters_before, rosters_after)
+                      item_str = format_player(display) if isinstance(display, dict) else display
                       cond_key = f"{item_type}-{direction}-{item if isinstance(item, str) else item.get('name', item)}"
                       cond = conditions.get(cond_key)
                       if cond:
