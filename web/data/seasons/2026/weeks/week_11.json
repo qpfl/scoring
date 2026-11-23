@@ -1,6 +1,6 @@
 {
   "week": 11,
-  "scored_at": "2026-11-23T09:38:32.775713+00:00",
+  "scored_at": "2026-11-23T16:21:31.558532+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -452,7 +452,8 @@
           "nfl_is_home": true,
           "kickoff": "2026-11-22T18:00:00+00:00",
           "game_final": true,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "game_day_inactive"
         },
         {
           "name": "Dawson Knox",
@@ -6884,7 +6885,8 @@
             "nfl_is_home": true,
             "kickoff": "2026-11-22T18:00:00+00:00",
             "game_final": true,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "game_day_inactive"
           },
           {
             "name": "Dawson Knox",
