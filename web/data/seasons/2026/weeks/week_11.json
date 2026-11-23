@@ -1,6 +1,6 @@
 {
   "week": 11,
-  "scored_at": "2026-11-23T05:47:28.349923+00:00",
+  "scored_at": "2026-11-23T07:25:53.655405+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -293,14 +293,14 @@
           "kickoff": "2026-11-22T18:00:00+00:00",
           "game_final": true,
           "on_bye": false,
-          "unavailable_reason": "practice_squad",
           "breakdown": {
             "fg_1_29": 1,
             "fg_50_59": 8
           },
           "data_notes": [
             "Daniel Carlson not found on roster team NO; matched by name+position on MIA instead (stale nfl_team?)"
-          ]
+          ],
+          "unavailable_reason": "practice_squad"
         },
         {
           "name": "Chicago Bears",
@@ -6725,14 +6725,14 @@
             "kickoff": "2026-11-22T18:00:00+00:00",
             "game_final": true,
             "on_bye": false,
-            "unavailable_reason": "practice_squad",
             "breakdown": {
               "fg_1_29": 1,
               "fg_50_59": 8
             },
             "data_notes": [
               "Daniel Carlson not found on roster team NO; matched by name+position on MIA instead (stale nfl_team?)"
-            ]
+            ],
+            "unavailable_reason": "practice_squad"
           },
           {
             "name": "Chicago Bears",
