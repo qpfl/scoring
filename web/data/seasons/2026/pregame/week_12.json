@@ -328,6 +328,16 @@
           "tags": []
         },
         {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Josh Allen leads all QPFL QB starters this season with 255 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
           "id": "pre_team_streak",
           "category": "team",
           "subjects": [
@@ -384,7 +394,7 @@
             "CGK",
             "SLS"
           ],
-          "template": "Pat Freiermuth faces former team {team:SLS} (24 starts, 121 points there, 2022-2024).",
+          "template": "Pat Freiermuth faces former team {team:SLS} (24 starts, 121 points there, 2022-2024). On the bench for now.",
           "notability": 0.57,
           "tags": [
             "bench"
@@ -635,5 +645,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-24T05:55:57.871803+00:00"
+  "generated_at": "2026-11-24T12:54:20.286865+00:00"
 }
