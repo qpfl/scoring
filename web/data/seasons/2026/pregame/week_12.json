@@ -646,6 +646,23 @@
       "team2": "WJK",
       "storylines": [
         {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "Brock Purdy has scored 20+ in 3 straight starts.",
+          "notability": 0.55,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "WJK",
+            "player": "Brock Purdy",
+            "position": "QB",
+            "min": 20
+          }
+        },
+        {
           "id": "pre_team_streak",
           "category": "team",
           "subjects": [
@@ -714,6 +731,24 @@
           "id": "pre_revenge",
           "category": "player",
           "subjects": [
+            "WJK",
+            "J/J"
+          ],
+          "template": "Chuba Hubbard faces former team {team:J/J} (17 starts, 180 points there, 2024-2025).",
+          "notability": 0.635,
+          "tags": [
+            "starter"
+          ],
+          "check": {
+            "type": "win",
+            "team": "WJK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
             "J/J",
             "WJK"
           ],
@@ -730,20 +765,7 @@
             "WJK",
             "J/J"
           ],
-          "template": "Chuba Hubbard faces former team {team:J/J} (17 starts, 180 points there, 2024-2025).",
-          "notability": 0.535,
-          "tags": [
-            "bench"
-          ]
-        },
-        {
-          "id": "pre_revenge",
-          "category": "player",
-          "subjects": [
-            "WJK",
-            "J/J"
-          ],
-          "template": "Chase Brown faces former team {team:J/J} (9 starts, 115 points there, 2024). Averages 3.5 in 2 starts against them.",
+          "template": "Chase Brown faces former team {team:J/J} (9 starts, 115 points there, 2024). Averages 3.5 in 2 starts against them. On the bench for now.",
           "notability": 0.495,
           "tags": [
             "bench"
@@ -780,5 +802,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-24T16:50:22.037221+00:00"
+  "generated_at": "2026-11-24T16:52:06.200464+00:00"
 }
