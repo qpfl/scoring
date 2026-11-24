@@ -381,6 +381,22 @@
           "tags": []
         },
         {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "The closest projected game of the week: {team:SLS} by 2.3.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "SLS",
+            "expect": true
+          }
+        },
+        {
           "id": "pre_player_leader",
           "category": "player",
           "subjects": [
@@ -500,6 +516,22 @@
           ],
           "template": "{team:S/T} {has:S/T} won 3 straight against {team:AST}.",
           "notability": 0.57,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "S/T",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_projection_widest",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "The week's biggest projected favorite: {team:S/T} by 14.",
+          "notability": 0.45,
           "tags": [],
           "check": {
             "type": "win",
@@ -748,5 +780,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-24T16:17:56.868223+00:00"
+  "generated_at": "2026-11-24T16:50:22.037221+00:00"
 }
