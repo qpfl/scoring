@@ -34,6 +34,22 @@
           "tags": []
         },
         {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "CWR"
+          ],
+          "template": "The closest projected game of the week: {team:GSA} by 1.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "GSA",
+            "expect": true
+          }
+        },
+        {
           "id": "pre_player_leader",
           "category": "player",
           "subjects": [
@@ -123,7 +139,7 @@
             "CWR",
             "GSA"
           ],
-          "template": "Rome Odunze faces former team {team:GSA} (traded away 2025 offseason; 1 start, 3 points there, 2024). Averages 8.5 in 2 starts against them.",
+          "template": "Rome Odunze faces former team {team:GSA} (traded away 2025 offseason; 1 start, 3 points there, 2024). Averages 8.5 in 2 starts against them. On the bench for now.",
           "notability": 0.555,
           "tags": [
             "bench"
@@ -399,22 +415,6 @@
           "template": "{team:SLS} {has:SLS} averaged 76.7 against {team:CGK} in 11 meetings, 11.4 fewer than against everyone else.",
           "notability": 0.476,
           "tags": []
-        },
-        {
-          "id": "pre_projection_closest",
-          "category": "team",
-          "subjects": [
-            "CGK",
-            "SLS"
-          ],
-          "template": "The closest projected game of the week: {team:SLS} by 2.3.",
-          "notability": 0.45,
-          "tags": [],
-          "check": {
-            "type": "win",
-            "team": "SLS",
-            "expect": true
-          }
         },
         {
           "id": "pre_player_leader",
@@ -822,5 +822,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-24T16:57:49.731236+00:00"
+  "generated_at": "2026-11-24T16:59:01.219539+00:00"
 }
