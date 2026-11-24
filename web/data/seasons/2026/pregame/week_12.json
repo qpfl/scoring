@@ -34,6 +34,16 @@
           "tags": []
         },
         {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "George Kittle leads all QPFL TE starters this season with 95 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
           "id": "pre_series_widest",
           "category": "team",
           "subjects": [
@@ -64,7 +74,7 @@
             "GSA",
             "CWR"
           ],
-          "template": "A.J. Brown faces former team {team:CWR} (traded away 2025 offseason; 50 starts, 555 points there, 2021-2024). Averages 5 in 2 starts against them.",
+          "template": "A.J. Brown faces former team {team:CWR} (traded away 2025 offseason; 50 starts, 555 points there, 2021-2024). Averages 5 in 2 starts against them. On the bench for now.",
           "notability": 0.7,
           "tags": [
             "bench"
@@ -78,10 +88,33 @@
             "CWR"
           ],
           "template": "George Kittle faces former team {team:CWR} (26 starts, 228 points there, 2020-2022). Averages 6.8 in 4 starts against them.",
-          "notability": 0.58,
+          "notability": 0.68,
           "tags": [
-            "bench"
-          ]
+            "starter"
+          ],
+          "check": {
+            "type": "win",
+            "team": "GSA",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "GSA",
+            "CWR"
+          ],
+          "template": "Ja'Marr Chase faces former team {team:CWR} (13 starts, 140 points there, 2021-2022). Averages 8.2 in 8 starts against them.",
+          "notability": 0.615,
+          "tags": [
+            "starter"
+          ],
+          "check": {
+            "type": "win",
+            "team": "GSA",
+            "expect": true
+          }
         },
         {
           "id": "pre_revenge",
@@ -92,19 +125,6 @@
           ],
           "template": "Rome Odunze faces former team {team:GSA} (traded away 2025 offseason; 1 start, 3 points there, 2024). Averages 8.5 in 2 starts against them.",
           "notability": 0.555,
-          "tags": [
-            "bench"
-          ]
-        },
-        {
-          "id": "pre_revenge",
-          "category": "player",
-          "subjects": [
-            "GSA",
-            "CWR"
-          ],
-          "template": "Ja'Marr Chase faces former team {team:CWR} (13 starts, 140 points there, 2021-2022). Averages 8.2 in 8 starts against them.",
-          "notability": 0.515,
           "tags": [
             "bench"
           ]
@@ -802,5 +822,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-24T16:52:06.200464+00:00"
+  "generated_at": "2026-11-24T16:57:49.731236+00:00"
 }
