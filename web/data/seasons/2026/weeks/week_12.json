@@ -1,6 +1,6 @@
 {
   "week": 12,
-  "scored_at": "2026-11-24T17:22:27.931083+00:00",
+  "scored_at": "2026-11-24T20:12:00.294940+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -238,12 +238,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 4.7,
+          "projected_points": 0.0,
           "nfl_opponent": "CIN",
           "nfl_is_home": false,
           "kickoff": "2026-11-29T18:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "practice_squad"
         },
         {
           "name": "Chicago Bears",
@@ -2249,7 +2250,7 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 2.5,
+          "projected_points": 2.6,
           "nfl_opponent": "NO",
           "nfl_is_home": true,
           "kickoff": "2026-11-29T18:00:00+00:00",
@@ -2341,10 +2342,10 @@
       ],
       "total_score": 0.0,
       "projection_ready": true,
-      "projected_total": 81.1,
+      "projected_total": 81.2,
       "win_probability": null,
       "starters_remaining": 10,
-      "pregame_total": 81.1,
+      "pregame_total": 81.2,
       "score_rank": 6
     },
     {
@@ -3470,13 +3471,12 @@
           "position": "RB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 6.8,
           "nfl_opponent": "ARI",
           "nfl_is_home": false,
           "kickoff": "2026-11-29T21:25:00+00:00",
           "game_final": false,
-          "on_bye": false,
-          "unavailable_reason": "ir"
+          "on_bye": false
         },
         {
           "name": "Ja'Kobi Lane",
@@ -4263,13 +4263,12 @@
             "position": "RB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 6.8,
             "nfl_opponent": "ARI",
             "nfl_is_home": false,
             "kickoff": "2026-11-29T21:25:00+00:00",
             "game_final": false,
-            "on_bye": false,
-            "unavailable_reason": "ir"
+            "on_bye": false
           },
           {
             "name": "Ja'Kobi Lane",
@@ -5007,7 +5006,7 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 2.5,
+            "projected_points": 2.6,
             "nfl_opponent": "NO",
             "nfl_is_home": true,
             "kickoff": "2026-11-29T18:00:00+00:00",
@@ -5099,10 +5098,10 @@
         ],
         "total_score": 0.0,
         "projection_ready": true,
-        "projected_total": 81.1,
+        "projected_total": 81.2,
         "win_probability": null,
         "starters_remaining": 10,
-        "pregame_total": 81.1,
+        "pregame_total": 81.2,
         "score_rank": 6
       },
       "team2": {
@@ -5737,12 +5736,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 4.7,
+            "projected_points": 0.0,
             "nfl_opponent": "CIN",
             "nfl_is_home": false,
             "kickoff": "2026-11-29T18:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "practice_squad"
           },
           {
             "name": "Chicago Bears",
