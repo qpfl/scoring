@@ -1,0 +1,1025 @@
+{
+  "season": 2026,
+  "week": 11,
+  "week_label": "Week 11",
+  "history_through": "2026 Week 10",
+  "headline": [
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 10-1, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "all_play",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} {is:J/J} 2-9 despite a 52-47 record against the whole league, the unluckiest start through 11 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 88.6 points, the highest-scoring Week 11 in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_first_win",
+      "category": "team",
+      "subjects": [
+        "AST",
+        "GSA"
+      ],
+      "template": "{team:AST} beat {team:GSA} for the first time in 4 meetings.",
+      "notability": 0.68,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_big_games",
+      "category": "player",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Dak Prescott ({team:RPA}) has 6 career 40-point games, tied for the 3rd-most in league history.",
+      "notability": 0.603,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {is:S/T} 8-3; every team that started 8-3 has made the playoffs (7 for 7).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "standings_leader_run",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} held first place for 7 straight weeks.",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} lost to {team:SLS} by 20 but would have won by starting the best lineup on the roster (93), the 3rd time this season.",
+      "notability": 0.63,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 1,207 points against {team:J/J} through 11 games, the most through 11 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} {has:WJK} won 4 straight, the longest win streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "RPA"
+      ],
+      "template": "{team:S/T} {has:S/T} won 6 straight against {team:RPA} (series: 7-3-1).",
+      "notability": 0.59,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_points",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Joe W. passed Arnav for 4th place on the all-time career points list.",
+      "notability": 0.588,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_easy",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "Opponents have scored a combined 178.5 points below their season averages against {team:CWR} through 11 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored a combined 214.9 points above their season averages against {team:J/J} through 11 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "week_high_streak",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} posted the league's top score for the 2nd straight week.",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_loyalty",
+      "category": "player",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "Jonathan Taylor made his 75th start for {team:CWR}.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_lead",
+      "category": "team",
+      "subjects": [
+        "SLS",
+        "CWR"
+      ],
+      "template": "{team:SLS} beat {team:CWR} to break a tie in the all-time series and take a 6-5 lead.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "AST",
+        "GSA"
+      ],
+      "template": "{team:AST} beat {team:GSA} by 4; without Bryce Young's 20 points it would have been a loss.",
+      "notability": 0.383,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 1,096 points through 11 games, the 3rd-most through 11 games in league history.",
+      "notability": 0.388,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "Every game was a scorigami (97-93, 95-73, 110-101, 85-65 and 92-75), first-time finals that take the league to 473 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_carry",
+      "category": "player",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Dak Prescott ({team:RPA}) supplied 57% of {team:RPA}'s 75 points in a loss, the 5th-largest share by one player in league history.",
+      "notability": 0.305,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "all": [
+    {
+      "id": "title_defense",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "Defending champion {team:CGK} {is:CGK} 10-1, the best start to a title defense in league history.",
+      "notability": 0.8,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "all_play",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "{team:J/J} {is:J/J} 2-9 despite a 52-47 record against the whole league, the unluckiest start through 11 games in league history.",
+      "notability": 0.75,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "same_week_average_high",
+      "category": "league",
+      "subjects": [],
+      "template": "Teams averaged 88.6 points, the highest-scoring Week 11 in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_first_win",
+      "category": "team",
+      "subjects": [
+        "AST",
+        "GSA"
+      ],
+      "template": "{team:AST} beat {team:GSA} for the first time in 4 meetings.",
+      "notability": 0.68,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "career_big_games",
+      "category": "player",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Dak Prescott ({team:RPA}) has 6 career 40-point games, tied for the 3rd-most in league history.",
+      "notability": 0.603,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "playoff_odds",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {is:S/T} 8-3; every team that started 8-3 has made the playoffs (7 for 7).",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "standings_leader_run",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} {has:CGK} held first place for 7 straight weeks.",
+      "notability": 0.65,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "lineup_cost",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "{team:CWR} lost to {team:SLS} by 20 but would have won by starting the best lineup on the roster (93), the 3rd time this season.",
+      "notability": 0.63,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "points_against_high",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored 1,207 points against {team:J/J} through 11 games, the most through 11 games in league history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "streak_win",
+      "category": "team",
+      "subjects": [
+        "WJK"
+      ],
+      "template": "{team:WJK} {has:WJK} won 4 straight, the longest win streak in franchise history.",
+      "notability": 0.6,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_streak",
+      "category": "team",
+      "subjects": [
+        "S/T",
+        "RPA"
+      ],
+      "template": "{team:S/T} {has:S/T} won 6 straight against {team:RPA} (series: 7-3-1).",
+      "notability": 0.59,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "owner_passed_points",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Joe W. passed Arnav for 4th place on the all-time career points list.",
+      "notability": 0.588,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_easy",
+      "category": "team",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "Opponents have scored a combined 178.5 points below their season averages against {team:CWR} through 11 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "schedule_luck_tough",
+      "category": "team",
+      "subjects": [
+        "J/J"
+      ],
+      "template": "Opponents have scored a combined 214.9 points above their season averages against {team:J/J} through 11 games, the most in league history.",
+      "notability": 0.55,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "week_high_streak",
+      "category": "team",
+      "subjects": [
+        "CGK"
+      ],
+      "template": "{team:CGK} posted the league's top score for the 2nd straight week.",
+      "notability": 0.51,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_loyalty",
+      "category": "player",
+      "subjects": [
+        "CWR"
+      ],
+      "template": "Jonathan Taylor made his 75th start for {team:CWR}.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "h2h_lead",
+      "category": "team",
+      "subjects": [
+        "SLS",
+        "CWR"
+      ],
+      "template": "{team:SLS} beat {team:CWR} to break a tie in the all-time series and take a 6-5 lead.",
+      "notability": 0.45,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_swing",
+      "category": "player",
+      "subjects": [
+        "AST",
+        "GSA"
+      ],
+      "template": "{team:AST} beat {team:GSA} by 4; without Bryce Young's 20 points it would have been a loss.",
+      "notability": 0.383,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "pace_high",
+      "category": "team",
+      "subjects": [
+        "S/T"
+      ],
+      "template": "{team:S/T} {has:S/T} scored 1,096 points through 11 games, the 3rd-most through 11 games in league history.",
+      "notability": 0.388,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "scorigami_week",
+      "category": "league",
+      "subjects": [],
+      "template": "Every game was a scorigami (97-93, 95-73, 110-101, 85-65 and 92-75), first-time finals that take the league to 473 unique final scores.",
+      "notability": 0.3,
+      "tags": [
+        "regular"
+      ]
+    },
+    {
+      "id": "player_carry",
+      "category": "player",
+      "subjects": [
+        "RPA"
+      ],
+      "template": "Dak Prescott ({team:RPA}) supplied 57% of {team:RPA}'s 75 points in a loss, the 5th-largest share by one player in league history.",
+      "notability": 0.305,
+      "tags": [
+        "regular"
+      ]
+    }
+  ],
+  "recaps": [
+    {
+      "team1": "AST",
+      "team2": "GSA",
+      "notes": [
+        {
+          "id": "h2h_first_win",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "GSA"
+          ],
+          "template": "{team:AST} beat {team:GSA} for the first time in 4 meetings.",
+          "notability": 0.68,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_upset",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "GSA"
+          ],
+          "template": "An upset: {team:AST} won despite a projected 8.7-point deficit.",
+          "notability": 0.587,
+          "tags": []
+        },
+        {
+          "id": "recap_series_close",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "GSA"
+          ],
+          "template": "At 4 points, it was the closest of their 4 meetings.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "recap_player_season_high",
+          "category": "player",
+          "subjects": [
+            "AST"
+          ],
+          "template": "Dallas Cowboys' 6 is the most by a OL this season.",
+          "notability": 0.45,
+          "tags": [
+            "Dallas Cowboys"
+          ]
+        },
+        {
+          "id": "player_swing",
+          "category": "player",
+          "subjects": [
+            "AST",
+            "GSA"
+          ],
+          "template": "{team:AST} beat {team:GSA} by 4; without Bryce Young's 20 points it would have been a loss.",
+          "notability": 0.383,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "GSA"
+          ],
+          "template": "Patrick Mahomes II (QB) led the game with 30 points for {team:GSA}.",
+          "notability": 0.35,
+          "tags": [
+            "Patrick Mahomes II"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "AST",
+            "GSA"
+          ],
+          "template": "Scorigami: the first 97-93 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "S/T",
+      "team2": "RPA",
+      "notes": [
+        {
+          "id": "playoff_odds",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} {is:S/T} 8-3; every team that started 8-3 has made the playoffs (7 for 7).",
+          "notability": 0.65,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "career_big_games",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Dak Prescott ({team:RPA}) has 6 career 40-point games, tied for the 3rd-most in league history.",
+          "notability": 0.603,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_streak",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "RPA"
+          ],
+          "template": "{team:S/T} {has:S/T} won 6 straight against {team:RPA} (series: 7-3-1).",
+          "notability": 0.59,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "pace_high",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} {has:S/T} scored 1,096 points through 11 games, the 3rd-most through 11 games in league history.",
+          "notability": 0.388,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "player_carry",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Dak Prescott ({team:RPA}) supplied 57% of {team:RPA}'s 75 points in a loss, the 5th-largest share by one player in league history.",
+          "notability": 0.305,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "{team:S/T} left 15 points on the bench (best possible lineup: 107).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "RPA"
+          ],
+          "template": "Scorigami: the first 92-75 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "CGK",
+      "team2": "J/J",
+      "notes": [
+        {
+          "id": "title_defense",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "Defending champion {team:CGK} {is:CGK} 10-1, the best start to a title defense in league history.",
+          "notability": 0.8,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "all_play",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "{team:J/J} {is:J/J} 2-9 despite a 52-47 record against the whole league, the unluckiest start through 11 games in league history.",
+          "notability": 0.75,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "standings_leader_run",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} held first place for 7 straight weeks.",
+          "notability": 0.65,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "points_against_high",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Opponents have scored 1,207 points against {team:J/J} through 11 games, the most through 11 games in league history.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "owner_passed_points",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Joe W. passed Arnav for 4th place on the all-time career points list.",
+          "notability": 0.588,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "schedule_luck_tough",
+          "category": "team",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Opponents have scored a combined 214.9 points above their season averages against {team:J/J} through 11 games, the most in league history.",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "week_high_streak",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} posted the league's top score for the 2nd straight week.",
+          "notability": 0.51,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "That's 3 straight for {team:CGK} against {team:J/J}.",
+          "notability": 0.47,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "{team:CGK} leads the series 14-5 after 19 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_week_top",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK}'s 110 was the week's highest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "C.J. Stroud (QB) led the game with 25 points for {team:J/J}.",
+          "notability": 0.35,
+          "tags": [
+            "C.J. Stroud"
+          ]
+        },
+        {
+          "id": "recap_bench_points",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} left 27 points on the bench (best possible lineup: 137).",
+          "notability": 0.3,
+          "tags": []
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "J/J"
+          ],
+          "template": "Scorigami: the first 110-101 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "SLS",
+      "team2": "CWR",
+      "notes": [
+        {
+          "id": "lineup_cost",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR} lost to {team:SLS} by 20 but would have won by starting the best lineup on the roster (93), the 3rd time this season.",
+          "notability": 0.63,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "schedule_luck_easy",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "Opponents have scored a combined 178.5 points below their season averages against {team:CWR} through 11 games, the most in league history.",
+          "notability": 0.55,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "player_loyalty",
+          "category": "player",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "Jonathan Taylor made his 75th start for {team:CWR}.",
+          "notability": 0.45,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "h2h_lead",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "CWR"
+          ],
+          "template": "{team:SLS} beat {team:CWR} to break a tie in the all-time series and take a 6-5 lead.",
+          "notability": 0.45,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_week_bottom",
+          "category": "team",
+          "subjects": [
+            "CWR"
+          ],
+          "template": "{team:CWR}'s 65 was the week's lowest score.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Joe Burrow (QB) led the game with 24 points for {team:SLS}.",
+          "notability": 0.35,
+          "tags": [
+            "Joe Burrow"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "CWR"
+          ],
+          "template": "Scorigami: the first 85-65 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    },
+    {
+      "team1": "WJK",
+      "team2": "AYP",
+      "notes": [
+        {
+          "id": "streak_win",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} {has:WJK} won 4 straight, the longest win streak in franchise history.",
+          "notability": 0.6,
+          "tags": [
+            "regular"
+          ]
+        },
+        {
+          "id": "recap_series_streak",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "That's 2 straight for {team:WJK} against {team:AYP}.",
+          "notability": 0.43,
+          "tags": []
+        },
+        {
+          "id": "recap_series_record",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "{team:WJK} leads the series 7-5 after 12 meetings.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_series_highest_scoring",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "Their 168 combined points were the 2nd-highest-scoring meeting of 12.",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "recap_top_player",
+          "category": "player",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "Jonah Coleman (RB) led the game with 30 points for {team:AYP}.",
+          "notability": 0.35,
+          "tags": [
+            "Jonah Coleman"
+          ]
+        },
+        {
+          "id": "recap_scorigami",
+          "category": "team",
+          "subjects": [
+            "WJK",
+            "AYP"
+          ],
+          "template": "Scorigami: the first 95-73 final in QPFL history.",
+          "notability": 0.3,
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-11-24T05:55:53.212902+00:00"
+}

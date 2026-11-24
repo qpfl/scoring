@@ -1,0 +1,639 @@
+{
+  "season": 2026,
+  "week": 12,
+  "week_label": "Week 12",
+  "history_through": [
+    2026,
+    11
+  ],
+  "matchups": [
+    {
+      "team1": "GSA",
+      "team2": "CWR",
+      "storylines": [
+        {
+          "id": "pre_series_playoffs",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "CWR"
+          ],
+          "template": "{team:GSA} and {team:CWR} have met 2 times in the playoffs; they have split them 1-1.",
+          "notability": 0.56,
+          "tags": []
+        },
+        {
+          "id": "pre_opponent_scoring",
+          "category": "team",
+          "subjects": [
+            "CWR",
+            "GSA"
+          ],
+          "template": "{team:CWR} {has:CWR} averaged 73.9 against {team:GSA} in 14 meetings, 12.1 fewer than against everyone else.",
+          "notability": 0.481,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "CWR"
+          ],
+          "template": "Their most lopsided meeting was a 69-point win: {team:GSA} won 137-68 (Week 8, 2025).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "GSA",
+            "CWR"
+          ],
+          "template": "{team:CWR} won the last meeting 80-65 (Week 7, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "GSA",
+            "CWR"
+          ],
+          "template": "A.J. Brown faces former team {team:CWR} (traded away 2025 offseason; 50 starts, 555 points there, 2021-2024). Averages 5 in 2 starts against them.",
+          "notability": 0.7,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "GSA",
+            "CWR"
+          ],
+          "template": "George Kittle faces former team {team:CWR} (26 starts, 228 points there, 2020-2022). Averages 6.8 in 4 starts against them.",
+          "notability": 0.58,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "CWR",
+            "GSA"
+          ],
+          "template": "Rome Odunze faces former team {team:GSA} (traded away 2025 offseason; 1 start, 3 points there, 2024). Averages 8.5 in 2 starts against them.",
+          "notability": 0.555,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "GSA",
+            "CWR"
+          ],
+          "template": "Ja'Marr Chase faces former team {team:CWR} (13 starts, 140 points there, 2021-2022). Averages 8.2 in 8 starts against them.",
+          "notability": 0.515,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 14,
+        "wins": 8,
+        "losses": 6,
+        "ties": 0,
+        "season": {
+          "wins": 0,
+          "losses": 1,
+          "ties": 0
+        },
+        "scored_games": 14,
+        "points_for": 1271.0,
+        "points_against": 1035.0
+      }
+    },
+    {
+      "team1": "RPA",
+      "team2": "AYP",
+      "storylines": [
+        {
+          "id": "pre_form_bottom_half",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} {has:AYP} finished in the bottom half of the league 5 weeks running.",
+          "notability": 0.5,
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "AYP",
+            "expect": false
+          }
+        },
+        {
+          "id": "pre_team_streak",
+          "category": "team",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "{team:RPA} {has:RPA} lost 3 straight.",
+          "notability": 0.42,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "RPA",
+            "expect": false
+          }
+        },
+        {
+          "id": "pre_team_streak",
+          "category": "team",
+          "subjects": [
+            "AYP"
+          ],
+          "template": "{team:AYP} {has:AYP} lost 3 straight.",
+          "notability": 0.42,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "AYP",
+            "expect": false
+          }
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "AYP"
+          ],
+          "template": "{team:RPA} won the last meeting 94-46 (Week 3, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "RPA",
+            "AYP"
+          ],
+          "template": "Matthew Stafford faces former team {team:AYP} (26 starts, 531 points there, 2020-2024). Averages 13.5 in 2 starts against them.",
+          "notability": 0.58,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "RPA",
+            "AYP"
+          ],
+          "template": "Derrick Henry faces former team {team:AYP} (15 starts, 218 points there, 2024-2025). Averages 17.8 in 14 starts against them.",
+          "notability": 0.525,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "AYP",
+            "RPA"
+          ],
+          "template": "Hunter Henry faces former team {team:RPA} (13 starts, 70 points there, 2020). Averages 5.5 in 2 starts against them.",
+          "notability": 0.515,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 12,
+        "wins": 7,
+        "losses": 4,
+        "ties": 1,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 12,
+        "points_for": 954.0,
+        "points_against": 931.0
+      }
+    },
+    {
+      "team1": "CGK",
+      "team2": "SLS",
+      "storylines": [
+        {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "SLS"
+          ],
+          "template": "Joe Burrow has scored 20+ in 7 straight starts.",
+          "notability": 0.7,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "SLS",
+            "player": "Joe Burrow",
+            "position": "QB",
+            "min": 20
+          }
+        },
+        {
+          "id": "pre_series_streak",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "{team:CGK} {has:CGK} won 4 straight against {team:SLS}.",
+          "notability": 0.61,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "CGK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_series_playoffs",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "{team:CGK} and {team:SLS} have met 3 times in the playoffs; {team:CGK} won 3 of them.",
+          "notability": 0.59,
+          "tags": []
+        },
+        {
+          "id": "pre_standings_top",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "A meeting of playoff-position teams: {team:CGK} (1st) and {team:SLS} (4th).",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "pre_playoff_rematch",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "A rematch of the 2025 Semi-Finals, which {team:CGK} won 106-70.",
+          "notability": 0.5,
+          "tags": []
+        },
+        {
+          "id": "pre_opponent_scoring",
+          "category": "team",
+          "subjects": [
+            "SLS",
+            "CGK"
+          ],
+          "template": "{team:SLS} {has:SLS} averaged 76.7 against {team:CGK} in 11 meetings, 11.4 fewer than against everyone else.",
+          "notability": 0.476,
+          "tags": []
+        },
+        {
+          "id": "pre_team_streak",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "{team:CGK} {has:CGK} won 3 straight.",
+          "notability": 0.42,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "CGK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_series_closest",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "Their closest meeting was decided by 2 points: {team:SLS} won 92-90 (Week 4, 2021).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "Their most lopsided meeting was a 51-point win: {team:CGK} won 109-58 (Week 2, 2026).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "{team:CGK} won the last meeting 109-58 (Week 2, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "Pat Freiermuth faces former team {team:SLS} (24 starts, 121 points there, 2022-2024).",
+          "notability": 0.57,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [
+        {
+          "id": "pre_milestone_owner_wins",
+          "category": "team",
+          "subjects": [
+            "CGK"
+          ],
+          "template": "A win would be Kaminska's 75th career win.",
+          "notability": 0.6,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "CGK",
+            "expect": true
+          }
+        }
+      ],
+      "series": {
+        "games": 11,
+        "wins": 8,
+        "losses": 3,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 11,
+        "points_for": 1018.0,
+        "points_against": 844.0
+      }
+    },
+    {
+      "team1": "S/T",
+      "team2": "AST",
+      "storylines": [
+        {
+          "id": "pre_series_streak",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "{team:S/T} {has:S/T} won 3 straight against {team:AST}.",
+          "notability": 0.57,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "S/T",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_series_closest",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "Their closest meeting was decided by 1 point: {team:S/T} won 76-75 (Week 11, 2025).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "Their most lopsided meeting was a 56-point win: {team:S/T} won 121-65 (Week 3, 2025).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "S/T",
+            "AST"
+          ],
+          "template": "{team:S/T} won the last meeting 105-85 (Week 2, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 5,
+        "wins": 3,
+        "losses": 2,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 5,
+        "points_for": 458.0,
+        "points_against": 425.0
+      }
+    },
+    {
+      "team1": "J/J",
+      "team2": "WJK",
+      "storylines": [
+        {
+          "id": "pre_team_streak",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} {has:WJK} won 4 straight.",
+          "notability": 0.46,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "WJK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_form_top_half",
+          "category": "team",
+          "subjects": [
+            "WJK"
+          ],
+          "template": "{team:WJK} {has:WJK} finished in the top half of the league 4 weeks running.",
+          "notability": 0.46,
+          "tags": [],
+          "check": {
+            "type": "top_half",
+            "team": "WJK",
+            "expect": true
+          }
+        },
+        {
+          "id": "pre_series_closest",
+          "category": "team",
+          "subjects": [
+            "J/J",
+            "WJK"
+          ],
+          "template": "Their closest meeting was decided by 1 point: {team:J/J} won 58-57 (Week 7, 2022).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_series_widest",
+          "category": "team",
+          "subjects": [
+            "J/J",
+            "WJK"
+          ],
+          "template": "Their most lopsided meeting was a 76-point win: {team:WJK} won 106-30 (Week 5, 2023).",
+          "notability": 0.4,
+          "tags": []
+        },
+        {
+          "id": "pre_last_meeting",
+          "category": "team",
+          "subjects": [
+            "J/J",
+            "WJK"
+          ],
+          "template": "{team:J/J} won the last meeting 113-93 (Week 5, 2026).",
+          "notability": 0.35,
+          "tags": []
+        }
+      ],
+      "revenge": [
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "J/J",
+            "WJK"
+          ],
+          "template": "Xavier Worthy faces former team {team:WJK} (traded away 2026 offseason; 10 starts, 43 points there, 2024-2025).",
+          "notability": 0.6,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "WJK",
+            "J/J"
+          ],
+          "template": "Chuba Hubbard faces former team {team:J/J} (17 starts, 180 points there, 2024-2025).",
+          "notability": 0.535,
+          "tags": [
+            "bench"
+          ]
+        },
+        {
+          "id": "pre_revenge",
+          "category": "player",
+          "subjects": [
+            "WJK",
+            "J/J"
+          ],
+          "template": "Chase Brown faces former team {team:J/J} (9 starts, 115 points there, 2024). Averages 3.5 in 2 starts against them.",
+          "notability": 0.495,
+          "tags": [
+            "bench"
+          ]
+        }
+      ],
+      "records": [],
+      "milestones": [],
+      "series": {
+        "games": 18,
+        "wins": 12,
+        "losses": 6,
+        "ties": 0,
+        "season": {
+          "wins": 1,
+          "losses": 0,
+          "ties": 0
+        },
+        "scored_games": 18,
+        "points_for": 1362.0,
+        "points_against": 1238.0
+      }
+    }
+  ],
+  "names": {
+    "GSA": "Griff",
+    "CGK": "Kaminska",
+    "RPA": "Ryan",
+    "S/T": "Spencer/Tim",
+    "CWR": "Redacted/Jack",
+    "J/J": "Joe/Joe",
+    "SLS": "Stephen",
+    "AYP": "Arnav",
+    "AST": "Anagh",
+    "WJK": "Bill"
+  },
+  "generated_at": "2026-11-24T05:55:57.871803+00:00"
+}
