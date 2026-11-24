@@ -132,6 +132,23 @@
       "team2": "AYP",
       "storylines": [
         {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Dak Prescott has scored 20+ in 3 straight starts.",
+          "notability": 0.55,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "RPA",
+            "player": "Dak Prescott",
+            "position": "QB",
+            "min": 20
+          }
+        },
+        {
           "id": "pre_form_bottom_half",
           "category": "team",
           "subjects": [
@@ -145,6 +162,16 @@
             "team": "AYP",
             "expect": false
           }
+        },
+        {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Jaxon Smith-Njigba leads all QPFL WR starters this season with 179 points.",
+          "notability": 0.45,
+          "tags": []
         },
         {
           "id": "pre_team_streak",
@@ -196,11 +223,16 @@
             "RPA",
             "AYP"
           ],
-          "template": "Matthew Stafford faces former team {team:AYP} (26 starts, 531 points there, 2020-2024). Averages 13.5 in 2 starts against them.",
-          "notability": 0.58,
+          "template": "Derrick Henry faces former team {team:AYP} (15 starts, 218 points there, 2024-2025). Averages 17.8 in 14 starts against them.",
+          "notability": 0.625,
           "tags": [
-            "bench"
-          ]
+            "starter"
+          ],
+          "check": {
+            "type": "win",
+            "team": "RPA",
+            "expect": true
+          }
         },
         {
           "id": "pre_revenge",
@@ -209,8 +241,8 @@
             "RPA",
             "AYP"
           ],
-          "template": "Derrick Henry faces former team {team:AYP} (15 starts, 218 points there, 2024-2025). Averages 17.8 in 14 starts against them.",
-          "notability": 0.525,
+          "template": "Matthew Stafford faces former team {team:AYP} (26 starts, 531 points there, 2020-2024). Averages 13.5 in 2 starts against them. On the bench for now.",
+          "notability": 0.58,
           "tags": [
             "bench"
           ]
@@ -229,7 +261,28 @@
           ]
         }
       ],
-      "records": [],
+      "records": [
+        {
+          "id": "pre_record_thirties",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "A 30-point game would move Dak Prescott past Jalen Hurts for 4th in career 30-point games.",
+          "notability": 0.45,
+          "tags": [
+            "career",
+            "player-career-thirty-point-games"
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "RPA",
+            "player": "Dak Prescott",
+            "position": "QB",
+            "min": 30
+          }
+        }
+      ],
       "milestones": [],
       "series": {
         "games": 12,
@@ -695,5 +748,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-24T13:48:52.973983+00:00"
+  "generated_at": "2026-11-24T14:41:34.749252+00:00"
 }
