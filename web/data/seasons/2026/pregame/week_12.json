@@ -455,6 +455,16 @@
           }
         },
         {
+          "id": "pre_player_leader",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Jahmyr Gibbs leads all QPFL RB starters this season with 228 points.",
+          "notability": 0.45,
+          "tags": []
+        },
+        {
           "id": "pre_series_closest",
           "category": "team",
           "subjects": [
@@ -489,8 +499,48 @@
         }
       ],
       "revenge": [],
-      "records": [],
-      "milestones": [],
+      "records": [
+        {
+          "id": "pre_record_career",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Jahmyr Gibbs is 19 points behind Saquon Barkley for 5th in career RB points, with 16.6 projected this week.",
+          "notability": 0.6,
+          "tags": [
+            "career",
+            "player-career-most-points-rb"
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "S/T",
+            "player": "Jahmyr Gibbs",
+            "position": "RB",
+            "min": 19.0,
+            "over": true
+          }
+        }
+      ],
+      "milestones": [
+        {
+          "id": "pre_milestone_points",
+          "category": "player",
+          "subjects": [
+            "S/T"
+          ],
+          "template": "Amon-Ra St. Brown needs 7 points for 750 career points as a QPFL starter.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "S/T",
+            "player": "Amon-Ra St. Brown",
+            "position": "WR",
+            "min": 7.0
+          }
+        }
+      ],
       "series": {
         "games": 5,
         "wins": 3,
@@ -645,5 +695,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-24T12:54:20.286865+00:00"
+  "generated_at": "2026-11-24T13:48:52.973983+00:00"
 }
