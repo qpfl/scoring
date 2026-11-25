@@ -1,6 +1,6 @@
 {
   "week": 12,
-  "scored_at": "2026-11-24T20:43:03.684731+00:00",
+  "scored_at": "2026-11-25T00:19:39.726673+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -233,14 +233,14 @@
         },
         {
           "name": "Daniel Carlson",
-          "nfl_team": "NO",
+          "nfl_team": "MIA",
           "position": "K",
           "score": 0.0,
           "found": false,
           "starter": false,
           "projected_points": 0.0,
-          "nfl_opponent": "CIN",
-          "nfl_is_home": false,
+          "nfl_opponent": "NYJ",
+          "nfl_is_home": true,
           "kickoff": "2026-11-29T18:00:00+00:00",
           "game_final": false,
           "on_bye": false,
@@ -281,7 +281,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": -0.8,
+          "projected_points": -0.9,
           "nfl_opponent": "SF",
           "nfl_is_home": false,
           "kickoff": "2026-11-29T21:25:00+00:00",
@@ -1056,7 +1056,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 1.8,
+          "projected_points": 1.9,
           "nfl_opponent": "SEA",
           "nfl_is_home": true,
           "kickoff": "2026-11-29T21:25:00+00:00",
@@ -2054,12 +2054,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 5.5,
+          "projected_points": 0.0,
           "nfl_opponent": "PIT",
           "nfl_is_home": false,
           "kickoff": "2026-11-27T20:00:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Justin Jefferson",
@@ -2544,12 +2545,13 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 4.5,
+          "projected_points": 0.0,
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "doubtful"
         },
         {
           "name": "Eli Raridon",
@@ -4598,7 +4600,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 1.8,
+            "projected_points": 1.9,
             "nfl_opponent": "SEA",
             "nfl_is_home": true,
             "kickoff": "2026-11-29T21:25:00+00:00",
@@ -4810,12 +4812,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 5.5,
+            "projected_points": 0.0,
             "nfl_opponent": "PIT",
             "nfl_is_home": false,
             "kickoff": "2026-11-27T20:00:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Justin Jefferson",
@@ -5731,14 +5734,14 @@
           },
           {
             "name": "Daniel Carlson",
-            "nfl_team": "NO",
+            "nfl_team": "MIA",
             "position": "K",
             "score": 0.0,
             "found": false,
             "starter": false,
             "projected_points": 0.0,
-            "nfl_opponent": "CIN",
-            "nfl_is_home": false,
+            "nfl_opponent": "NYJ",
+            "nfl_is_home": true,
             "kickoff": "2026-11-29T18:00:00+00:00",
             "game_final": false,
             "on_bye": false,
@@ -5779,7 +5782,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": -0.8,
+            "projected_points": -0.9,
             "nfl_opponent": "SF",
             "nfl_is_home": false,
             "kickoff": "2026-11-29T21:25:00+00:00",
@@ -7263,12 +7266,13 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 4.5,
+            "projected_points": 0.0,
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "doubtful"
           },
           {
             "name": "Eli Raridon",
