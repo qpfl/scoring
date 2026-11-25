@@ -1,6 +1,6 @@
 {
   "week": 12,
-  "scored_at": "2026-11-25T14:36:29.204524+00:00",
+  "scored_at": "2026-11-25T19:13:48.866553+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -1165,7 +1165,7 @@
       "avatar": "images/avatars/CWR/2026-w1.png",
       "projection_ready": true,
       "projected_total": 85.1,
-      "win_probability": 0.4804,
+      "win_probability": 0.7608,
       "starters_remaining": 9,
       "pregame_total": 85.1,
       "score_rank": 3
@@ -3191,12 +3191,13 @@
           "score": 0.0,
           "found": false,
           "starter": true,
-          "projected_points": 14.7,
+          "projected_points": 0.0,
           "nfl_opponent": "BUF",
           "nfl_is_home": false,
           "kickoff": "2026-11-27T01:20:00+00:00",
           "game_final": false,
-          "on_bye": false
+          "on_bye": false,
+          "unavailable_reason": "out"
         },
         {
           "name": "Saquon Barkley",
@@ -3524,9 +3525,9 @@
       "total_score": 0.0,
       "avatar": "images/avatars/GSA/2026-w10.png",
       "projection_ready": true,
-      "projected_total": 86.1,
-      "win_probability": 0.5196,
-      "starters_remaining": 10,
+      "projected_total": 71.3,
+      "win_probability": 0.2392,
+      "starters_remaining": 9,
       "pregame_total": 86.1,
       "score_rank": 9
     },
@@ -3983,12 +3984,13 @@
             "score": 0.0,
             "found": false,
             "starter": true,
-            "projected_points": 14.7,
+            "projected_points": 0.0,
             "nfl_opponent": "BUF",
             "nfl_is_home": false,
             "kickoff": "2026-11-27T01:20:00+00:00",
             "game_final": false,
-            "on_bye": false
+            "on_bye": false,
+            "unavailable_reason": "out"
           },
           {
             "name": "Saquon Barkley",
@@ -4316,9 +4318,9 @@
         "total_score": 0.0,
         "avatar": "images/avatars/GSA/2026-w10.png",
         "projection_ready": true,
-        "projected_total": 86.1,
-        "win_probability": 0.5196,
-        "starters_remaining": 10,
+        "projected_total": 71.3,
+        "win_probability": 0.2392,
+        "starters_remaining": 9,
         "pregame_total": 86.1,
         "score_rank": 9
       },
@@ -4710,7 +4712,7 @@
         "avatar": "images/avatars/CWR/2026-w1.png",
         "projection_ready": true,
         "projected_total": 85.1,
-        "win_probability": 0.4804,
+        "win_probability": 0.7608,
         "starters_remaining": 9,
         "pregame_total": 85.1,
         "score_rank": 3
