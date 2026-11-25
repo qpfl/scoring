@@ -669,6 +669,23 @@
           "id": "pre_player_hot",
           "category": "player",
           "subjects": [
+            "J/J"
+          ],
+          "template": "Jordan Love has scored 20+ in 4 straight starts.",
+          "notability": 0.6,
+          "tags": [],
+          "check": {
+            "type": "player_points",
+            "team": "J/J",
+            "player": "Jordan Love",
+            "position": "QB",
+            "min": 20
+          }
+        },
+        {
+          "id": "pre_player_hot",
+          "category": "player",
+          "subjects": [
             "WJK"
           ],
           "template": "Brock Purdy has scored 20+ in 3 straight starts.",
@@ -772,7 +789,7 @@
             "J/J",
             "WJK"
           ],
-          "template": "Xavier Worthy faces former team {team:WJK} (traded away 2026 offseason; 10 starts, 43 points there, 2024-2025).",
+          "template": "Xavier Worthy faces former team {team:WJK} (traded away 2026 offseason; 10 starts, 43 points there, 2024-2025). On the bench for now.",
           "notability": 0.6,
           "tags": [
             "bench"
@@ -792,7 +809,29 @@
           ]
         }
       ],
-      "records": [],
+      "records": [
+        {
+          "id": "pre_record_season",
+          "category": "player",
+          "subjects": [
+            "J/J"
+          ],
+          "template": "Kansas City Chiefs is 1 point behind Philadelphia Eagles (2024) for 5th in single-season OL points, with 1.6 projected this week.",
+          "notability": 0.6,
+          "tags": [
+            "season",
+            "player-season-most-points-ol"
+          ],
+          "check": {
+            "type": "player_points",
+            "team": "J/J",
+            "player": "Kansas City Chiefs",
+            "position": "OL",
+            "min": 1.0,
+            "over": true
+          }
+        }
+      ],
       "milestones": [],
       "series": {
         "games": 18,
@@ -822,5 +861,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-25T14:34:49.188450+00:00"
+  "generated_at": "2026-11-25T14:36:44.102626+00:00"
 }
