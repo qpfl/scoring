@@ -56,8 +56,8 @@ jobs:
       - name: Commit and push changes
         if: steps.git-check.outputs.changed == 'true'
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git config --local user.email "59709552+gansel51@users.noreply.github.com"
+          git config --local user.name "Griffin Ansel"
           git add web/data.json web/data/seasons/*/live.json
           git commit -m "Update trade blocks in web data"
           scripts/git_push_with_retry.sh origin main 5

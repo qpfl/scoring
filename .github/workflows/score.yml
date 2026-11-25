@@ -320,8 +320,8 @@ jobs:
 
       - name: Commit and push
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git config --local user.email "59709552+gansel51@users.noreply.github.com"
+          git config --local user.name "Griffin Ansel"
 
           # Add all data files (no more Excel score files)
           git add web/data.json web/data/ data/
