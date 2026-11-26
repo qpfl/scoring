@@ -184,6 +184,22 @@
           }
         },
         {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "RPA",
+            "AYP"
+          ],
+          "template": "The closest projected game of the week: {team:AYP} by 0.5.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "AYP",
+            "expect": true
+          }
+        },
+        {
           "id": "pre_player_leader",
           "category": "player",
           "subjects": [
@@ -243,16 +259,11 @@
             "RPA",
             "AYP"
           ],
-          "template": "Derrick Henry faces former team {team:AYP} (15 starts, 218 points there, 2024-2025). Averages 17.8 in 14 starts against them.",
-          "notability": 0.625,
+          "template": "Matthew Stafford faces former team {team:AYP} (26 starts, 531 points there, 2020-2024). Averages 13.5 in 2 starts against them. On the bench for now.",
+          "notability": 0.58,
           "tags": [
-            "starter"
-          ],
-          "check": {
-            "type": "win",
-            "team": "RPA",
-            "expect": true
-          }
+            "bench"
+          ]
         },
         {
           "id": "pre_revenge",
@@ -261,8 +272,8 @@
             "RPA",
             "AYP"
           ],
-          "template": "Matthew Stafford faces former team {team:AYP} (26 starts, 531 points there, 2020-2024). Averages 13.5 in 2 starts against them. On the bench for now.",
-          "notability": 0.58,
+          "template": "Derrick Henry faces former team {team:AYP} (15 starts, 218 points there, 2024-2025). Averages 17.8 in 14 starts against them. On the bench for now.",
+          "notability": 0.525,
           "tags": [
             "bench"
           ]
@@ -303,7 +314,24 @@
           }
         }
       ],
-      "milestones": [],
+      "milestones": [
+        {
+          "id": "pre_milestone_starts",
+          "category": "player",
+          "subjects": [
+            "RPA"
+          ],
+          "template": "Dalton Kincaid is set for career start 50.",
+          "notability": 0.35,
+          "tags": [],
+          "check": {
+            "type": "player_start",
+            "team": "RPA",
+            "player": "Dalton Kincaid",
+            "position": "TE"
+          }
+        }
+      ],
       "series": {
         "games": 12,
         "wins": 7,
@@ -714,22 +742,6 @@
           }
         },
         {
-          "id": "pre_projection_closest",
-          "category": "team",
-          "subjects": [
-            "J/J",
-            "WJK"
-          ],
-          "template": "The closest projected game of the week: {team:J/J} by 1.",
-          "notability": 0.45,
-          "tags": [],
-          "check": {
-            "type": "win",
-            "team": "J/J",
-            "expect": true
-          }
-        },
-        {
           "id": "pre_series_closest",
           "category": "team",
           "subjects": [
@@ -861,5 +873,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-26T19:10:23.146639+00:00"
+  "generated_at": "2026-11-26T19:39:40.359903+00:00"
 }
