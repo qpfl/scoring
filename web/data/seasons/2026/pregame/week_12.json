@@ -34,22 +34,6 @@
           "tags": []
         },
         {
-          "id": "pre_projection_closest",
-          "category": "team",
-          "subjects": [
-            "GSA",
-            "CWR"
-          ],
-          "template": "The closest projected game of the week: {team:GSA} by 1.",
-          "notability": 0.45,
-          "tags": [],
-          "check": {
-            "type": "win",
-            "team": "GSA",
-            "expect": true
-          }
-        },
-        {
           "id": "pre_player_leader",
           "category": "player",
           "subjects": [
@@ -550,7 +534,7 @@
             "S/T",
             "AST"
           ],
-          "template": "The week's biggest projected favorite: {team:S/T} by 14.",
+          "template": "The week's biggest projected favorite: {team:S/T} by 14.2.",
           "notability": 0.45,
           "tags": [],
           "check": {
@@ -730,6 +714,22 @@
           }
         },
         {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "J/J",
+            "WJK"
+          ],
+          "template": "The closest projected game of the week: {team:J/J} by 1.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "J/J",
+            "expect": true
+          }
+        },
+        {
           "id": "pre_series_closest",
           "category": "team",
           "subjects": [
@@ -861,5 +861,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-26T03:55:27.179324+00:00"
+  "generated_at": "2026-11-26T17:02:33.805599+00:00"
 }
