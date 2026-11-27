@@ -1,6 +1,6 @@
 {
   "week": 12,
-  "scored_at": "2026-11-27T00:17:33.559980+00:00",
+  "scored_at": "2026-11-27T03:55:29.253981+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -102,7 +102,7 @@
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -349,7 +349,7 @@
           "position": "QB",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 17.6,
           "nfl_opponent": "KC",
           "nfl_is_home": true,
           "kickoff": "2026-11-27T01:20:00+00:00",
@@ -376,7 +376,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "projected_points": 0.0,
+          "projected_points": 5.8,
           "nfl_opponent": "KC",
           "nfl_is_home": true,
           "kickoff": "2026-11-27T01:20:00+00:00",
@@ -650,7 +650,7 @@
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -713,15 +713,18 @@
           "name": "Brian Schottenheimer",
           "nfl_team": "DAL",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": -1,
+          "found": true,
           "starter": true,
           "projected_points": 2.3,
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "loss_margin_<10": -1
+          }
         },
         {
           "name": "San Francisco 49ers",
@@ -799,11 +802,11 @@
           "on_bye": false
         }
       ],
-      "total_score": 67.0,
+      "total_score": 66.0,
       "projection_ready": true,
-      "projected_total": 117.7,
-      "win_probability": 0.99,
-      "starters_remaining": 7,
+      "projected_total": 114.4,
+      "win_probability": 0.9877,
+      "starters_remaining": 6,
       "pregame_total": 89.6,
       "score_rank": 1
     },
@@ -1086,7 +1089,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1263,7 +1266,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "ir"
         },
@@ -1742,7 +1745,7 @@
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1813,7 +1816,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -1942,7 +1945,7 @@
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2018,7 +2021,7 @@
       "avatar": "images/avatars/AST/2026-w0.png",
       "projection_ready": true,
       "projected_total": 76.9,
-      "win_probability": 0.01,
+      "win_probability": 0.0123,
       "starters_remaining": 9,
       "pregame_total": 75.6,
       "score_rank": 7
@@ -2057,7 +2060,7 @@
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2586,7 +2589,7 @@
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -2647,7 +2650,7 @@
           "nfl_opponent": "PHI",
           "nfl_is_home": true,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "out"
         },
@@ -3329,7 +3332,7 @@
           "score": 0.0,
           "found": false,
           "starter": false,
-          "projected_points": 0.0,
+          "projected_points": 14.7,
           "nfl_opponent": "BUF",
           "nfl_is_home": false,
           "kickoff": "2026-11-27T01:20:00+00:00",
@@ -3348,7 +3351,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3808,7 +3811,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3836,7 +3839,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3896,7 +3899,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -3959,15 +3962,18 @@
           "name": "Nick Sirianni",
           "nfl_team": "PHI",
           "position": "HC",
-          "score": 0.0,
-          "found": false,
+          "score": 2,
+          "found": true,
           "starter": false,
           "projected_points": -1.3,
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
-          "on_bye": false
+          "game_final": true,
+          "on_bye": false,
+          "breakdown": {
+            "win_margin_<10": 2
+          }
         },
         {
           "name": "Liam Coen",
@@ -3994,7 +4000,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false
         },
         {
@@ -4023,7 +4029,7 @@
           "nfl_opponent": "DAL",
           "nfl_is_home": false,
           "kickoff": "2026-11-26T21:30:00+00:00",
-          "game_final": false,
+          "game_final": true,
           "on_bye": false,
           "unavailable_reason": "backup"
         },
@@ -4140,7 +4146,7 @@
             "score": 0.0,
             "found": false,
             "starter": false,
-            "projected_points": 0.0,
+            "projected_points": 14.7,
             "nfl_opponent": "BUF",
             "nfl_is_home": false,
             "kickoff": "2026-11-27T01:20:00+00:00",
@@ -4159,7 +4165,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4762,7 +4768,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -4930,7 +4936,7 @@
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5438,7 +5444,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5466,7 +5472,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5526,7 +5532,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5589,15 +5595,18 @@
             "name": "Nick Sirianni",
             "nfl_team": "PHI",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": 2,
+            "found": true,
             "starter": false,
             "projected_points": -1.3,
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "win_margin_<10": 2
+            }
           },
           {
             "name": "Liam Coen",
@@ -5624,7 +5633,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -5653,7 +5662,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "backup"
           },
@@ -5807,7 +5816,7 @@
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6054,7 +6063,7 @@
             "position": "QB",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 17.6,
             "nfl_opponent": "KC",
             "nfl_is_home": true,
             "kickoff": "2026-11-27T01:20:00+00:00",
@@ -6081,7 +6090,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "projected_points": 0.0,
+            "projected_points": 5.8,
             "nfl_opponent": "KC",
             "nfl_is_home": true,
             "kickoff": "2026-11-27T01:20:00+00:00",
@@ -6157,7 +6166,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "ir"
           },
@@ -6765,7 +6774,7 @@
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -6828,15 +6837,18 @@
             "name": "Brian Schottenheimer",
             "nfl_team": "DAL",
             "position": "HC",
-            "score": 0.0,
-            "found": false,
+            "score": -1,
+            "found": true,
             "starter": true,
             "projected_points": 2.3,
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
-            "on_bye": false
+            "game_final": true,
+            "on_bye": false,
+            "breakdown": {
+              "loss_margin_<10": -1
+            }
           },
           {
             "name": "San Francisco 49ers",
@@ -6914,11 +6926,11 @@
             "on_bye": false
           }
         ],
-        "total_score": 67.0,
+        "total_score": 66.0,
         "projection_ready": true,
-        "projected_total": 117.7,
-        "win_probability": 0.99,
-        "starters_remaining": 7,
+        "projected_total": 114.4,
+        "win_probability": 0.9877,
+        "starters_remaining": 6,
         "pregame_total": 89.6,
         "score_rank": 1
       },
@@ -7038,7 +7050,7 @@
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7109,7 +7121,7 @@
             "nfl_opponent": "DAL",
             "nfl_is_home": false,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7238,7 +7250,7 @@
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7314,7 +7326,7 @@
         "avatar": "images/avatars/AST/2026-w0.png",
         "projection_ready": true,
         "projected_total": 76.9,
-        "win_probability": 0.01,
+        "win_probability": 0.0123,
         "starters_remaining": 9,
         "pregame_total": 75.6,
         "score_rank": 7
@@ -7478,7 +7490,7 @@
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false
           },
           {
@@ -7539,7 +7551,7 @@
             "nfl_opponent": "PHI",
             "nfl_is_home": true,
             "kickoff": "2026-11-26T21:30:00+00:00",
-            "game_final": false,
+            "game_final": true,
             "on_bye": false,
             "unavailable_reason": "out"
           },
