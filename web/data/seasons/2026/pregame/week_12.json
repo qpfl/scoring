@@ -184,22 +184,6 @@
           }
         },
         {
-          "id": "pre_projection_closest",
-          "category": "team",
-          "subjects": [
-            "RPA",
-            "AYP"
-          ],
-          "template": "The closest projected game of the week: {team:AYP} by 0.5.",
-          "notability": 0.45,
-          "tags": [],
-          "check": {
-            "type": "win",
-            "team": "AYP",
-            "expect": true
-          }
-        },
-        {
           "id": "pre_player_leader",
           "category": "player",
           "subjects": [
@@ -427,6 +411,22 @@
           "template": "{team:SLS} {has:SLS} averaged 76.7 against {team:CGK} in 11 meetings, 11.4 fewer than against everyone else.",
           "notability": 0.476,
           "tags": []
+        },
+        {
+          "id": "pre_projection_closest",
+          "category": "team",
+          "subjects": [
+            "CGK",
+            "SLS"
+          ],
+          "template": "The closest projected game of the week: {team:SLS} by 0.4.",
+          "notability": 0.45,
+          "tags": [],
+          "check": {
+            "type": "win",
+            "team": "SLS",
+            "expect": true
+          }
         },
         {
           "id": "pre_player_leader",
@@ -873,5 +873,5 @@
     "AST": "Anagh",
     "WJK": "Bill"
   },
-  "generated_at": "2026-11-27T19:05:26.221324+00:00"
+  "generated_at": "2026-11-27T21:01:39.864422+00:00"
 }
