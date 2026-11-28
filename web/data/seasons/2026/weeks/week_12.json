@@ -1,6 +1,6 @@
 {
   "week": 12,
-  "scored_at": "2026-11-28T03:42:28.233475+00:00",
+  "scored_at": "2026-11-28T07:04:37.398316+00:00",
   "teams": [
     {
       "name": "2 Billion Dollar Pitts",
@@ -2943,7 +2943,7 @@
       "total_score": 57.0,
       "projection_ready": true,
       "projected_total": 70.2,
-      "win_probability": 0.99,
+      "win_probability": 0.9529,
       "starters_remaining": 2,
       "pregame_total": 81.6,
       "score_rank": 3
@@ -3078,7 +3078,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": true,
+          "starter": false,
           "projected_points": 0.0,
           "nfl_opponent": "TEN",
           "nfl_is_home": true,
@@ -3125,7 +3125,7 @@
           "position": "WR",
           "score": 0.0,
           "found": false,
-          "starter": false,
+          "starter": true,
           "projected_points": 6.8,
           "nfl_opponent": "ARI",
           "nfl_is_home": false,
@@ -3359,10 +3359,10 @@
       ],
       "total_score": 10.0,
       "projection_ready": true,
-      "projected_total": 45.3,
-      "win_probability": 0.01,
-      "starters_remaining": 6,
-      "pregame_total": 80.6,
+      "projected_total": 52.1,
+      "win_probability": 0.0471,
+      "starters_remaining": 7,
+      "pregame_total": 76.3,
       "score_rank": 8
     },
     {
@@ -8001,7 +8001,7 @@
         "total_score": 57.0,
         "projection_ready": true,
         "projected_total": 70.2,
-        "win_probability": 0.99,
+        "win_probability": 0.9529,
         "starters_remaining": 2,
         "pregame_total": 81.6,
         "score_rank": 3
@@ -8136,7 +8136,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": true,
+            "starter": false,
             "projected_points": 0.0,
             "nfl_opponent": "TEN",
             "nfl_is_home": true,
@@ -8183,7 +8183,7 @@
             "position": "WR",
             "score": 0.0,
             "found": false,
-            "starter": false,
+            "starter": true,
             "projected_points": 6.8,
             "nfl_opponent": "ARI",
             "nfl_is_home": false,
@@ -8417,10 +8417,10 @@
         ],
         "total_score": 10.0,
         "projection_ready": true,
-        "projected_total": 45.3,
-        "win_probability": 0.01,
-        "starters_remaining": 6,
-        "pregame_total": 80.6,
+        "projected_total": 52.1,
+        "win_probability": 0.0471,
+        "starters_remaining": 7,
+        "pregame_total": 76.3,
         "score_rank": 8
       }
     }
